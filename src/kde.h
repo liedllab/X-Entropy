@@ -12,19 +12,19 @@
 
 class IIntegration {
 public:
-	virtual double operator() (std::vector<double> function, int steps, double range) = 0;
+	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept = 0;
 };
 
 class Simpson : public IIntegration {
 public:
 	Simpson() {}
-	virtual double operator() (std::vector<double> function, int steps, double range);
+	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept;
 };
 
 class Riemann : public IIntegration {
 public:
 	Riemann() {};
-	virtual double operator() (std::vector<double> function, int steps, double range);
+	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept;
 };
 
 
@@ -39,21 +39,20 @@ private:
 	std::vector<double> m_densityEstimation;
 	void dct(double *, double  *);
 	void idct(double *, double  *);
-	double fixedpoint(double *, double *);
-	std::pair<double, double> extrema(std::vector<double>);
-	double csiszar(double, int, double *, double *);
+	double fixedpoint(const std::vector<double> &, const std::vector<double> &);
+	std::pair<double, double> extrema(const std::vector<double> &) const noexcept;
+	double csiszar(double, int, const std::vector<double>&, const std::vector<double>&) const noexcept;
 public:
-	Gce(void) {}
 	Gce(double *, int);
 	Gce(double *, int, int);
-	Gce(std::vector<double>, int);
+	Gce(const std::vector<double>&, int);
 
 	Gce(boost::python::list &, int);
 	Gce(boost::python::list &);
 	Gce(boost::python::list &, boost::python::list &, int);
 
 	void calculate(void);
-	double integrate_c(std::string, double, double);
+	double integrate_c(const std::string &, double, double);
 	double integrate_p(boost::python::str &, double, double);
 	int getGridLength(void);
 	int getResolution(void);
