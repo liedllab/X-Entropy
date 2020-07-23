@@ -19,7 +19,6 @@
 
 class IIntegration {
 public:
-  virtual ~IIntegration() {}
 	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept = 0;
 };
 

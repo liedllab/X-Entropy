@@ -218,7 +218,7 @@ void Gce::calculate() {
   idct(&dct_data[0], &density[0]);
 
 
-  double inv_range{ 1.0 / (m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0)) };
+  double inv_range{ 1 / (m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0)) };
   for (int i = 0; i < (int) m_xgrid.size(); ++i) {
     m_densityEstimation.push_back(density[i] * (0.5 * inv_range));
   }
@@ -266,8 +266,8 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
   // This part of the code is used to calculate the inital functional, only that no new t_star will be calculated.
   #pragma omp parallel for
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
-    f_helper[omp_get_thread_num()] += i_arr[i] * i_arr[i] * i_arr[i] * i_arr[i] * 
-        i_arr[i] * data[i] * exp(-1 * i_arr[i] * M_PI_2 * m_tStar);
+    f_helper[omp_get_thread_num()] += pow(i_arr[i], 
+        (double)5) * data[i] * exp(-1 * i_arr[i] * M_PI * M_PI * m_tStar);
   }
   for (int i = 0; i < omp_get_max_threads(); ++i) {
     f += f_helper[i];
@@ -319,7 +319,7 @@ double Gce::csiszar(double f_before, int s, const std::vector<double> &i_arr, co
   // Calculates the Csiszar measure via Gaussians over the entire grid.
   #pragma omp parallel for
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
-    f[omp_get_thread_num()] += pow(i_arr[i], s) * data[i] * exp(-i_arr[i] * M_PI_2 * helper);
+    f[omp_get_thread_num()] += pow(i_arr[i], s) * data[i] * exp(-i_arr[i] * M_PI * M_PI * helper);
   }
   for (int i = 0; i < omp_get_max_threads(); ++i) {
     ret += f[i];
