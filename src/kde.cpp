@@ -42,8 +42,6 @@ IIntegration *getFunction(std::string type) {
 }
 
 
-Gce::Gce(double *array, int length) : Gce(array, length, -1) {}
-
 /****
  * Constructor for the GCE class, to make a python importable library, the
  * explanation for the constructor is given only once.
@@ -51,7 +49,7 @@ Gce::Gce(double *array, int length) : Gce(array, length, -1) {}
  * @argument res: The resolution at which to calculate the density estimation.
  */
 
-Gce::Gce(std::vector<double> array, int res) 
+Gce::Gce(const std::vector<double> &array, int res) 
   : m_resolution(res), m_nFrames(array.size()), m_tStar(0), m_angles(array) 
 {
   if (m_resolution == -1) {
@@ -96,7 +94,7 @@ Gce::Gce(std::vector<double> array, int res)
  * @argument length: The length of the array.
  */
 
-Gce::Gce(double *array, int length, int res) 
+Gce::Gce(double *array, int length, int res = -1) 
   : m_resolution(res), m_nFrames(length), m_tStar(0)
 {
 //	if (length < m_resolution) {
@@ -156,7 +154,7 @@ Gce::Gce(Gce &other) : resolution(other.resolution), t_star(other.t_star), n_fra
  * 		      be stored
  * @return: The minimum value in the array.
  */
-std::pair<double, double> Gce::extrema(std::vector<double> array) {
+std::pair<double, double> Gce::extrema(const std::vector<double> &array) const noexcept {
   double minimum{ array.at(0) };
   double maximum{ array.at(0) };
 
@@ -175,12 +173,12 @@ std::pair<double, double> Gce::extrema(std::vector<double> array) {
 /****
  * Starts the calculation, could have guessed, right?
  */
-void Gce::calculate(void) {
+void Gce::calculate() {
   std::vector<double> i_arr(m_xgrid.size());
   std::vector<double> dct_data(m_xgrid.size());
   double error = std::numeric_limits<double>::max();
 
-  // Precalculate the values for the matrix
+  // Precalculate the squared indices for the matrix
   for (int i = 1; i < (int) m_xgrid.size(); ++i)
     i_arr[i - 1] = i*i;
 
@@ -192,22 +190,26 @@ void Gce::calculate(void) {
   std::vector<double> a2(m_xgrid.size());
 //	#pragma omp parallel for
   for (int i = 1; i < (int) m_xgrid.size(); ++i) {
-    a2[i - 1] = (dct_data[i] / 2);
+    a2[i - 1] = (dct_data[i] * 0.5);
     a2[i - 1] *= a2[i - 1];
   }
   // Minimization of the error iteratively, until the convergence criterion is met.
   while (abs(error) > (DBL_EPSILON)) {
-    error = fixedpoint(&a2[0], &i_arr[0]);
+    error = fixedpoint(a2, i_arr);
   }
 //	#pragma omp parallel for
   for (int i = 0; i < (int) m_xgrid.size(); ++i) {
-    dct_data[i] *= std::exp(-1 * i * i * M_PI * M_PI * m_tStar / 2);
+    dct_data[i] *= std::exp(-0.5 * i * i * M_PI * M_PI * m_tStar);
   }
   std::vector<double> density(m_xgrid.size());
+
+  // Get the data back into real space with the inverse discrete cosine transform
   idct(&dct_data[0], &density[0]);
-  double range = m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0);
+
+
+  double inv_range{ 1 / (m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0)) };
   for (int i = 0; i < (int) m_xgrid.size(); ++i) {
-    m_densityEstimation.push_back(density[i]/ (2 * range));
+    m_densityEstimation.push_back(density[i] * (0.5 * inv_range));
   }
 }
 
@@ -233,11 +235,11 @@ void Gce::idct(double *before_idct, double *after_idct) {
 /****
  * Calculates the new t_star value. And the error.
  * @param data: An array holding the data, or the initial density.
- * @param I: An array holding the index number, squared.
+ * @param i_arr: An array holding the index number, squared.
  * @return: Sets the t_star value of the class to a new value and returns the
  * 	        error.
  */
-double Gce::fixedpoint(double *data, double *I) {
+double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double> &i_arr) {
   // Used for parallelization purposes.
   double f_helper [omp_get_max_threads()] = { 0 };
   double f = 0;
@@ -246,8 +248,8 @@ double Gce::fixedpoint(double *data, double *I) {
   // This part of the code is used to calculate the inital functional, only that no new t_star will be calculated.
   #pragma omp parallel for
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
-    f_helper[omp_get_thread_num()] += pow(I[i], 
-        (double)5) * data[i] * exp(-1 * I[i] * M_PI * M_PI * m_tStar);
+    f_helper[omp_get_thread_num()] += pow(i_arr[i], 
+        (double)5) * data[i] * exp(-1 * i_arr[i] * M_PI * M_PI * m_tStar);
   }
   for (int i = 0; i < omp_get_max_threads(); ++i) {
     f += f_helper[i];
@@ -256,7 +258,7 @@ double Gce::fixedpoint(double *data, double *I) {
   // This function uses the old functional (f) to calculate a new one. The functional at this point is the 
   // Csiszar Cross entropy
   for (int s = 4; s >= 2; --s) {
-    f = csiszar(f, s, I, data);
+    f = csiszar(f, s, i_arr, data);
   }
   time = pow(2 * m_nFrames * sqrt(M_PI) * f, -2 / (double)5.0);
   // Calculate the relative error of the new t_star (time) and the old t_star.
@@ -270,11 +272,11 @@ double Gce::fixedpoint(double *data, double *I) {
  * Which is a Csiszar measure of Cross Entropy.
  * @param f_before: The last functional, which is updated here.
  * @param s: The s'th step.
- * @param I: An array holding its squared index.
+ * @param i_arr: An array holding its squared index.
  * @param data: The prior density.
  * @return: The new value for the functional (the new Csiszar measure).
  */
-double Gce::csiszar(double f_before, int s, double *I, double *data) {
+double Gce::csiszar(double f_before, int s, const std::vector<double> &i_arr, const std::vector<double> &data) const noexcept {
   // The first constraint.
   double K0 = 1;
   // A helper for parallelization reasons
@@ -292,7 +294,7 @@ double Gce::csiszar(double f_before, int s, double *I, double *data) {
   // Calculates the Csiszar measure via Gaussians over the entire grid.
   #pragma omp parallel for
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
-    f[omp_get_thread_num()] += pow(I[i], s) * data[i] * exp(-I[i] * M_PI * M_PI * helper);
+    f[omp_get_thread_num()] += pow(i_arr[i], s) * data[i] * exp(-i_arr[i] * M_PI * M_PI * helper);
   }
   for (int i = 0; i < omp_get_max_threads(); ++i) {
     ret += f[i];
@@ -302,7 +304,7 @@ double Gce::csiszar(double f_before, int s, double *I, double *data) {
 }
 
 /*Fancy*/
-double Gce::integrate_c(std::string type, double min, double max) {
+double Gce::integrate_c(const std::string &type, double min, double max) {
   double norm = 0;
   IIntegration *inte = getFunction(type);
   std::vector<double> grid;
@@ -338,6 +340,7 @@ double Gce::integrate_c(std::string type, double min, double max) {
       fDens.at(i) = 0;
     }
   }
+  delete inte;
 #ifdef SHANNON_ENTROPY
   return entropy;
 #else
@@ -385,7 +388,7 @@ int Gce::getGridLength(void) {
   return (int) m_xgrid.size();
 }
 
-double Simpson::operator() (std::vector<double> function, int steps, double range) {
+double Simpson::operator() (const std::vector<double> &function, int steps, double range) const noexcept{
   if (steps % 2) {
     steps -= 1;
   }
@@ -415,7 +418,7 @@ double Simpson::operator() (std::vector<double> function, int steps, double rang
   return ret * h;
 }
 
-double Riemann::operator() (std::vector<double> function, int steps, double range) {
+double Riemann::operator() (const std::vector<double> &function, int steps, double range) const noexcept{
 		double dx = range / function.size();
 		double ret = 0;
 		for (int j = 0; j < (int)function.size(); ++j) {
