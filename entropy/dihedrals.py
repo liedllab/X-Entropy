@@ -6,6 +6,7 @@ import numpy as np
 def calculateEntropy(dihedralArr, resolution = 16000, method = "Simpson"):
     """Calculate the dihedral entropy of a trajectory.
 
+<<<<<<< HEAD
     The dihedral entropy of a number of different dihedral angles can be calculated using this
     function. The output will be a number for the entropy in each direction. This is calcualted
     using a generalized cross entropy method, published by Y.Botev et al.
@@ -32,6 +33,32 @@ def calculateEntropy(dihedralArr, resolution = 16000, method = "Simpson"):
     """
 
     values = []
+=======
+  The dihedral entropy of a number of different dihedral angles can be calculated using this
+  function. The output will be a number for the entropy in each direction. This is calcualted
+  using a generalized cross entropy method, published by Y.Botev et al.
+
+  >>> calculateEntropy([[1] * 600000, [1] * 600000])
+  [0.00627780151892203, 0.00627780151892203]
+  
+  Parameters
+  ----------
+  dihedralArr: list(list(float))
+      A 2D array holding all the dihedrals of a simulation (number Atoms,
+      number Dihedrals)
+  resolution: int, optional
+      The resolution used for the initial construction of the histogram
+      bin size (default is 16,000)
+  method: str, optional
+      The method for the numerical integration scheme. Can be one of 
+      Riemann or Simpson (default is Simpson)
+
+  Returns
+  -------
+  list:
+    a list of floats that are the entropies for the different dihedrals
+  """
+>>>>>>> Fixed some smaller issues
 
     if isinstance(dihedralArr[0], (float)):
         dihedralArr = [dihedralArr]

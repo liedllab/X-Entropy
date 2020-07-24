@@ -23,13 +23,6 @@
 
 #include "kde.h"
 
-
-/****
- * @brief Returns the integration functor.
- * Get the function, so the numerical integration scheme associated with the type string.
- * @param type The type of the numerical integration scheme, i.e., Simpson or Riemann.
- * @return An object that implements the IIntegration interface.
- */
 IIntegration *getFunction(const std::string& type) {
   if (type == "Simpson") {
     return new Simpson();
@@ -266,8 +259,8 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
   // This part of the code is used to calculate the inital functional, only that no new t_star will be calculated.
   #pragma omp parallel for
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
-    f_helper[omp_get_thread_num()] += pow(i_arr[i], 
-        (double)5) * data[i] * exp(-1 * i_arr[i] * M_PI * M_PI * m_tStar);
+    f_helper[omp_get_thread_num()] += i_arr[i] * i_arr[i] * i_arr[i] * i_arr[i] * 
+        i_arr[i] * data[i] * exp(-1 * i_arr[i] * M_PI_2 * m_tStar);
   }
   for (int i = 0; i < omp_get_max_threads(); ++i) {
     f += f_helper[i];
@@ -319,7 +312,7 @@ double Gce::csiszar(double f_before, int s, const std::vector<double> &i_arr, co
   // Calculates the Csiszar measure via Gaussians over the entire grid.
   #pragma omp parallel for
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
-    f[omp_get_thread_num()] += pow(i_arr[i], s) * data[i] * exp(-i_arr[i] * M_PI * M_PI * helper);
+    f[omp_get_thread_num()] += pow(i_arr[i], s) * data[i] * exp(-i_arr[i] * M_PI_2 * helper);
   }
   for (int i = 0; i < omp_get_max_threads(); ++i) {
     ret += f[i];
