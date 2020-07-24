@@ -41,8 +41,9 @@ def calculateEntropy(dihedralArr, resolution = 16000, method = "Simpson"):
   return values
 
 
-def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, method = "Simpson", mc_order=10, temp=310):
-  """Calculate the dihedral entropy of an aMD trajectory.
+def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, method = "Simpson", mc_order=10, temp=300):
+  """Calculate the dihedral entropy of an accelerated MD (aMD) trajectory using Maclaurin series
+     expansion for reweighting (see https://doi.org/10.1021/ct500090q).
 
   Parameters
   ----------
@@ -58,7 +59,7 @@ def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, metho
   mc_order: int, optional
       The order of the MCLaurin series expansion (default is 10)
   temp: float, optional
-      The temperature for the reweighting (default is 310)
+      The temperature for the reweighting (default is 300)
   
   Returns
   -------
@@ -76,8 +77,8 @@ def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, metho
   return values
 
 
-def reweighting (diheds, weights, mc_order = 10, temp = 310, binsX = None, resolution=(2 << 12)):
-  """Reweight the histogram of a dihedral.
+def reweighting (diheds, weights, mc_order = 10, temp = 300, binsX = None, resolution=(2 << 12)):
+    """Reweight the histogram of a dihedral with a Maclaurin series expansion (https://doi.org/10.1021/ct500090q). 
 
   Parameters
   ----------
@@ -88,7 +89,7 @@ def reweighting (diheds, weights, mc_order = 10, temp = 310, binsX = None, resol
   mc_order: int, optional
       The order of the MCLaurin series (default is 10)
   temp: float, optional
-      The simulation temperature (default is 310)
+      The simulation temperature (default is 300)
   binsX: list or None, optional
       The bins used for histogramming (default is None)
   
