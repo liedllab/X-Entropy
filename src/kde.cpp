@@ -30,7 +30,7 @@
 
 #include "kde.h"
 
-IIntegration *getFunction(std::string type) {
+IIntegration *getFunction(const std::string& type) {
   if (type == "Simpson") {
     return new Simpson();
   } else if (type ==  "Riemann") {
@@ -58,7 +58,7 @@ Gce::Gce(const std::vector<double> &array, int res)
   auto ext{ extrema(m_angles) };
   double range{ ext.second - ext.first };
   double histogram_normalizer{ 1.0 / (double)(m_angles.size()) };
-  ext.first -= (range / 10.0);
+  ext.first -= (range * 0.1);
   range *= 1.2;
   
   
@@ -110,13 +110,19 @@ Gce::Gce(double *array, int length, int res = -1)
   }
   auto ext{ extrema(m_angles) };
   double range{ ext.second - ext.first };
-  double histogram_normalizer = 1 / (double)length;
+  double histogram_normalizer{ 1.0 / static_cast<double>(length) };
   ext.first -= (range / 10);
   range *= 1.2;
+
+
+
   double stepsize = range / (m_resolution - 1);
   for (double i = ext.first; i < range; i += stepsize) {
     m_xgrid.push_back(i);
   }
+
+
+
   m_histogram.resize(m_xgrid.size());
   #pragma omp parallel for
   for (int i = 0; i < length; ++i) {
@@ -242,25 +248,31 @@ void Gce::idct(double *before_idct, double *after_idct) {
 double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double> &i_arr) {
   // Used for parallelization purposes.
   double f_helper [omp_get_max_threads()] = { 0 };
-  double f = 0;
-  double error = 0;
-  double time = 0;
+  double f{ 0 };
+  double error{ 0 };
+  double time{ 0 };
   // This part of the code is used to calculate the inital functional, only that no new t_star will be calculated.
   #pragma omp parallel for
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
-    f_helper[omp_get_thread_num()] += pow(i_arr[i], 
-        (double)5) * data[i] * exp(-1 * i_arr[i] * M_PI * M_PI * m_tStar);
+    f_helper[omp_get_thread_num()] += i_arr[i] * i_arr[i] * i_arr[i] * i_arr[i] * 
+        i_arr[i] * data[i] * exp(-1 * i_arr[i] * M_PI_2 * m_tStar);
   }
   for (int i = 0; i < omp_get_max_threads(); ++i) {
     f += f_helper[i];
   }
-  f *= 2 * pow(M_PI, 10);
+
+  f *= 2.0 * M_PI_4 * M_PI_4 * M_PI_2;
   // This function uses the old functional (f) to calculate a new one. The functional at this point is the 
   // Csiszar Cross entropy
   for (int s = 4; s >= 2; --s) {
     f = csiszar(f, s, i_arr, data);
   }
-  time = pow(2 * m_nFrames * sqrt(M_PI) * f, -2 / (double)5.0);
+
+  // The actual formula is a bit different, but to optimize away the root,
+  // I squared the first part in the pow function. The root is then calculated
+  // via the exponent in the pow function (this might be unnecessary optimization,
+  // but I think not).
+  time = pow(4.0 * m_nFrames * m_nFrames * M_PI * f * f, -0.2);
   // Calculate the relative error of the new t_star (time) and the old t_star.
   error = (m_tStar - time) / time;
   m_tStar = time;
@@ -290,11 +302,11 @@ double Gce::csiszar(double f_before, int s, const std::vector<double> &i_arr, co
     K0 *= i;
   }
   K0 /= sqrt(2 * M_PI);
-  helper = pow(2 * K0 / (m_nFrames * f_before), (double)2.0/ (double)(3.0 + 2 * s));
+  helper = pow(2.0 * K0 / (m_nFrames * f_before), 2.0 / (3.0 + 2.0 * s));
   // Calculates the Csiszar measure via Gaussians over the entire grid.
   #pragma omp parallel for
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
-    f[omp_get_thread_num()] += pow(i_arr[i], s) * data[i] * exp(-i_arr[i] * M_PI * M_PI * helper);
+    f[omp_get_thread_num()] += pow(i_arr[i], s) * data[i] * exp(-i_arr[i] * M_PI_2 * helper);
   }
   for (int i = 0; i < omp_get_max_threads(); ++i) {
     ret += f[i];
@@ -352,7 +364,7 @@ double Gce::integrate_c(const std::string &type, double min, double max) {
 /****
  * Returns the calculated density values.
  */
-std::vector<double> Gce::getDensityEstimation(void) {
+std::vector<double> Gce::getDensityEstimation() {
   return m_densityEstimation;
 }
 
@@ -360,31 +372,27 @@ std::vector<double> Gce::getDensityEstimation(void) {
 /****
  * Getters
  */
-std::vector<double> Gce::getAngles(void) {
+const std::vector<double>& Gce::getAngles() const {
   return m_angles;
 }
 
-std::vector<double> Gce::getGrid(void) {
+const std::vector<double>& Gce::getGrid() const {
   return m_xgrid;
 }
 
-std::vector<double> Gce::getHistogram(void) {
-  std::vector<double> ret;
-  for (int i = 0; i < (int) m_xgrid.size(); ++i) {
-    ret.push_back(m_histogram[i]);
-  }
-  return ret;
+const std::vector<double>& Gce::getHistogram() const {
+  return m_histogram;
 }
 
-double Gce::getTStar(void) {
+double Gce::getTStar() const {
   return m_tStar;
 }
 
-int Gce::getResolution(void) {
+int Gce::getResolution() const {
   return m_resolution;
 }
 
-int Gce::getGridLength(void) {
+int Gce::getGridLength() const {
   return (int) m_xgrid.size();
 }
 
@@ -453,7 +461,7 @@ DihedralEntropy::DihedralEntropy(py::list &l, int n, py::str &numericalIntegral)
     m_angles.push_back(py::extract<double>(l[i]));
   }
   m_length = m_angles.size();
-  std::string numInt = std::string(py::extract<char *>(numericalIntegral));
+  std::string numInt{ py::extract<char *>(numericalIntegral) };
   integrate(getFunction(numInt));
 }
 
