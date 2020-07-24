@@ -7,11 +7,12 @@
 #include <omp.h>
 #include <boost/python.hpp>
 
-#define GASCONSTANT 8.3144598
+#define GASCONSTANT 8.314462618
 
 
 class IIntegration {
 public:
+  virtual ~IIntegration() {}
 	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept = 0;
 };
 
@@ -30,9 +31,9 @@ public:
 
 class Gce {
 private:
-	int m_resolution = 0;
-	int m_nFrames = 0;
-	double m_tStar = 0;
+	int m_resolution;
+	int m_nFrames;
+	double m_tStar;
 	std::vector<double> m_xgrid;
 	std::vector<double> m_histogram;
 	std::vector<double> m_angles;
@@ -54,13 +55,13 @@ public:
 	void calculate(void);
 	double integrate_c(const std::string &, double, double);
 	double integrate_p(boost::python::str &, double, double);
-	int getGridLength(void);
-	int getResolution(void);
-	double getTStar(void);
-	std::vector<double> getHistogram(void);
-	std::vector<double> getGrid(void);
-	std::vector<double> getDensityEstimation(void);
-	std::vector<double> getAngles(void);
+	int getGridLength() const;
+	int getResolution() const;
+	double getTStar() const;
+	const std::vector<double>& getHistogram() const;
+	const std::vector<double>& getGrid() const;
+	std::vector<double> getDensityEstimation();
+	const std::vector<double>& getAngles() const;
 //	boost::python::list getResult(void);
 };
 
