@@ -1,6 +1,7 @@
 # Dihedral Entropy
 
 This is an adaption of the kernel density estimator (kde) of Z. Botev, based on a matlab implementation. It was ported to C++ by Johannes Kraml with the help of Florian Hofer (mostly debugging and stuff), both based on the matlab implementation (the names of the variables were kept for better comparison) and the C implementation of Roland Huber.
+
 Features were added to ensure better parallelism for the kde, as well as for the subsequent integration. Before the kernel density estimation is performed, the dihedral angles are mirrored, in order to circumvent boundary conditions. If this behaviour is undesired, a call to the kde class itself is necessary to calculate the density estimation alone.
 
 The package can be installed via
@@ -23,8 +24,7 @@ import entropy
 ```
 
 Dependencies:
-The dependencies are not yet handled correctly, thus the user is asked to ensure he fulfills the necessary
-dependencies on his system.
+The dependencies are not yet handled correctly, thus the user is asked to ensure he fulfills the necessary dependencies on his system.
 
 - openmp
 - fftw3
