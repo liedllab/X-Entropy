@@ -14,8 +14,6 @@ setup(
         description = "Calculate the entropy of a given set of data, using the fftw3 library.",
         author = "Johannes Kraml",
         author_email="johannes.kraml@uibk.ac.at",
-#        include_package_data = True,
-#        zip_safe = False,
 
         py_modules=['entropy.dihedrals'],
 
