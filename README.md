@@ -19,7 +19,7 @@ python setup.py install
 After this, the package is callable by using
 
 ```python
-import Entropy
+import entropy
 ```
 
 Dependencies:
