@@ -3,6 +3,13 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <limits>
+
+#include <cfloat>
+#include <cmath>
+#include <cstdlib>
+
 #include <fftw3.h>
 #include <omp.h>
 #include <boost/python.hpp>

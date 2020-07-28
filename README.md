@@ -4,6 +4,8 @@ This is an adaption of the kernel density estimator (kde) of Z. Botev, based on 
 
 Features were added to ensure better parallelism for the kde, as well as for the subsequent integration. Before the kernel density estimation is performed, the dihedral angles are mirrored, in order to circumvent boundary conditions. If this behaviour is undesired, a call to the kde class itself is necessary to calculate the density estimation alone.
 
+## Installation
+
 The package can be installed via
 
 ```bash
