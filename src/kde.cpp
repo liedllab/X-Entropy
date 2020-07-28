@@ -1,7 +1,7 @@
 /************************************************************************************************************************
  *															                                                                                        *
  *						GCE (1.0)					                                                                                    		*
- *	This is an implementation of the Generalized Cross Entropy Method, based on a matlab script by Y. Botev.	          *
+ *	This is an implementation of the Generalized Cross Entropy Method, based on a matlab script by Z. Botev.	          *
  *	It was reprogrammed from the former GCE, for parallelization and to create a python connectable library.	          *
  *	The GCE Method calculates a density estimation, based on a prior probability density p, a generalized 		          *
  *	Cross Entropy distance D between two probability densities and a finite set of constraints connecting the	          *
@@ -13,7 +13,7 @@
  *															                                                                                        *
  ************************************************************************************************************************
  *															                                                                                        *
- *	Written by Johannes Kraml, based on Code by RG Huber and Z Botev. This program was implemented with the		          *
+ *	Written by Johannes Kraml, based on Code by RG Huber and Z. Botev. This program was implemented with the		        *
  *	help of Florian Hofer.												                                                                      *
  *															                                                                                        *
  *	Contact: johannes.kraml@uibk.ac.at										                                                              *
@@ -21,15 +21,15 @@
  ************************************************************************************************************************/
 
 
-#include <iostream>
-#include <limits>
-
-#include <cfloat>
-#include <cmath>
-#include <cstdlib>
-
 #include "kde.h"
 
+
+/****
+ * @brief Returns the integration functor.
+ * Get the function, so the numerical integration scheme associated with the type string.
+ * @param type The type of the numerical integration scheme, i.e., Simpson or Riemann.
+ * @return An object that implements the IIntegration interface.
+ */
 IIntegration *getFunction(const std::string& type) {
   if (type == "Simpson") {
     return new Simpson();
@@ -43,10 +43,11 @@ IIntegration *getFunction(const std::string& type) {
 
 
 /****
+ * @brief Constructor
  * Constructor for the GCE class, to make a python importable library, the
  * explanation for the constructor is given only once.
- * @argument array: The values for which to calculate the density estimation.
- * @argument res: The resolution at which to calculate the density estimation.
+ * @param array: The values for which to calculate the density estimation.
+ * @param res: The resolution at which to calculate the density estimation.
  */
 
 Gce::Gce(const std::vector<double> &array, int res) 
@@ -87,11 +88,12 @@ Gce::Gce(const std::vector<double> &array, int res)
 }
 
 /****
+ * @brief Constructor
  * Constructor for the GCE class, to make a python importable library, the
  * explanation for the constructor is given only once.
- * @argument array: The array for which to calculate the density estimation.
- * @argument res: The resolution at which to calculate the density estimation.
- * @argument length: The length of the array.
+ * @param array: The array for which to calculate the density estimation.
+ * @param res: The resolution at which to calculate the density estimation.
+ * @param length: The length of the array.
  */
 
 Gce::Gce(double *array, int length, int res = -1) 
@@ -154,9 +156,12 @@ Gce::Gce(Gce &other) : resolution(other.resolution), t_star(other.t_star), n_fra
 #endif
 
 /****
- * Calculation of the minimum and maximum value of a given data set.
- * @argument array: The dataset to calculate the minimum and maximum from.
- * @argument maximum: A pointer to the value, where the maximum should
+ * @brief Minimum maximum calculation
+ * Calculation of the minimum and maximum value of a given data set. Both values
+ * are always calculated, as this does not cost much more and returned as a pair
+ * of values.
+ * @param array: The dataset to calculate the minimum and maximum from.
+ * @param maximum: A pointer to the value, where the maximum should
  * 		      be stored
  * @return: The minimum value in the array.
  */
@@ -177,7 +182,7 @@ std::pair<double, double> Gce::extrema(const std::vector<double> &array) const n
 }
 
 /****
- * Starts the calculation, could have guessed, right?
+ * @brief Starts the calculation, could have guessed, right?
  */
 void Gce::calculate() {
   std::vector<double> i_arr(m_xgrid.size());
@@ -213,32 +218,39 @@ void Gce::calculate() {
   idct(&dct_data[0], &density[0]);
 
 
-  double inv_range{ 1 / (m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0)) };
+  double inv_range{ 1.0 / (m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0)) };
   for (int i = 0; i < (int) m_xgrid.size(); ++i) {
     m_densityEstimation.push_back(density[i] * (0.5 * inv_range));
   }
 }
 
 /****
+ * @brief Discrete Cosine Transform
  * Calculates the direct cosine transforamtion using the fftw3 C library.
+ * @param before_dct The values of the function before fourier transformation.
+ * @param after_dct The values of the function after fourier transformation
  */
 void Gce::dct(double *before_dct, double *after_dct){
-  fftw_plan p = fftw_plan_r2r_1d((int) m_xgrid.size(), before_dct, after_dct, FFTW_REDFT10, FFTW_ESTIMATE);
+  fftw_plan p{ fftw_plan_r2r_1d((int) m_xgrid.size(), before_dct, after_dct, FFTW_REDFT10, FFTW_ESTIMATE) };
   fftw_execute(p);
   fftw_destroy_plan(p);
 }
 
 /****
+ * @brief Inverse Discrete Cosine Transform
  * Calculates the inverse direct cosine transformation using the
  * fftw3 C library.
+ * @param before_idct The values of the function before inverse fourier transformation.
+ * @param after_idct The values of the function after inverse fourier transformation
  */
 void Gce::idct(double *before_idct, double *after_idct) {
-  fftw_plan p = fftw_plan_r2r_1d((int) m_xgrid.size(), before_idct, after_idct, FFTW_REDFT01, FFTW_ESTIMATE);
+  fftw_plan p{ fftw_plan_r2r_1d((int) m_xgrid.size(), before_idct, after_idct, FFTW_REDFT01, FFTW_ESTIMATE) };
   fftw_execute(p);
   fftw_destroy_plan(p);
 }
 
 /****
+ * @brief Calculates new t_star.
  * Calculates the new t_star value. And the error.
  * @param data: An array holding the data, or the initial density.
  * @param i_arr: An array holding the index number, squared.
@@ -280,6 +292,7 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
 }
 
 /****
+ * @brief Csiszar distance
  * The correctly written functional function. Calculates the f value.
  * Which is a Csiszar measure of Cross Entropy.
  * @param f_before: The last functional, which is updated here.
@@ -475,18 +488,18 @@ DihedralEntropy::DihedralEntropy(py::list &l, py::str &numericalIntegral) :
  * just change the Code here and send me the copy ;)
  */
 void DihedralEntropy::integrate(IIntegration *t) {
-  std::vector<double> mirrored(m_angles.size() * 3);
-  double dx = 0;
-  double norm = 0;
+  std::vector<double> mirrored(m_angles.size() * 3.0);
+  double dx{ 0.0 };
+  double norm{ 0.0 };
   // Mirrors the dihedrals to get rid of boundary problems
   #pragma omp parallel for
   for (int i = 0; i < (int) m_angles.size(); ++i) {
-    mirrored.at(i) = m_angles.at(i) - 360;
+    mirrored.at(i) = m_angles.at(i) - 360.0;
     mirrored.at(i + m_angles.size()) = m_angles.at(i);
-    mirrored.at(i + 2 * m_angles.size()) = m_angles.at(i) + 360;
+    mirrored.at(i + 2 * m_angles.size()) = m_angles.at(i) + 360.0;
   }
   // Uses the GCE to calculate the Density.
-  Gce kde(mirrored, m_res);
+  Gce kde{ mirrored, m_res };
   kde.calculate();
   dx = kde.getGrid().at(1) - kde.getGrid().at(0);
   // This is defined here, because the handling of those is easier.
