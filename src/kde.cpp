@@ -23,6 +23,13 @@
 
 #include "kde.h"
 
+
+/****
+ * @brief Returns the integration functor.
+ * Get the function, so the numerical integration scheme associated with the type string.
+ * @param type The type of the numerical integration scheme, i.e., Simpson or Riemann.
+ * @return An object that implements the IIntegration interface.
+ */
 IIntegration *getFunction(const std::string& type) {
   if (type == "Simpson") {
     return new Simpson();
@@ -211,7 +218,7 @@ void Gce::calculate() {
   idct(&dct_data[0], &density[0]);
 
 
-  double inv_range{ 1 / (m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0)) };
+  double inv_range{ 1.0 / (m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0)) };
   for (int i = 0; i < (int) m_xgrid.size(); ++i) {
     m_densityEstimation.push_back(density[i] * (0.5 * inv_range));
   }
