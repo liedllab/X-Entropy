@@ -4,41 +4,44 @@ import numpy as np
 
 
 def calculateEntropy(dihedralArr, resolution = 16000, method = "Simpson"):
-  """Calculate the dihedral entropy of a trajectory.
+    """Calculate the dihedral entropy of a trajectory.
 
-  The dihedral entropy of a number of different dihedral angles can be calculated using this
-  function. The output will be a number for the entropy in each direction. This is calcualted
-  using a generalized cross entropy method, published by Y.Botev et al.
+    The dihedral entropy of a number of different dihedral angles can be calculated using this
+    function. The output will be a number for the entropy in each direction. This is calcualted
+    using a generalized cross entropy method, published by Y.Botev et al.
 
-  >>> calculateEntropy([[1] * 600000, [1] * 600000])
-  [0.00627780151892203, 0.00627780151892203]
-  
-  Parameters
-  ----------
-  dihedralArr: list(list(float))
-      A 2D array holding all the dihedrals of a simulation (number Atoms,
-      number Dihedrals)
-  resolution: int, optional
-      The resolution used for the initial construction of the histogram
-      bin size (default is 16,000)
-  method: str, optional
-      The method for the numerical integration scheme. Can be one of 
-      Riemann or Simpson (default is Simpson)
+    >>> calculateEntropy([[1] * 600000, [1] * 600000])
+    [0.00627780151892203, 0.00627780151892203]
+    
+    Parameters
+    ----------
+    dihedralArr: list(list(float))
+        A 2D array holding all the dihedrals of a simulation (number Atoms,
+        number Dihedrals)
+    resolution: int, optional
+        The resolution used for the initial construction of the histogram
+        bin size (default is 16,000)
+    method: str, optional
+        The method for the numerical integration scheme. Can be one of 
+        "Riemann" or "Simpson" (default is "Simpson")
 
-  Returns
-  -------
-  list:
-    a list of floats that are the entropies for the different dihedrals
-  """
+    Returns
+    -------
+    list:
+    A list of floats that are the entropies for the different dihedrals
+    """
 
-  values = []
+    values = []
 
-  for dihedrals in  dihedralArr:
-      # The mirroring is not necessary, all of this is done via the ent module
-      entropyCalculator = ent(list(dihedrals), resolution, method)
-      values.append(entropyCalculator.getResult() * -1)
+    if isinstance(dihedralArr[0], (float)):
+        dihedralArr = [dihedralArr]
 
-  return values
+    for dihedrals in dihedralArr:
+        # The mirroring is not necessary, all of this is done via the ent module
+        entropyCalculator = ent(list(dihedrals), resolution, method)
+        values.append(entropyCalculator.getResult() * -1)
+
+    return values
 
 
 def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, method = "Simpson", mc_order=10, temp=300):
@@ -65,16 +68,20 @@ def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, metho
   -------
   values:
     A list holding the values for each angle.
-  """
+    """
 
-  values = []
-  for dihedral in dihedralArr:
-      inHist = reweighting(dihedral, weightArr, mc_order=mc_order, temp=temp, resolution=resolution)
-      kernel = Kde(list(inHist), list(np.linspace(-180 - 360, 180 + 360, num = resolution)), len(dihedral))
-      kernel.calculate()
-      values.append(kernel.integrate(method, -180, 180) * -8.3145)
+    values = []
 
-  return values
+    if isinstance(dihedralArr[0], (float)):
+        dihedralArr = [dihedralArr]
+
+    for dihedral in dihedralArr:
+        inHist = reweighting(dihedral, weightArr, mc_order=mc_order, temp=temp, resolution=resolution)
+        kernel = Kde(list(inHist), list(np.linspace(-180 - 360, 180 + 360, num = resolution)), len(dihedral))
+        kernel.calculate()
+        values.append(kernel.integrate(method, -180, 180) * -8.3145)
+
+    return values
 
 
 def reweighting (diheds, weights, mc_order = 10, temp = 300, binsX = None, resolution=(2 << 12)):
