@@ -20,7 +20,12 @@ setup(
         ext_modules = [
             Extension(
                 'entropy.kde',
-                ['src/kde.cpp'],
+                [
+                  'src/kde.cpp',
+                  'src/Integrators.cpp',
+                  'src/DihedralEntropy.cpp',
+                  'src/Module.cpp'
+                ],
                 libraries=['fftw3', 'm', 'boost_python-py{}{}'.format(version[0], version[1]), 'gomp'],
                 extra_compile_args=['-O3', '-fopenmp'],
             ),

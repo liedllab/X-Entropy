@@ -14,27 +14,10 @@
 #include <omp.h>
 #include <boost/python.hpp>
 
+#include "Exceptions.h"
+#include "Integrators.h"
+
 #define GASCONSTANT 8.314462618
-
-
-class IIntegration {
-public:
-  virtual ~IIntegration() {}
-	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept = 0;
-};
-
-class Simpson : public IIntegration {
-public:
-	Simpson() {}
-	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept override;
-};
-
-class Riemann : public IIntegration {
-public:
-	Riemann() {};
-	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept override;
-};
-
 
 class Gce {
 private:
@@ -71,24 +54,6 @@ public:
 	std::vector<double> getDensityEstimation();
 	const std::vector<double>& getAngles() const;
 //	boost::python::list getResult(void);
-};
-
-
-class DihedralEntropy {
-private:
-	double m_entropy;
-	int m_res;
-	int m_length;
-	std::vector<double> m_angles;
-	void integrate(const std::unique_ptr<IIntegration>& t);
-	void integrate();
-public:
-	DihedralEntropy(void) {}
-	DihedralEntropy(boost::python::list &, int);
-	DihedralEntropy(boost::python::list &, boost::python::str &);
-	DihedralEntropy(boost::python::list &, int, boost::python::str &);
-	DihedralEntropy(boost::python::list &);
-	double getEntropy(void);
 };
 
 #endif
