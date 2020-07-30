@@ -26,13 +26,13 @@ public:
 class Simpson : public IIntegration {
 public:
 	Simpson() {}
-	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept;
+	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept override;
 };
 
 class Riemann : public IIntegration {
 public:
 	Riemann() {};
-	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept;
+	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept override;
 };
 
 
@@ -50,6 +50,7 @@ private:
 	double fixedpoint(const std::vector<double> &, const std::vector<double> &);
 	std::pair<double, double> extrema(const std::vector<double> &) const noexcept;
 	double csiszar(double, int, const std::vector<double>&, const std::vector<double>&) const noexcept;
+  double calcIntPow(double, int) const noexcept;
 public:
 	Gce(double *, int);
 	Gce(double *, int, int);
@@ -75,11 +76,11 @@ public:
 
 class DihedralEntropy {
 private:
-	double m_entropy = 0;
-	double m_res = 0;
-	int m_length = 0;
+	double m_entropy;
+	int m_res;
+	int m_length;
 	std::vector<double> m_angles;
-	void integrate(IIntegration *t);
+	void integrate(const std::unique_ptr<IIntegration>& t);
 	void integrate();
 public:
 	DihedralEntropy(void) {}
