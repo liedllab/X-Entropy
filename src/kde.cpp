@@ -24,25 +24,6 @@
 
 #include "kde.h"
 
-
-/****
- * @brief Returns the integration functor.
- * Get the function, so the numerical integration scheme associated with the type string.
- * @param type The type of the numerical integration scheme, i.e., Simpson or Riemann.
- * @return An object that implements the IIntegration interface.
- */
-std::unique_ptr<IIntegration> getFunction(const std::string& type) {
-  if (type == "Simpson") {
-    return std::make_unique<Simpson>();
-  } else if (type ==  "Riemann") {
-      return std::make_unique<Riemann>();
-  } else {
-    std::cerr << "Error: The function you searched for is not yet implemented." << std::endl;
-    return nullptr;
-  }
-}
-
-
 /****
  * @brief Constructor
  * Constructor for the GCE class, to make a python importable library, the
@@ -399,52 +380,6 @@ int Gce::getGridLength() const {
   return (int) m_xgrid.size();
 }
 
-double Simpson::operator() (const std::vector<double> &function, int steps, double range) const noexcept{
-  if (steps % 2) {
-    steps -= 1;
-  }
-  double ret = function.at(0);
-  double h = range / (3 * steps);
-  ret += function.at(function.size() - 1);
-  double pcalc[omp_get_max_threads()] = { 0 };
-  double calc = 0;
-
-
-  #pragma omp parallel for
-  for (int j = 1; j < (steps / 2); ++j) {
-    pcalc[omp_get_thread_num()] += function.at(2 * j - 1);
-  }
-
-
-  for (int i = 0; i < omp_get_max_threads(); ++i) {
-    calc += pcalc[i];
-    pcalc[i] = 0;
-  }
-
-
-  ret += 4 * calc;
-  calc = 0;
-  #pragma omp parallel for
-  for (int j = 1; j < ((steps / 2) - 1); ++j) {
-    pcalc[omp_get_thread_num()] += function.at(2 * j);
-  }
-
-
-  for (int i = 0; i < omp_get_max_threads(); ++i) {
-    calc += pcalc[i];
-  }
-  ret += 2 * calc;
-  return ret * h;
-}
-
-double Riemann::operator() (const std::vector<double> &function, int steps, double range) const noexcept{
-		double dx = range / function.size();
-		double ret = 0;
-		for (int j = 0; j < (int)function.size(); ++j) {
-			ret += function.at(j) * dx;
-		}
-		return ret;
-	}
 
 
 /********************************************************************************
@@ -454,101 +389,6 @@ double Riemann::operator() (const std::vector<double> &function, int steps, doub
  ********************************************************************************/
 
 namespace py = boost::python;
-
-DihedralEntropy::DihedralEntropy(py::list &l, int n) : m_entropy(0), m_res(n) {
-  m_res =std::pow(2, (int) (log(m_res)/log(2)) + 1);
-  for (int i = 0; i < (int) py::len(l); ++i) {
-    m_angles.push_back(py::extract<double>(l[i]));
-  }
-  m_length = m_angles.size();
-  integrate();
-}
-
-DihedralEntropy::DihedralEntropy(py::list &l) 
-: DihedralEntropy{ l, (2 << 12) } {}
-
-DihedralEntropy::DihedralEntropy(py::list &l, int n, py::str &numericalIntegral)
-: m_entropy{ 0.0 }, m_res{ n } {
-  m_res =std::pow(2, (int) (log(m_res)/log(2)) + 1);
-  for (int i = 0; i < (int) py::len(l); ++i) {
-    m_angles.push_back(py::extract<double>(l[i]));
-  }
-  m_length = m_angles.size();
-  std::string numInt{ py::extract<char *>(numericalIntegral) };
-  integrate(getFunction(numInt));
-}
-
-DihedralEntropy::DihedralEntropy(py::list &l, py::str &numericalIntegral) : 
-  DihedralEntropy{ l, (2 << 12), numericalIntegral } {}
-
-/****
- * Used to calculate the integral of an dihedral angle distribution. If another
- * Entropy is desired, the GCE (or kde in python) has to be used directly and
- * everything encoded here has to be done by python. Or you are also welcome to
- * just change the Code here and send me the copy ;)
- */
-void DihedralEntropy::integrate(const std::unique_ptr<IIntegration>& t) {
-  std::vector<double> mirrored(m_angles.size() * 3.0);
-  double dx{ 0.0 };
-  double norm{ 0.0 };
-  // Mirrors the dihedrals to get rid of boundary problems
-  #pragma omp parallel for
-  for (int i = 0; i < (int) m_angles.size(); ++i) {
-    mirrored.at(i) = m_angles.at(i) - 360.0;
-    mirrored.at(i + m_angles.size()) = m_angles.at(i);
-    mirrored.at(i + 2 * m_angles.size()) = m_angles.at(i) + 360.0;
-  }
-  // Uses the GCE to calculate the Density.
-  Gce kde{ mirrored, m_res };
-  kde.calculate();
-  dx = kde.getGrid().at(1) - kde.getGrid().at(0);
-  // This is defined here, because the handling of those is easier.
-  std::vector<double> density = kde.getDensityEstimation();
-  std::vector<double> xgrid = kde.getGrid();
-  std::vector<double> finalDens;
-  // Integrate only over the angles between -180 and 180 degrees.
-  for (int i = 0; i < (int) density.size(); ++i) {
-    if (xgrid.at(i) >= -180.0 && xgrid.at(i) <= 180.0) {
-      finalDens.push_back(density.at(i));
-    }
-    if (xgrid.at(i) > 180.0) {
-      break;
-    }
-  }
-  // Integration part.
-  norm = 0;
-  //norm = t->operator()(finalDens, finalDens.size(), 360);
-  for (int i = 0; i < (int) finalDens.size(); ++i) {
-    norm += finalDens.at(i);
-  }
-  #pragma omp parallel for
-  for (int i = 0; i < (int) finalDens.size(); ++i) {
-    finalDens.at(i) /= norm;
-    if (finalDens.at(i) > 0) {
-      finalDens.at(i) = finalDens.at(i) * log(finalDens.at(i));
-    } else if (finalDens.at(i) != finalDens.at(i) ) {
-      std::cout << "Nan von irgendwo" << std::endl;
-      finalDens.at(i) = 0;
-    }
-  }
-  m_entropy = t->operator()(finalDens, finalDens.size(), 360);
-  // Finally done, just multiply with the universal gasconstant (which you will find to be defined in the header,
-  // where it belongs!
-  m_entropy *= GASCONSTANT;
-
-}
-
-void DihedralEntropy::integrate() {
-  integrate(std::make_unique<Riemann>());
-}
-
-/****
- * Get the entropy.
- * @return: The value for the entropy.
- */
-double DihedralEntropy::getEntropy() {
-  return m_entropy;
-}
 
 /****
  * The same as before, but uses python lists now, which it will convert to an C
@@ -590,6 +430,7 @@ Gce::Gce(py::list &l, int n)
     }
   }
 
+
 }
 
 
@@ -614,27 +455,4 @@ Gce::Gce(py::list &l)
 double Gce::integrate_p(py::str &intName, double min, double max) {
   std::string integralName = std::string(py::extract<char *>(intName));
   return integrate_c(integralName, min, max);
-}
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-
-/****
- * The python modules
- */
-BOOST_PYTHON_MODULE(kde) {
-  py::class_<Gce>("Kde", py::init<py::list &, int>())
-    .def("calculate", &Gce::calculate)
-    .def("getResult", &Gce::getDensityEstimation)
-    .def("integrate", &Gce::integrate_p)
-    .def(py::init<py::list &, py::list &, int>())
-    ;
-  py::class_<std::vector<double> >("DoubleVec")
-    .def(py::vector_indexing_suite<std::vector<double>>() )
-    ;
-  py::class_<DihedralEntropy>("DihedralEntropy", py::init<py::list &, int>())
-    .def(py::init<py::list &>())
-    .def(py::init<py::list &, py::str &>())
-    .def(py::init<py::list &, int, py::str &>())
-    .def("getResult", &DihedralEntropy::getEntropy)
-    ;
-
 }

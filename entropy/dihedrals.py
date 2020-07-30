@@ -41,28 +41,28 @@ def calculateEntropy(dihedralArr, resolution = 16000, method = "Simpson"):
 
 
 def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, method = "Simpson", mc_order=10, temp=300):
-  """Calculate the dihedral entropy of an accelerated MD (aMD) trajectory using Maclaurin series
-     expansion for reweighting (see https://doi.org/10.1021/ct500090q).
+    """Calculate the dihedral entropy of an accelerated MD (aMD) trajectory using Maclaurin series
+       expansion for reweighting (see https://doi.org/10.1021/ct500090q).
 
-  Parameters
-  ----------
-  dihedralArr: list(list(float))
-      A 2D-array, holding all the dihedrals of the trajectory.
-  weightArr: list(list(double))
-      The weights of the aMD trajctory.
-  resolution: int, optional
-      The resolution of the initial Histogram approximation (default is 16000)
-  method: str, optional
-      The method for the numerical integral, at the moment only
-      Riemann and Simpson is available (default is Simpson)
-  mc_order: int, optional
-      The order of the MCLaurin series expansion (default is 10)
-  temp: float, optional
-      The temperature for the reweighting (default is 300)
-  
-  Returns
-  -------
-  values:
+    Parameters
+    ----------
+    dihedralArr: list(list(float))
+        A 2D-array, holding all the dihedrals of the trajectory.
+    weightArr: list(list(double))
+        The weights of the aMD trajctory.
+    resolution: int, optional
+        The resolution of the initial Histogram approximation (default is 16000)
+    method: str, optional
+        The method for the numerical integral, at the moment only
+        Riemann and Simpson is available (default is Simpson)
+    mc_order: int, optional
+        The order of the MCLaurin series expansion (default is 10)
+    temp: float, optional
+        The temperature for the reweighting (default is 300)
+
+    Returns
+    -------
+    values:
     A list holding the values for each angle.
     """
 
@@ -83,40 +83,40 @@ def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, metho
 def reweighting (diheds, weights, mc_order = 10, temp = 300, binsX = None, resolution=(2 << 12)):
     """Reweight the histogram of a dihedral with a Maclaurin series expansion (https://doi.org/10.1021/ct500090q). 
 
-  Parameters
-  ----------
-  diheds: list(list(float))
-      A 2D-array, holding a dihedral
-  weights: list(list(float))
-      The weights of the aMD trajectory
-  mc_order: int, optional
-      The order of the MCLaurin series (default is 10)
-  temp: float, optional
-      The simulation temperature (default is 300)
-  binsX: list or None, optional
-      The bins used for histogramming (default is None)
-  
-  Returns
-  -------
-  The reweighted histogram of the dihedral.
-  """
-  
-  def mirror (arr):
+    Parameters
+    ----------
+    diheds: list(list(float))
+        A 2D-array, holding a dihedral
+    weights: list(list(float))
+        The weights of the aMD trajectory
+    mc_order: int, optional
+        The order of the MCLaurin series (default is 10)
+    temp: float, optional
+        The simulation temperature (default is 300)
+    binsX: list or None, optional
+        The bins used for histogramming (default is None)
+
+    Returns
+    -------
+    The reweighted histogram of the dihedral.
+    """
+
+    def mirror (arr):
       return list(arr) + list(arr) + list(arr)
-  def fact(x):
+    def fact(x):
       if x == 0:
-          return 1
+        return 1
       return fact(x - 1) * x
-      
-  diheds = np.array(mirror(diheds))
-  weights = np.array(mirror(weights))
-  if binsX is None:
-      binsX = np.linspace(-180 - 360, 180 + 360, num = resolution)
-  MCweight = np.ones(len(weights))
-  
-  for x in range(mc_order):
-      MCweight = np.add(MCweight, np.divide(np.power(weights, x + 1), fact(x + 1)))
-  hist = np.histogram(diheds, bins = binsX, weights = MCweight)[0]
-  norm = np.linalg.norm(hist)
-  hist = np.divide(hist, norm)
-  return hist
+
+    diheds = np.array(mirror(diheds))
+    weights = np.array(mirror(weights))
+    if binsX is None:
+        binsX = np.linspace(-180 - 360, 180 + 360, num = resolution)
+    MCweight = np.ones(len(weights))
+
+    for x in range(mc_order):
+        MCweight = np.add(MCweight, np.divide(np.power(weights, x + 1), fact(x + 1)))
+    hist = np.histogram(diheds, bins = binsX, weights = MCweight)[0]
+    norm = np.linalg.norm(hist)
+    hist = np.divide(hist, norm)
+    return hist
