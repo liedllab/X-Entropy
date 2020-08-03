@@ -15,7 +15,7 @@ def calculateEntropy(dihedralArr, resolution = 16000, method = "Simpson"):
     
     Parameters
     ----------
-    dihedralArr: list(list(float))
+    dihedralArr: list(list(float)) or list(float)
         A 2D array holding all the dihedrals of a simulation (number Atoms,
         number Dihedrals)
     resolution: int, optional
@@ -50,7 +50,7 @@ def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, metho
 
     Parameters
     ----------
-    dihedralArr: list(list(float))
+    dihedralArr: list(list(float)) or list(float)
         A 2D-array, holding all the dihedrals of the trajectory.
     weightArr: list(list(double))
         The weights of the aMD trajctory.

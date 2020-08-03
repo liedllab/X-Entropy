@@ -1,19 +1,19 @@
 #include "DihedralEntropy.h"
 
 /********************************************************************************
- * 										*
- * Python ports.								*
- *										*
+ * 										                                                          *
+ * Python ports.								                                                *
+ *										                                                          *
  ********************************************************************************/
 
 namespace py = boost::python;
 
 DihedralEntropy::DihedralEntropy(py::list &l, int n) : m_entropy(0), m_res(n) {
-  m_res =std::pow(2, (int) (log(m_res)/log(2)) + 1);
-  for (int i = 0; i < (int) py::len(l); ++i) {
+  m_res = std::pow(2, static_cast<int>(log(m_res)/log(2)) + 1);
+  for (int i = 0; i < static_cast<int>(py::len(l)); ++i) {
     m_angles.push_back(py::extract<double>(l[i]));
   }
-  m_length = m_angles.size();
+  m_length = static_cast<int>( m_angles.size() );
   integrate();
 }
 
@@ -22,8 +22,8 @@ DihedralEntropy::DihedralEntropy(py::list &l)
 
 DihedralEntropy::DihedralEntropy(py::list &l, int n, py::str &numericalIntegral)
 : m_entropy{ 0.0 }, m_res{ n } {
-  m_res =std::pow(2, (int) (log(m_res)/log(2)) + 1);
-  for (int i = 0; i < (int) py::len(l); ++i) {
+  m_res =std::pow(2, static_cast<int>(log(m_res)/log(2)) + 1);
+  for (int i = 0; i < static_cast<int>( py::len(l) ); ++i) {
     m_angles.push_back(py::extract<double>(l[i]));
   }
   m_length = m_angles.size();
@@ -84,9 +84,9 @@ void DihedralEntropy::integrate(const std::unique_ptr<IIntegration>& t) {
       finalDens.at(i) = 0;
     }
   }
-  m_entropy = t->operator()(finalDens, finalDens.size(), 360);
-  // Finally done, just multiply with the universal gasconstant (which you will find to be defined in the header,
-  // where it belongs!
+  m_entropy = (*t)(finalDens, 360);
+  // Finally done, just multiply with the universal gasconstant 
+  // (which you will find to be defined in the header)
   m_entropy *= GASCONSTANT;
 
 }

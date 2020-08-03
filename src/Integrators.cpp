@@ -1,9 +1,11 @@
 #include "Integrators.h"
-
+#include <algorithm>
 std::unique_ptr<IIntegration> getFunction(const std::string& type) {
-  if (type == "Simpson") {
+  std::string newstr{ type };
+  transform(newstr.begin(), newstr.end(), newstr.begin(), ::tolower);
+  if ( newstr == "simpson") {
     return std::make_unique<Simpson>();
-  } else if (type ==  "Riemann") {
+  } else if (newstr ==  "riemann") {
       return std::make_unique<Riemann>();
   }
 
@@ -11,48 +13,39 @@ std::unique_ptr<IIntegration> getFunction(const std::string& type) {
 }
 
 
-double Simpson::operator() (const std::vector<double> &function, int steps, double range) const noexcept{
+double Simpson::operator() (const std::vector<double> &function, double range) const noexcept{
+  // TODO: Should actually throw an error
+  int steps{ static_cast<int>(function.size()) };
   if (steps % 2) {
     steps -= 1;
   }
   double ret = function.at(0);
   double h = range / (3 * steps);
   ret += function.at(function.size() - 1);
-  double pcalc[omp_get_max_threads()] = { 0 };
-  double calc = 0;
+  double calc = 0.0;
 
 
   // Check this!!
-  #pragma omp parallel for
-  for (int j = 1; j < (steps / 2); ++j) {
-    pcalc[omp_get_thread_num()] += function.at(2 * j - 1);
+  #pragma omp parallel for reduction(+:calc)
+  for (int j = 1; j <= (steps / 2); ++j) {
+    calc += function.at(2 * j - 1);
   }
 
 
-  for (int i = 0; i < omp_get_max_threads(); ++i) {
-    calc += pcalc[i];
-    pcalc[i] = 0;
-  }
-
-
-  ret += 4 * calc;
-  calc = 0;
+  ret += 4.0 * calc;
+  calc = 0.0;
 
   // Check this!
-  #pragma omp parallel for
-  for (int j = 1; j < ((steps / 2) - 1); ++j) {
-    pcalc[omp_get_thread_num()] += function.at(2 * j);
+  #pragma omp parallel for reduction(+:calc)
+  for (int j = 1; j <= ((steps / 2) - 1); ++j) {
+    calc += function.at(2 * j);
   }
 
-
-  for (int i = 0; i < omp_get_max_threads(); ++i) {
-    calc += pcalc[i];
-  }
-  ret += 2 * calc;
+  ret += 2.0 * calc;
   return ret * h;
 }
 
-double Riemann::operator() (const std::vector<double> &function, int steps, double range) const noexcept{
+double Riemann::operator() (const std::vector<double> &function, double range) const noexcept{
 		double dx{ range / static_cast<double>( function.size() ) };
 		double ret{ 0 };
 		for (auto val : function) {

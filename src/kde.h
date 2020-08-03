@@ -35,7 +35,6 @@ private:
 	double csiszar(double, int, const std::vector<double>&, const std::vector<double>&) const noexcept;
   double calcIntPow(double, int) const noexcept;
 public:
-	Gce(double *, int);
 	Gce(double *, int, int);
 	Gce(const std::vector<double>&, int);
 
