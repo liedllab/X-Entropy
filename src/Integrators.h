@@ -14,19 +14,19 @@
 class IIntegration {
 public:
   virtual ~IIntegration() {}
-	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept = 0;
+	virtual double operator() (const std::vector<double> &function, double range) const noexcept = 0;
 };
 
 class Simpson : public IIntegration {
 public:
 	Simpson() {}
-	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept override;
+	virtual double operator() (const std::vector<double> &function, double range) const noexcept override;
 };
 
 class Riemann : public IIntegration {
 public:
 	Riemann() {};
-	virtual double operator() (const std::vector<double> &function, int steps, double range) const noexcept override;
+	virtual double operator() (const std::vector<double> &function, double range) const noexcept override;
 };
 
 

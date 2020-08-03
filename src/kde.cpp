@@ -13,14 +13,12 @@
  *															                                                                                        *
  ************************************************************************************************************************
  *															                                                                                        *
- *	Written by Johannes Kraml, based on Code by RG Huber and Z. Botev. This program was implemented with the		        *
+ *	Written by Johannes Kraml, based on Code by RG Huber and Z Botev. This program was implemented with the		          *
  *	help of Florian Hofer.												                                                                      *
  *															                                                                                        *
  *	Contact: johannes.kraml@uibk.ac.at										                                                              *
  *															                                                                                        *
  ************************************************************************************************************************/
-
-// TODO! Refactor this into different files!
 
 #include "kde.h"
 
@@ -225,6 +223,8 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
   double f{ 0 };
   double error{ 0 };
   double time{ 0 };
+
+
   // This part of the code is used to calculate the inital functional, only that no new t_star will be calculated.
   #pragma omp parallel for
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
@@ -249,26 +249,32 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
   time = pow(4.0 * m_nFrames * m_nFrames * M_PI * f * f, -0.2);
   // Calculate the relative error of the new t_star (time) and the old t_star.
   error = (m_tStar - time) / time;
+  // Set the new t* to the appropriate value.
   m_tStar = time;
   return error;
 }
 
 /****
  * @brief Csiszar distance
- * The correctly written functional function. Calculates the f value.
- * Which is a Csiszar measure of Cross Entropy.
+ * Calculates the Csiszar distance between two different values. This is
+ * function is iteratively optimized.
  * @param f_before: The last functional, which is updated here.
  * @param s: The s'th step.
  * @param i_arr: An array holding its squared index.
  * @param data: The prior density.
  * @return: The new value for the functional (the new Csiszar measure).
  */
-double Gce::csiszar(double f_before, int s, const std::vector<double> &i_arr, const std::vector<double> &data) const noexcept {
+double Gce::csiszar(
+  double f_before,
+  int s,
+  const std::vector<double> &i_arr,
+  const std::vector<double> &data
+) const noexcept {
   // The first constraint.
   double K0{ 1 };
   // A helper for parallelization reasons
-  double f[omp_get_max_threads()] = { 0 };
-  // A helper that one does not need to calculate this over and over again.
+  double f{ 0 };
+  // A helper that one does not need to calculate this particular value over and over again.
   double helper{ 0 };
   // The new f to be returned (hence ret).
   double ret{ 0 };
@@ -278,15 +284,14 @@ double Gce::csiszar(double f_before, int s, const std::vector<double> &i_arr, co
   }
   K0 *= M_2_SQRTPI * M_SQRT1_2 * 0.5;
   helper = pow(2.0 * K0 / (m_nFrames * f_before), 1.0 / (1.5 + s));
+
   // Calculates the Csiszar measure via Gaussians over the entire grid.
-  #pragma omp parallel for
-  for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
+  #pragma omp parallel for reduction(+:f)
+  for (int i = 0; i < static_cast<int>(m_xgrid.size() - 1); ++i) {
     double i_arr_s{ calcIntPow(i_arr[i], s) };
-    f[omp_get_thread_num()] += i_arr_s * data[i] * exp(-M_PI * M_PI * i_arr[i] * helper);
+    f += i_arr_s * data[i] * exp(-M_PI * M_PI * i_arr[i] * helper);
   }
-  for (int i = 0; i < omp_get_max_threads(); ++i) {
-    ret += f[i];
-  }
+
   return ret *  2.0 * calcIntPow(M_PI, 2 * s);
 }
 
@@ -307,10 +312,20 @@ double Gce::calcIntPow(double value, int exponent) const noexcept {
   return ret;
 }
 
-/*Fancy*/
+/*****
+ * @brief Integrate the values.
+ * The integration is done between min and max of a given histogram.
+ * The integration scheme is gathered from the getFunction function, which
+ * returns the appropriate integration function as a IIntegrator pointer.
+ * @param type The type of the integration scheme, can be either Simpson
+ *             or Riemann integral.
+ * @param min The minimal value in the integration (on the x coordinate)
+ * @param max The maximum value in the integration (on the x coordinate)
+ * @return The integrated value within the given bounds.
+ */
 double Gce::integrate_c(const std::string &type, double min, double max) {
-  double norm = 0;
-  std::unique_ptr<IIntegration> inte{ getFunction(type) };
+  double norm{ 0 };
+  auto inte{ getFunction(type) };
   std::vector<double> grid;
   std::vector<double> fDens;
 
@@ -324,7 +339,7 @@ double Gce::integrate_c(const std::string &type, double min, double max) {
   }
 
   norm = 0;
-  norm = (*inte)(fDens, grid.size(), grid.at(grid.size() - 1) - grid.at(0));
+  norm = (*inte)(fDens, grid.at(grid.size() - 1) - grid.at(0));
   #pragma omp parallel for
   for (int i = 0; i < (int) fDens.size(); ++i) {
     fDens.at(i) /= norm;
@@ -341,7 +356,7 @@ double Gce::integrate_c(const std::string &type, double min, double max) {
 
   }
 
-  return (*inte)(fDens, grid.size(), grid.at(grid.size() - 1) - grid.at(0));
+  return (*inte)(fDens, grid.at(grid.size() - 1) - grid.at(0));
 }
 
 
@@ -391,8 +406,8 @@ int Gce::getGridLength() const {
 namespace py = boost::python;
 
 /****
- * The same as before, but uses python lists now, which it will convert to an C
- * array. Is als a constructor.
+ * The same as before, but uses python lists now, which it will convert to a C
+ * array.
  * @param l: The python list object holding the data.
  * @param n: The resolution of the inital grid, standard (if set to -1) is
  * 		2 ^ 12.
