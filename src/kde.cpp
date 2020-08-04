@@ -40,16 +40,16 @@ Gce::Gce(const std::vector<double> &array, int res)
   double range{ ext.second - ext.first };
   double histogram_normalizer{ 1.0 / static_cast<double>(m_angles.size()) };
   
-  //ext.first -= (range * 0.1);
-  //range *= 1.2;
+  ext.first -= (range * 0.1);
+  range *= 1.2;
   
   
   // Necessary steps for the calculation of the histogram.
-  double stepsize{ range / static_cast<double>(m_resolution - 1) };
-  for (double i = ext.first; i < (ext.first + range); i += stepsize) {
-    m_xgrid.push_back(i);
+  double stepsize{ range / static_cast<double>(m_resolution) };
+  for (int i = 0; i <= m_resolution; i++) {
+    m_xgrid.push_back(ext.first + i * stepsize);
   }
-  m_histogram.resize(m_xgrid.size());
+  m_histogram.resize(m_xgrid.size() - 1);
 
   /*
    * Here a first density is approximated via a histogram. This is the
@@ -59,7 +59,7 @@ Gce::Gce(const std::vector<double> &array, int res)
   //#pragma omp parallel for
   for (int i = 0; i < (int) array.size(); ++i) {
     for (int j = 0; j < (int) (m_xgrid.size() - 1); ++j) {
-      if ( (array.at(i) > m_xgrid.at(j)) && (array.at(i) < m_xgrid.at(j + 1)) ) {
+      if ( (array.at(i) > m_xgrid.at(j)) && (array.at(i) <= m_xgrid.at(j + 1)) ) {
         //#pragma omp critical
         m_histogram[j] += histogram_normalizer;
         break;

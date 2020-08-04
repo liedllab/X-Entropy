@@ -6,7 +6,7 @@ Features were added to ensure better parallelism for the kde, as well as for the
 
 ## Installation
 
-The package can be installed via
+Please ensure that you are having a python version higher than 3.3 for this package to work properly. The package can be installed via
 
 ```bash
 pip install /PATH/TO/ENTROPY
@@ -30,8 +30,6 @@ The dependencies are not yet handled correctly, thus the user is asked to ensure
 
 - openmp
 - fftw3
-
-Because of some stupidity between Python versions 2.x and 3.3+, if your Python version is either 2.x or < 3.3, the user has to add a __init__.py to the dihedrals.py directory (this file can be empty). On Python 3.3+ the user should not do that. A fix is in the making.
 
 As of now, there are no known bugs, if you find any, please contact me.
 

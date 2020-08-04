@@ -13,7 +13,7 @@ all: testapp
 tests: all
 	./testapp
 
-testapp: $(OBJ_FILES) $(patsubst %.cpp, %.o, $(wildcard ../src/Integrators.cpp))
+testapp: $(OBJ_FILES) ../src/Integrators.o ../src/kde.o
 	$(CXX) $(FlAGS) $(GTEST_FLAGS) $^ -o $@ $(LIBS) $(GTEST_LIBS)
 
 %.o: %.cpp
