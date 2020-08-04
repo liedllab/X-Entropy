@@ -12,7 +12,6 @@
 
 #include <fftw3.h>
 #include <omp.h>
-#include <boost/python.hpp>
 
 #include "Exceptions.h"
 #include "Integrators.h"
@@ -37,14 +36,10 @@ private:
 public:
 	Gce(double *, int, int);
 	Gce(const std::vector<double>&, int);
-
-	Gce(boost::python::list &, int);
-	Gce(boost::python::list &);
-	Gce(boost::python::list &, boost::python::list &, int);
+  Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int res);
 
 	void calculate(void);
-	double integrate_c(const std::string &, double, double);
-	double integrate_p(boost::python::str &, double, double);
+	double integrate(const std::string &, double, double);
 	int getGridLength() const;
 	int getResolution() const;
 	double getTStar() const;
