@@ -1,5 +1,5 @@
 from entropy.kde import DihedralEntropy as ent
-from entropy.kde import Kde
+from entropy.kde import GCE
 import numpy as np
 
 
@@ -77,7 +77,7 @@ def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, metho
 
     for dihedral in dihedralArr:
         inHist = reweighting(dihedral, weightArr, mc_order=mc_order, temp=temp, resolution=resolution)
-        kernel = Kde(list(inHist), list(np.linspace(-180 - 360, 180 + 360, num = resolution)), len(dihedral))
+        kernel = GCE(list(inHist), list(np.linspace(-180 - 360, 180 + 360, num = resolution)), len(dihedral))
         kernel.calculate()
         values.append(kernel.integrate(method, -180, 180) * -8.3145)
 
