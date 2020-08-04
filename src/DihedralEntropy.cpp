@@ -40,7 +40,7 @@ DihedralEntropy::DihedralEntropy(py::list &l, py::str &numericalIntegral) :
  * everything encoded here has to be done by python. Or you are also welcome to
  * just change the Code here and send me the copy ;)
  */
-void DihedralEntropy::integrate(const std::unique_ptr<IIntegration>& t) {
+void DihedralEntropy::integrate(const std::unique_ptr<IIntegration>& inte) {
   std::vector<double> mirrored(m_angles.size() * 3.0);
   double dx{ 0.0 };
   double norm{ 0.0 };
@@ -56,8 +56,8 @@ void DihedralEntropy::integrate(const std::unique_ptr<IIntegration>& t) {
   kde.calculate();
   dx = kde.getGrid().at(1) - kde.getGrid().at(0);
   // This is defined here, because the handling of those is easier.
-  std::vector<double> density = kde.getDensityEstimation();
-  std::vector<double> xgrid = kde.getGrid();
+  auto density = kde.getDensityEstimation();
+  auto xgrid{ kde.getGrid() };
   std::vector<double> finalDens;
   // Integrate only over the angles between -180 and 180 degrees.
   for (int i = 0; i < (int) density.size(); ++i) {
@@ -69,22 +69,20 @@ void DihedralEntropy::integrate(const std::unique_ptr<IIntegration>& t) {
     }
   }
   // Integration part.
-  norm = 0;
-  //norm = t->operator()(finalDens, finalDens.size(), 360);
-  for (int i = 0; i < (int) finalDens.size(); ++i) {
-    norm += finalDens.at(i);
-  }
+  norm = (*inte)(finalDens, 360);
+  //for (int i = 0; i < (int) finalDens.size(); ++i) {
+  //  norm += finalDens.at(i);
+  //}
   #pragma omp parallel for
   for (int i = 0; i < (int) finalDens.size(); ++i) {
     finalDens.at(i) /= norm;
     if (finalDens.at(i) > 0) {
       finalDens.at(i) = finalDens.at(i) * log(finalDens.at(i));
     } else if (finalDens.at(i) != finalDens.at(i) ) {
-      std::cout << "Nan von irgendwo" << std::endl;
-      finalDens.at(i) = 0;
+      throw IntegrationError("Created a NAN during integration!");
     }
   }
-  m_entropy = (*t)(finalDens, 360);
+  m_entropy = (*inte)(finalDens, 360);
   // Finally done, just multiply with the universal gasconstant 
   // (which you will find to be defined in the header)
   m_entropy *= GASCONSTANT;

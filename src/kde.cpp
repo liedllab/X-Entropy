@@ -40,8 +40,8 @@ Gce::Gce(const std::vector<double> &array, int res)
   double range{ ext.second - ext.first };
   double histogram_normalizer{ 1.0 / static_cast<double>(m_angles.size()) };
   
-  ext.first -= (range * 0.1);
-  range *= 1.2;
+  //ext.first -= (range * 0.1);
+  //range *= 1.2;
   
   
   // Necessary steps for the calculation of the histogram.
@@ -56,16 +56,23 @@ Gce::Gce(const std::vector<double> &array, int res)
    * first step for the Cross Entropy Postulate, i.e., a prior
    * probability density p.
    */
-  #pragma omp parallel for
+  //#pragma omp parallel for
   for (int i = 0; i < (int) array.size(); ++i) {
     for (int j = 0; j < (int) (m_xgrid.size() - 1); ++j) {
       if ( (array.at(i) > m_xgrid.at(j)) && (array.at(i) < m_xgrid.at(j + 1)) ) {
-        #pragma omp critical
+        //#pragma omp critical
         m_histogram[j] += histogram_normalizer;
         break;
       }
     }
   }
+}
+
+
+Gce::Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int res)
+: m_histogram{ histogram }, m_xgrid{ xGrid }, m_resolution{ res }
+{
+
 }
 
 /****
@@ -219,20 +226,15 @@ void Gce::idct(double *before_idct, double *after_idct) {
  */
 double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double> &i_arr) {
   // Used for parallelization purposes.
-  double f_helper [omp_get_max_threads()] = { 0 };
   double f{ 0 };
   double error{ 0 };
   double time{ 0 };
 
 
   // This part of the code is used to calculate the inital functional, only that no new t_star will be calculated.
-  #pragma omp parallel for
+  #pragma omp parallel for reduction(+: f)
   for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
-    f_helper[omp_get_thread_num()] += i_arr[i] * i_arr[i] * i_arr[i] * i_arr[i] * 
-        i_arr[i] * data[i] * exp(-1 * i_arr[i] * M_PI * M_PI * m_tStar);
-  }
-  for (int i = 0; i < omp_get_max_threads(); ++i) {
-    f += f_helper[i];
+    f += calcIntPow(i_arr[i], 5) * data[i] * exp(-1 * i_arr[i] * M_PI * M_PI * m_tStar);
   }
 
   f *= 2.0 * calcIntPow(M_PI, 10);
@@ -247,10 +249,12 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
   // via the exponent in the pow function (this might be unnecessary optimization,
   // but I think not).
   time = pow(4.0 * m_nFrames * m_nFrames * M_PI * f * f, -0.2);
+
   // Calculate the relative error of the new t_star (time) and the old t_star.
   error = (m_tStar - time) / time;
   // Set the new t* to the appropriate value.
   m_tStar = time;
+  
   return error;
 }
 
@@ -276,23 +280,21 @@ double Gce::csiszar(
   double f{ 0 };
   // A helper that one does not need to calculate this particular value over and over again.
   double helper{ 0 };
-  // The new f to be returned (hence ret).
-  double ret{ 0 };
   // One could parallelize this, but this is not worth the effort (max 4 steps)
   for (int i = 1; i <= (2*s - 1); i += 2) {
     K0 *= static_cast<double>( i );
   }
   K0 *= M_2_SQRTPI * M_SQRT1_2 * 0.5;
   helper = pow(2.0 * K0 / (m_nFrames * f_before), 1.0 / (1.5 + s));
+  std::cout << f_before << std::endl;
 
   // Calculates the Csiszar measure via Gaussians over the entire grid.
-  #pragma omp parallel for reduction(+:f)
+  #pragma omp parallel for reduction(+: f)
   for (int i = 0; i < static_cast<int>(m_xgrid.size() - 1); ++i) {
-    double i_arr_s{ calcIntPow(i_arr[i], s) };
-    f += i_arr_s * data[i] * exp(-M_PI * M_PI * i_arr[i] * helper);
+    f += calcIntPow(i_arr[i], s) * data[i] * exp(-M_PI * M_PI * i_arr[i] * helper);
   }
 
-  return ret *  2.0 * calcIntPow(M_PI, 2 * s);
+  return f *  2.0 * calcIntPow(M_PI, 2 * s);
 }
 
 /*****
@@ -323,7 +325,7 @@ double Gce::calcIntPow(double value, int exponent) const noexcept {
  * @param max The maximum value in the integration (on the x coordinate)
  * @return The integrated value within the given bounds.
  */
-double Gce::integrate_c(const std::string &type, double min, double max) {
+double Gce::integrate(const std::string &type, double min, double max) {
   double norm{ 0 };
   auto inte{ getFunction(type) };
   std::vector<double> grid;
@@ -348,10 +350,10 @@ double Gce::integrate_c(const std::string &type, double min, double max) {
     {
       fDens.at(i) = fDens.at(i) * log(fDens.at(i));
     } 
+    // Proper error handling here
     else if (fDens.at(i) != fDens.at(i)) 
     {
-      std::cout << "Nan from somewhere!" << std::endl;
-      fDens.at(i) = 0;
+      throw IntegrationError("Created a NAN during integration!");
     }
 
   }
@@ -393,81 +395,4 @@ int Gce::getResolution() const {
 
 int Gce::getGridLength() const {
   return (int) m_xgrid.size();
-}
-
-
-
-/********************************************************************************
- * 										*
- * Python ports.								*
- *										*
- ********************************************************************************/
-
-namespace py = boost::python;
-
-/****
- * The same as before, but uses python lists now, which it will convert to a C
- * array.
- * @param l: The python list object holding the data.
- * @param n: The resolution of the inital grid, standard (if set to -1) is
- * 		2 ^ 12.
- */
-Gce::Gce(py::list &l, int n) 
-  : m_resolution(n), m_tStar(0) {
-  
-  for (int i = 0; i < py::len(l); ++i) {
-    m_angles.push_back(py::extract<double>(l[i]));
-  }
-  if (m_resolution == -1) {
-    m_resolution = 2 << 13;
-  }
-  m_nFrames = m_angles.size();
-  auto ext{ extrema(m_angles) };
-  double range{ ext.second - ext.first };
-  double histogram_normalizer{ 1.0 / (double)(m_angles.size()) };
-  ext.first -= (range / 10.0);
-  range *= 1.2;
-
-  double stepsize = range / (m_resolution - 1);
-  for (double i = ext.first; i < range; i += stepsize) {
-    m_xgrid.push_back(i);
-  }
-
-  m_histogram.resize(m_xgrid.size());
-  #pragma omp parallel for
-  for (int i = 0; i < (int) m_angles.size(); ++i) {
-    for (int j = 0; j < (int) (m_xgrid.size() - 1); ++j) {
-      if ( (m_angles.at(i) > m_xgrid.at(j)) && (m_angles.at(i) < m_xgrid.at(j + 1)) ) {
-        #pragma omp critical
-        m_histogram[j] += histogram_normalizer;
-        break;
-      }
-    }
-  }
-
-
-}
-
-
-
-
-Gce::Gce(py::list &hist, py::list &grid, int frames) 
-: m_resolution(py::len(hist)), m_tStar(0) {
-  m_histogram.resize(py::len(hist));
-  for (int i = 0; i < py::len(hist); ++i) {
-    m_histogram[i] = py::extract<double>(hist[i]);
-  }
-  for (int i = 0; i < py::len(grid); ++i) {
-    m_xgrid.push_back(py::extract<double>(grid[i]));
-  }
-  m_nFrames = frames;
-}
-
-Gce::Gce(py::list &l) 
-: Gce(l, -1) 
-{}
-
-double Gce::integrate_p(py::str &intName, double min, double max) {
-  std::string integralName = std::string(py::extract<char *>(intName));
-  return integrate_c(integralName, min, max);
 }

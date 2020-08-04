@@ -1,5 +1,5 @@
 #include "Integrators.h"
-#include <algorithm>
+
 std::unique_ptr<IIntegration> getFunction(const std::string& type) {
   std::string newstr{ type };
   transform(newstr.begin(), newstr.end(), newstr.begin(), ::tolower);
