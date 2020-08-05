@@ -54,6 +54,7 @@ BOOST_PYTHON_MODULE(kde) {
       "-------\n"
       "density : list(float)\n"
       "    The estimated density, using the GCE approach.\n")
+    .def("getTStar", &PyGCE::getTStar)
     .def("integrate", &PyGCE::integrate,
       py::args("self", "integrator", "min", "max"),
       "Integrates the estimated density and so calculates the\n"
@@ -104,13 +105,39 @@ BOOST_PYTHON_MODULE(kde) {
       "   convenient.\n"
     ))
     ;
-  py::class_<std::vector<double> >("DoubleVec")
+  /*py::class_<std::vector<double> >("DoubleVec")
     .def(py::vector_indexing_suite<std::vector<double>>() )
-    ;
-  py::class_<DihedralEntropy>("DihedralEntropy", py::init<py::list &, int>())
-    .def(py::init<py::list &>())
+    ;*/
+  py::class_<DihedralEntropy>("DihedralEntropy", py::init<py::list &, int>(
+      py::args("angles", "bins"),
+      "Constructor for the Dihedral Entropy class, be aware that this\n"
+      "class calculates the dihedral entropy on construction, so no calls\n"
+      "to calculate or similar are necessary. The underlying data should\n"
+      "not be binned.\n"
+      "\n"
+      "Parameters\n"
+      "----------\n"
+      "angles : list(float)\n"
+      "    The angles for which to calculate the dihedral entropy. The\n"
+      "    angles must be given in degrees.\n"
+      "bins: int\n"
+      "    The number of bins for the calculation of the histogram.\n"
+    ))
+    .def(
+      py::init<py::list &>(
+        py::arg("angles"),
+        "Constructor using only the angles, uses default bin number\n"
+        "for the calculation, default bin number is 2<<13.\n"
+        "\n"
+        "Parameters\n"
+        "----------\n"
+        "angles : list(float)\n"
+        "    The angles for which to calculate the dihedral entropy. The\n"
+        "    angles must be given in degrees.\n"
+      )
+    )
     .def(py::init<py::list &, py::str &>())
     .def(py::init<py::list &, int, py::str &>())
-    .def("getResult", &DihedralEntropy::getEntropy)
+    .def("getResult", &DihedralEntropy::getEntropy, py::return_value_policy<py::return_by_value>())
     ;
 }

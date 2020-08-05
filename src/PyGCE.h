@@ -63,5 +63,10 @@ public:
     return kde.getDensityEstimation();
   }
 
+  double getTStar()
+  {
+    return kde.getTStar();
+  }
+
 
 };
