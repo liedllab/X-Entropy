@@ -3,7 +3,7 @@
 std::unique_ptr<IIntegration> getFunction(const std::string& type) {
   std::string newstr{ type };
   transform(newstr.begin(), newstr.end(), newstr.begin(), ::tolower);
-  if ( newstr == "simpson") {
+  if ( newstr == "simpson" || newstr == "kepler" ) {
     return std::make_unique<Simpson>();
   } else if (newstr ==  "riemann") {
       return std::make_unique<Riemann>();
@@ -11,6 +11,7 @@ std::unique_ptr<IIntegration> getFunction(const std::string& type) {
 
   throw UnknownIntegrator( "The function you searched for is not yet implemented." );
 }
+
 
 
 double Simpson::operator() (const std::vector<double> &function, double range) const noexcept{
@@ -25,7 +26,7 @@ double Simpson::operator() (const std::vector<double> &function, double range) c
   double calc = 0.0;
 
 
-  // Check this!!
+  // C
   #pragma omp parallel for reduction(+:calc)
   for (int j = 1; j <= (steps / 2); ++j) {
     calc += function.at(2 * j - 1);
