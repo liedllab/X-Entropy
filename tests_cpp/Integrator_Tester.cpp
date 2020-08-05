@@ -38,4 +38,6 @@ TEST(Integrator_Test, Find_Integrator)
   EXPECT_NO_THROW(dynamic_cast<Simpson&>(*test));
   test = getFunction("Riemann");
   EXPECT_NO_THROW(dynamic_cast<Riemann&>(*test));
+  test = getFunction("Kepler");
+  EXPECT_NO_THROW(dynamic_cast<Simpson&>(*test));
 }
