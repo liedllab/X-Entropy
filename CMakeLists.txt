@@ -3,10 +3,17 @@ project(entropy_tests)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include(ExternalProject)
 
-include_directories(src)
+set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR})
 
-add_subdirectory(/usr/src/googletest gtest)
+ExternalProject_Add(googletest
+	GIT_REPOSITORY https://github.com/google/googletest.git
+	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
+)
+
+include_directories(src ${EXTERNAL_INSTALL_LOCATION}/include)
+link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
 
 add_subdirectory(src)
 
