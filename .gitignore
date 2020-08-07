@@ -3,3 +3,4 @@ __pycache__
 *.o
 *.out
 testapp
+build
