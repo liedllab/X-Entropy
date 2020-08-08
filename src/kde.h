@@ -11,7 +11,6 @@
 #include <cstdlib>
 
 #include <fftw3.h>
-#include <omp.h>
 
 #include "Exceptions.h"
 #include "Integrators.h"
