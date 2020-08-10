@@ -16,6 +16,7 @@ namespace py = boost::python;
 
 
 BOOST_PYTHON_MODULE(kde) {
+  py::to_python_converter<std::vector<double, std::allocator<double> >, VecToList<double> >();
   py::class_<PyGCE>("GCE", "Docstring for the class", py::init<py::list &, int>(
     py::args("self", "data", "bins"),
     "Constructor of a GCE class object. Uses the data and bins\n"
@@ -54,7 +55,15 @@ BOOST_PYTHON_MODULE(kde) {
       "-------\n"
       "density : list(float)\n"
       "    The estimated density, using the GCE approach.\n")
-    .def("getTStar", &PyGCE::getTStar)
+    .def("getBandwidth", &PyGCE::getBandwidth, py::arg("self"),
+      "Returns the optimal bandwidth for the given density function.\n"
+      "This calculation assumes a Gaussian Kernel.\n"
+      "\n"
+      "Returns\n"
+      "-------\n"
+      "bandwidth : float\n"
+      "    The optimal bandwidth for the given problem."
+    )
     .def("integrate", &PyGCE::integrate,
       py::args("self", "integrator", "min", "max"),
       "Integrates the estimated density and so calculates the\n"

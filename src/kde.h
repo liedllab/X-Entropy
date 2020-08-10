@@ -21,6 +21,7 @@ class Gce {
 private:
 	int m_resolution;
 	int m_nFrames;
+  double m_range;
 	double m_tStar;
 	std::vector<double> m_xgrid;
 	std::vector<double> m_histogram;
@@ -46,6 +47,7 @@ public:
 	const std::vector<double>& getGrid() const;
 	std::vector<double> getDensityEstimation();
 	const std::vector<double>& getAngles() const;
+  double getBandwidth() const;
 //	boost::python::list getResult(void);
 };
 

@@ -37,15 +37,15 @@ Gce::Gce(const std::vector<double> &array, int res)
     m_resolution = 2 << 13;
   }
   auto ext{ extrema(m_angles) };
-  double range{ ext.second - ext.first };
+  m_range = ext.second - ext.first;
   double histogram_normalizer{ 1.0 / static_cast<double>(m_angles.size()) };
   
-  ext.first -= (range * 0.1);
-  range *= 1.2;
+  ext.first -= (m_range * 0.1);
+  m_range *= 1.2;
   
   
   // Necessary steps for the calculation of the histogram.
-  double stepsize{ range / static_cast<double>(m_resolution) };
+  double stepsize{ m_range / static_cast<double>(m_resolution) };
   for (int i = 0; i <= m_resolution; i++) {
     m_xgrid.push_back(ext.first + i * stepsize);
   }
@@ -395,4 +395,8 @@ int Gce::getResolution() const {
 
 int Gce::getGridLength() const {
   return (int) m_xgrid.size();
+}
+
+double Gce::getBandwidth() const {
+  return sqrt(m_tStar) * m_range;
 }
