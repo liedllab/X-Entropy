@@ -3,7 +3,7 @@ import sys
 
 
 if sys.version_info.major == 3:
-    version = (3,8)
+    version = (3,6)
 else:
     version = (2,7)
 
