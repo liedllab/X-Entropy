@@ -1,11 +1,14 @@
 from distutils.core import setup, Extension
 import sys
+from glob import glob
 
 
 if sys.version_info.major == 3:
     version = (3,6)
 else:
     version = (2,7)
+
+version = glob("/usr/lib/x86_64*/libboost_python-py3*.so")[0][-5:][:-3]
 
 
 setup(
@@ -26,7 +29,7 @@ setup(
                   'src/DihedralEntropy.cpp',
                   'src/Module.cpp'
                 ],
-                libraries=['fftw3', 'm', 'boost_python-py{}{}'.format(version[0], version[1]), 'gomp'],
+                libraries=['fftw3', 'm', 'boost_python-py{}'.format(version), 'gomp'],
                 extra_compile_args=['-O3', '-fopenmp'],
             ),
         ]
