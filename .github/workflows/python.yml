@@ -12,13 +12,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      python-version: 3.8
-
     steps:
     - uses: actions/checkout@v1
 
-    - name: Install fftw3
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+
+    - name: Install dependencies
       run: sudo apt-get install -y libfftw3-dev
 
     - name: Build
