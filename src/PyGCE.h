@@ -7,6 +7,22 @@
 namespace py = boost::python;
 
 
+template<class T>
+class VecToList
+{
+public:
+  static PyObject* convert(const std::vector<T>& vec)
+  {
+    py::list *l = new py::list();
+    for (auto val  : vec)
+    {
+      l->append(val);
+    }
+    return l->ptr();
+  }
+};
+
+
 class PyGCE {
 private:
   Gce kde;
@@ -63,9 +79,9 @@ public:
     return kde.getDensityEstimation();
   }
 
-  double getTStar()
+  double getBandwidth()
   {
-    return kde.getTStar();
+    return kde.getBandwidth();
   }
 
 
