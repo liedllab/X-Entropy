@@ -1,6 +1,6 @@
 # Dihedral Entropy
 
-![CI:CMake](https://github.com/jokr91/dihedral_entropy/workflows/CI:CMake/badge.svg)
+![C++:CMake](https://github.com/jokr91/dihedral_entropy/workflows/C++:CMake/badge.svg)
 
 This is an adaption of the kernel density estimator (kde) of Z. Botev, based on a matlab implementation. It was ported to C++ by Johannes Kraml with the help of Florian Hofer (mostly debugging and stuff), both based on the matlab implementation (the names of the variables were kept for better comparison) and the C implementation of Roland Huber.
 
