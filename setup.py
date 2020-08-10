@@ -1,7 +1,11 @@
 from distutils.core import setup, Extension
 import sys
 
-version = (3,5)
+
+if sys.version_info.major == 3:
+    version = (3,5)
+else:
+    version = (2,7)
 
 
 setup(
