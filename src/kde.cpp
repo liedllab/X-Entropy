@@ -68,9 +68,15 @@ Gce::Gce(const std::vector<double> &array, int res)
   }
 }
 
-
-Gce::Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int res)
-: m_histogram{ histogram }, m_xgrid{ xGrid }, m_resolution{ res }
+/*****
+ * @brief Constructor
+ * Constructor for the GCE class, uses grid and histogram. Also takes number Frames.
+ * @param histogram The histogram of the data points
+ * @param xGrid The grid in x Dimension
+ * @param nFrames The number of observations
+ */
+Gce::Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int nFrames)
+: m_histogram{ histogram }, m_xgrid{ xGrid }, m_resolution{ xGrid.size() }, m_nFrames(nFrames)
 {
 
 }
@@ -286,7 +292,6 @@ double Gce::csiszar(
   }
   K0 *= M_2_SQRTPI * M_SQRT1_2 * 0.5;
   helper = pow(2.0 * K0 / (m_nFrames * f_before), 1.0 / (1.5 + s));
-  std::cout << f_before << std::endl;
 
   // Calculates the Csiszar measure via Gaussians over the entire grid.
   #pragma omp parallel for reduction(+: f)
