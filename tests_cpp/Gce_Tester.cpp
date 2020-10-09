@@ -12,6 +12,7 @@ TEST(GceTest, ConstructorTest)
   EXPECT_DOUBLE_EQ( gce.getHistogram()[4], 2.0 / 11.0); // Middle is double
   EXPECT_DOUBLE_EQ(gce.getGrid()[0], -0.1);
   EXPECT_DOUBLE_EQ(gce.getGrid()[10], 1.1);
+  EXPECT_THROW(Gce( std::vector<double>(), 10), EmptyListError);
 }
 
 
