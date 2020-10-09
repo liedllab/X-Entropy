@@ -1,6 +1,7 @@
 #include "Exceptions.h"
 #include "Integrators.h"
 #include "PyGCE.h"
+#include "ExceptionTranslators.h"
 #include "DihedralEntropy.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/args.hpp>
@@ -16,6 +17,9 @@ namespace py = boost::python;
 
 
 BOOST_PYTHON_MODULE(kde) {
+
+  py::register_exception_translator<EmptyListError>(&translateEmptyListError);
+
   py::to_python_converter<std::vector<double, std::allocator<double> >, VecToList<double> >();
   py::class_<PyGCE>("GCE", "Docstring for the class", py::init<py::list &, int>(
     py::args("self", "data", "bins"),
