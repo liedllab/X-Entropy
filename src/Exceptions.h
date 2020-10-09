@@ -44,7 +44,7 @@ class EmptyListError : std::exception
   std::string m_error_message;
 public:
   EmptyListError(const std::string& err_msg)
-  : m_error_message{ "Integration Error: " + err_msg }
+  : m_error_message{ "Empty List: " + err_msg }
   {
 
   }
