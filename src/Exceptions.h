@@ -37,3 +37,20 @@ public:
     return m_error_message.c_str();
   }
 };
+
+class EmptyListError : std::exception
+{
+  private:
+  std::string m_error_message;
+public:
+  EmptyListError(const std::string& err_msg)
+  : m_error_message{ "Integration Error: " + err_msg }
+  {
+
+  }
+
+  virtual const char *what() const throw() override
+  {
+    return m_error_message.c_str();
+  }
+};

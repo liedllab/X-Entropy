@@ -36,6 +36,10 @@ Gce::Gce(const std::vector<double> &array, int res)
   if (m_resolution == -1) {
     m_resolution = 2 << 13;
   }
+  if (m_nFrames <= 0)
+  {
+    throw EmptyListError("Could not construct the GCE object.");
+  }
   auto ext{ extrema(m_angles) };
   m_range = ext.second - ext.first;
   double histogram_normalizer{ 1.0 / static_cast<double>(m_angles.size()) };
