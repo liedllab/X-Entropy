@@ -7,7 +7,7 @@ import warnings
 warnings.simplefilter("always")
 
 
-def calculateEntropy(dihedralArr, resolution=2160, method="Simpson"):
+def calculateEntropy(dihedralArr, resolution=4096, method="Simpson"):
     """Calculate the dihedral entropy of a trajectory.
 
     The dihedral entropy of a number of different dihedral angles can be calculated using this
