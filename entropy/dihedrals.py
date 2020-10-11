@@ -38,12 +38,14 @@ def calculateEntropy(dihedralArr, resolution=2160, method="Simpson"):
         print("Resolution is not of type int. Trying to cast it to int...")
         resolution = int(resolution)
     if resolution < 100:
-        warnings.warn("You are using a rather small resolution. "
-                      "This may potentially lead to inaccurate results...", RuntimeWarning)
+        warn_msg = "You are using a rather small resolution. " \
+                   "This may potentially lead to inaccurate results..."
+        warnings.warn(warn_msg, RuntimeWarning)
     elif resolution > 10000:
-        warnings.warn("You are using a rather large resolution. "
-                      "Amongst other things, his may potentially lead to very long runtimes "
-                      "without necessarily improving the accuracy of the result...", RuntimeWarning)
+        warn_msg = "You are using a rather large resolution. " \
+                   "Amongst other things, his may potentially lead to very long runtimes " \
+                   "without necessarily improving the accuracy of the result..."
+        warnings.warn(warn_msg, RuntimeWarning)
 
     values = []
 
