@@ -1,9 +1,13 @@
 from entropy.kde import DihedralEntropy as ent
 from entropy.kde import GCE
 import numpy as np
+import warnings
+
+# We want to to change that default, since ignoring warnings is ultimately the users decision:
+warnings.simplefilter("always")
 
 
-def calculateEntropy(dihedralArr, resolution = 16000, method = "Simpson"):
+def calculateEntropy(dihedralArr, resolution=2160, method="Simpson"):
     """Calculate the dihedral entropy of a trajectory.
 
     The dihedral entropy of a number of different dihedral angles can be calculated using this
@@ -30,6 +34,16 @@ def calculateEntropy(dihedralArr, resolution = 16000, method = "Simpson"):
     list:
     A list of floats that are the entropies for the different dihedrals
     """
+    if not isinstance(resolution, int):
+        print("Resolution is not of type int. Trying to cast it to int...")
+        resolution = int(resolution)
+    if resolution < 100:
+        warnings.warn("You are using a rather small resolution. "
+                      "This may potentially lead to inaccurate results...", RuntimeWarning)
+    elif resolution > 10000:
+        warnings.warn("You are using a rather large resolution. "
+                      "Amongst other things, his may potentially lead to very long runtimes "
+                      "without necessarily improving the accuracy of the result...", RuntimeWarning)
 
     values = []
 
