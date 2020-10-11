@@ -57,7 +57,7 @@ def calculateEntropy(dihedralArr, resolution=2160, method="Simpson"):
 
     return values
 
-
+# TODO temperature is of no use here
 def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, method = "Simpson", mc_order=10, temp=300):
     """Calculate the dihedral entropy of an accelerated MD (aMD) trajectory using Maclaurin series
        expansion for reweighting (see https://doi.org/10.1021/ct500090q).
@@ -98,6 +98,7 @@ def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, metho
     return values
 
 
+# TODO temp is not used in the function below.
 def reweighting (diheds, weights, mc_order = 10, temp = 300, binsX = None, resolution=(2 << 12)):
     """Reweight the histogram of a dihedral with a Maclaurin series expansion (https://doi.org/10.1021/ct500090q). 
 
