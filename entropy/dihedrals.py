@@ -43,7 +43,7 @@ def calculateEntropy(dihedralArr, resolution=2160, method="Simpson"):
         warnings.warn(warn_msg, RuntimeWarning)
     elif resolution > 10000:
         warn_msg = "You are using a rather large resolution. " \
-                   "Amongst other things, his may potentially lead to very long runtimes " \
+                   "Amongst other things, this may potentially lead to very long runtimes " \
                    "without necessarily improving the accuracy of the result..."
         warnings.warn(warn_msg, RuntimeWarning)
 
