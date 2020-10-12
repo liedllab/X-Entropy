@@ -134,7 +134,7 @@ def reweighting(diheds, weights, bins=None, resolution=(2 << 12)):
     return hist
 
 
-def maclaurin_series(xs, mc_order=10):
+def maclaurin_series(xs, mac_order=10):
     """Maclaurin series to estimate e^{x}.
 
     Parameters
@@ -147,7 +147,7 @@ def maclaurin_series(xs, mc_order=10):
     -------
 
     """
-    return np.sum([xs ** i / np.math.factorial(i) for i in np.arange(mc_order)], axis=0)
+    return np.sum([xs ** i / np.math.factorial(i) for i in np.arange(mac_order)], axis=0)
 
 
 def calculate_amd_weight(boostEne, mac_order=10, T=300.0, kb=KB_kcal):
@@ -175,4 +175,4 @@ def calculate_amd_weight(boostEne, mac_order=10, T=300.0, kb=KB_kcal):
     # for x in range(mc_order+1):
     #     MCweight = np.add(MCweight, (np.divide(np.power(boostEne, x), math.factorial(x))))
     # return MCweight
-    return maclaurin_series(scaled_biasE, mc_order=mc_order)
+    return maclaurin_series(scaled_biasE, mc_order=mac_order)
