@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Integrators.h"
+#include "OMPExceptionHandler.h"
 #include "kde.h"
 
 

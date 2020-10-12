@@ -80,7 +80,7 @@ Gce::Gce(const std::vector<double> &array, int res)
  * @param nFrames The number of observations
  */
 Gce::Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int nFrames)
-: m_histogram{ histogram }, m_xgrid{ xGrid }, m_resolution{ xGrid.size() }, m_nFrames(nFrames)
+: m_histogram{ histogram }, m_xgrid{ xGrid }, m_resolution{ static_cast<int>(xGrid.size()) }, m_nFrames(nFrames)
 {
 
 }
@@ -351,21 +351,29 @@ double Gce::integrate(const std::string &type, double min, double max) {
 
   norm = 0;
   norm = (*inte)(fDens, grid.at(grid.size() - 1) - grid.at(0));
+
+  OMPExceptionHandler except;
+
   #pragma omp parallel for
-  for (int i = 0; i < (int) fDens.size(); ++i) {
-    fDens.at(i) /= norm;
+  for (int i = 0; i < static_cast<int>( fDens.size() ); ++i) {
+    except.Run([&]{
 
-    if (fDens.at(i) > 0) 
-    {
-      fDens.at(i) = fDens.at(i) * log(fDens.at(i));
-    } 
-    // Proper error handling here
-    else if (fDens.at(i) != fDens.at(i)) 
-    {
-      throw IntegrationError("Created a NAN during integration!");
-    }
+      fDens.at(i) /= norm;
 
+      if (fDens.at(i) > 0) 
+      {
+        fDens.at(i) = fDens.at(i) * log(fDens.at(i));
+      } 
+      // Proper error handling here
+      else if (fDens.at(i) != fDens.at(i)) 
+      {
+        throw IntegrationError("Created a NAN during integration!");
+      }
+    });
   }
+
+  except.Rethrow();
+    
 
   return (*inte)(fDens, grid.at(grid.size() - 1) - grid.at(0));
 }

@@ -7,7 +7,6 @@
  ********************************************************************************/
 
 DihedralEntropy::DihedralEntropy(const std::vector<double> &l, int n) : m_entropy(0), m_res(n) {
-  m_res = std::pow(2, static_cast<int>(log(m_res)/log(2)) + 1);
   for (int i = 0; i < static_cast<int>(py::len(l)); ++i) {
     m_angles.push_back(py::extract<double>(l[i]));
   }
@@ -15,12 +14,8 @@ DihedralEntropy::DihedralEntropy(const std::vector<double> &l, int n) : m_entrop
   integrate();
 }
 
-DihedralEntropy::DihedralEntropy(const std::vector<double> &l) 
-: DihedralEntropy{ l, (2 << 12) } {}
-
 DihedralEntropy::DihedralEntropy(const std::vector<double> &l, int n, const std::string &numericalIntegral)
 : m_entropy{ 0.0 }, m_res{ n } {
-  m_res =std::pow(2, static_cast<int>(log(m_res)/log(2)) + 1);
   for (int i = 0; i < static_cast<int>( py::len(l) ); ++i) {
     m_angles.push_back(py::extract<double>(l[i]));
   }
@@ -72,15 +67,22 @@ void DihedralEntropy::integrate(const std::unique_ptr<IIntegration>& inte) {
   //for (int i = 0; i < (int) finalDens.size(); ++i) {
   //  norm += finalDens.at(i);
   //}
+
+  OMPExceptionHandler except;
+
   #pragma omp parallel for
   for (int i = 0; i < (int) finalDens.size(); ++i) {
-    finalDens.at(i) /= norm;
-    if (finalDens.at(i) > 0) {
-      finalDens.at(i) = finalDens.at(i) * log(finalDens.at(i));
-    } else if (finalDens.at(i) != finalDens.at(i) ) {
-      throw IntegrationError("Created a NAN during integration!");
-    }
+
+    except.Run([&] {
+      finalDens.at(i) /= norm;
+      if (finalDens.at(i) > 0) {
+        finalDens.at(i) = finalDens.at(i) * log(finalDens.at(i));
+      } else if (finalDens.at(i) != finalDens.at(i) ) {
+        throw IntegrationError("Created a NAN during integration!");
+      }
+    });
   }
+  except.Rethrow();
   m_entropy = (*inte)(finalDens, 360);
   // Finally done, just multiply with the universal gasconstant 
   // (which you will find to be defined in the header)
