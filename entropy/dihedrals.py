@@ -6,7 +6,7 @@ import warnings
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
 warnings.simplefilter("always")
 
-# Boltzmann constant in kcal/(mol*K):
+# Boltzmann constant in kCal/(mol*K):
 KB_kcal = 0.001987204118
 
 
@@ -14,7 +14,7 @@ def calculateEntropy(dihedralArr, resolution=4096, method="Simpson"):
     """Calculate the dihedral entropy of a trajectory.
 
     The dihedral entropy of a number of different dihedral angles can be calculated using this
-    function. The output will be a number for the entropy in each direction. This is calcualted
+    function. The output will be a number for the entropy in each direction. This is calculated
     using a generalized cross entropy method, published by Y.Botev et al.
 
     >>> calculateEntropy([[1] * 600000, [1] * 600000])
@@ -65,14 +65,14 @@ def calculateEntropy(dihedralArr, resolution=4096, method="Simpson"):
 
 def calculateReweightedEntropy(dihedralArr, weightArr, resolution=16000, method="Simpson", id_gas=8.3145):
     """Calculate the dihedral entropy of an accelerated MD (aMD) trajectory using Maclaurin series
-       expansion for reweighting (see https://doi.org/10.1021/ct500090q).
+       expansion for reweighing (see https://doi.org/10.1021/ct500090q).
 
     Parameters
     ----------
     dihedralArr: list(list(float)) or list(float)
         A 2D-array, holding all the dihedrals of the trajectory.
     weightArr: list(list(double))
-        The weights of the aMD trajctory.
+        The weights of the aMD trajectory.
     resolution: int, optional
         The resolution of the initial Histogram approximation (default is 16000)
     method: str, optional
@@ -112,11 +112,11 @@ def reweighting(diheds, weights, bins=None, resolution=(2 << 12)):
         The weights used for the histogram
     bins: list or None, optional
         The bins used for histogramming (default is None)
-    resolution: resolution used to construct the bins if binsX is None (default 2<<12)
+    resolution: resolution used to construct the bins if bins is None (default 2<<12)
 
     Returns
     -------
-    The reweighted histogram of the input data.
+    The reweighed histogram of the input data.
     """
 
     def mirror(arr):
@@ -141,7 +141,7 @@ def maclaurin_series(xs, mc_order=10):
     ----------
     xs: array of floats
     mc_order: int
-        max order for the mclaurin series
+        max order for the Maclaurin series
 
     Returns
     -------
@@ -150,9 +150,9 @@ def maclaurin_series(xs, mc_order=10):
     return np.sum([xs ** i / np.math.factorial(i) for i in np.arange(mc_order)], axis=0)
 
 
-def calculate_amd_weight(boostEne, mc_order=10, T=300.0, kb=KB_kcal):
+def calculate_amd_weight(boostEne, mac_order=10, T=300.0, kb=KB_kcal):
     """Calculate weights from aMD simulation boost energies for histogram
-    reweighting using Maxlaurin series expansion (see https://doi.org/10.1021/ct500090q).
+    reweighing using Maclaurin series expansion (see https://doi.org/10.1021/ct500090q).
 
     Paramteres:
     -----------------------------
@@ -163,7 +163,7 @@ def calculate_amd_weight(boostEne, mc_order=10, T=300.0, kb=KB_kcal):
     T: float, optional
         The simulation temperature, used to calculate the Boltzmann factor from the energies (default is 300.0)
     kb: float, optional
-        Boltzmann constant. Default: 0.001987204118 kcal/(mol*K)
+        Boltzmann constant. Default: 0.001987204118 kCal/(mol*K)
 
     Returns
     -----------------------------
