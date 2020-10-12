@@ -29,7 +29,7 @@ def is_power_of_two(val):
 
 
 def next_power_of_two(val):
-    """Returns the next higher power of two
+    """Returns the next higher power of two.
 
     Parameters
     ----------
@@ -45,7 +45,7 @@ def next_power_of_two(val):
 
 def process_resolution_argument(resolution):
     """Warns about potentially too high or too low
-    values and picks the next highest power of two,
+    values and picks the next higher power of two,
     if it was no power of two initially.
 
     Parameters
@@ -72,6 +72,17 @@ def process_resolution_argument(resolution):
     if not is_power_of_two(resolution):
         resolution = next_power_of_two(resolution)
     return resolution
+
+
+def process_method_argument(method, available_methods=["simpson", "riemann"]):
+    """Catches unknown integration methods on a python
+    level. Deals with upper and lower case writing.
+
+    """
+    if not (method.lower() in available_methods):
+        err_msg = "{} is not a valid integration method\nChoose from {}.".format(method, available_methods)
+        raise ValueError(err_msg)
+    return method.lower().capitalize()  # first letter caps, rest lower case
 
 
 def calculateEntropy(dihedralArr, resolution=4096, method="Simpson", verbose=False):
@@ -105,8 +116,11 @@ def calculateEntropy(dihedralArr, resolution=4096, method="Simpson", verbose=Fal
     A list of floats that are the entropies for the different dihedrals
     """
     resolution = process_resolution_argument(resolution)
+    method = process_method_argument(method)
+
     if verbose:
         print("Using a resolution of {}.".format(resolution))
+        print("Using the following method for integration: {}.".format(method))
     values = []
 
     if isinstance(dihedralArr[0], (float)):
