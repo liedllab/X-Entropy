@@ -20,6 +20,7 @@ setup(
                   'entropy/kde/kde.pyx',
                 ],
                 libraries=['fftw3', 'm', 'gomp'],
+                extra_compile_args=['-O3', '-fopenmp'],
                 language = "c++",
             ),
         ])

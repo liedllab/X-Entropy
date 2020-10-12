@@ -1,6 +1,7 @@
 #pragma once
 
 #include <exception>
+#include <stdexcept>
 #include <string>
 
 class UnknownIntegrator : std::runtime_error 
