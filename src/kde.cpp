@@ -80,7 +80,7 @@ Gce::Gce(const std::vector<double> &array, int res)
  * @param nFrames The number of observations
  */
 Gce::Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int nFrames)
-: m_histogram{ histogram }, m_xgrid{ xGrid }, m_resolution{ xGrid.size() }, m_nFrames(nFrames)
+: m_histogram{ histogram }, m_xgrid{ xGrid }, m_resolution{ static_cast<int>(xGrid.size()) }, m_nFrames(nFrames)
 {
 
 }

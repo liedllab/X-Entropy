@@ -32,10 +32,7 @@ BOOST_PYTHON_MODULE(kde) {
     "data : list(float)\n"
     "   The data points to bin and calculate the KDE of.\n"
     "bins : int\n"
-    "   The number of bins. This should be to base 2, if not\n"
-    "   it will be recalculated as base 2 value, by calculating\n"
-    "   the next higher number that is base 2 (i.e., 200 will\n"
-    "   become 256).\n"
+    "   The number of bins. This should be to base 2.\n"
     "\n"
     "Examples\n"
     "--------\n"
@@ -136,19 +133,6 @@ BOOST_PYTHON_MODULE(kde) {
       "bins: int\n"
       "    The number of bins for the calculation of the histogram.\n"
     ))
-    .def(
-      py::init<py::list &>(
-        py::arg("angles"),
-        "Constructor using only the angles, uses default bin number\n"
-        "for the calculation, default bin number is 2<<13.\n"
-        "\n"
-        "Parameters\n"
-        "----------\n"
-        "angles : list(float)\n"
-        "    The angles for which to calculate the dihedral entropy. The\n"
-        "    angles must be given in degrees.\n"
-      )
-    )
     .def(py::init<py::list &, py::str &>())
     .def(py::init<py::list &, int, py::str &>())
     .def("getResult", &DihedralEntropy::getEntropy, py::return_value_policy<py::return_by_value>())
