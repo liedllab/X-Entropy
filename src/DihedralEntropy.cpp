@@ -26,8 +26,8 @@ DihedralEntropy::DihedralEntropy(py::list &l, int n, py::str &numericalIntegral)
   for (int i = 0; i < static_cast<int>( py::len(l) ); ++i) {
     m_angles.push_back(py::extract<double>(l[i]));
   }
-  m_length = m_angles.size();
-  std::string numInt{ py::extract<char *>(numericalIntegral) };
+  m_length = static_cast<int>(m_angles.size());
+  std::string numInt{ py::extract<std::string>(numericalIntegral) };
   integrate(getFunction(numInt));
 }
 
@@ -44,9 +44,10 @@ void DihedralEntropy::integrate(const std::unique_ptr<IIntegration>& inte) {
   std::vector<double> mirrored(m_angles.size() * 3.0);
   double dx{ 0.0 };
   double norm{ 0.0 };
+
   // Mirrors the dihedrals to get rid of boundary problems
   #pragma omp parallel for
-  for (int i = 0; i < (int) m_angles.size(); ++i) {
+  for (int i = 0; i < static_cast<int>( m_angles.size() ); ++i) {
     mirrored.at(i) = m_angles.at(i) - 360.0;
     mirrored.at(i + m_angles.size()) = m_angles.at(i);
     mirrored.at(i + 2 * m_angles.size()) = m_angles.at(i) + 360.0;

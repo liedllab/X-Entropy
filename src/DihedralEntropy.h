@@ -3,8 +3,6 @@
 
 #include <vector>
 
-#include <boost/python.hpp>
-
 #include "Integrators.h"
 #include "kde.h"
 
@@ -19,9 +17,9 @@ private:
 	void integrate();
 public:
 	DihedralEntropy(void) {}
-	DihedralEntropy(boost::python::list &, int);
-	DihedralEntropy(boost::python::list &, boost::python::str &);
-	DihedralEntropy(boost::python::list &, int, boost::python::str &);
-	DihedralEntropy(boost::python::list &);
+	DihedralEntropy(const std::vector<double> &, int);
+	DihedralEntropy(const std::vector<double> &, const std::string &);
+	DihedralEntropy(const std::vector<double> &, int, const std::string &);
+	DihedralEntropy(const std::vector<double> &);
 	double getEntropy(void);
 };
