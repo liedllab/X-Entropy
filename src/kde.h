@@ -14,6 +14,7 @@
 
 #include "Exceptions.h"
 #include "Integrators.h"
+#include "OMPExceptionHandler.h"
 
 #define GASCONSTANT 8.314462618
 
