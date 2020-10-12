@@ -22,6 +22,5 @@ public:
 	DihedralEntropy(boost::python::list &, int);
 	DihedralEntropy(boost::python::list &, boost::python::str &);
 	DihedralEntropy(boost::python::list &, int, boost::python::str &);
-	DihedralEntropy(boost::python::list &);
 	double getEntropy(void);
 };

@@ -7,7 +7,85 @@ import warnings
 warnings.simplefilter("always")
 
 
-def calculateEntropy(dihedralArr, resolution=4096, method="Simpson"):
+def is_power_of_two(val):
+    """This function will evaluate whether $val is
+    a power of two between 1 and 524288 or not.
+    Higher powers are not tested here.
+
+    Parameters
+    ----------
+    val : numeric
+
+    Returns
+    -------
+    bool
+
+    """
+
+    pows_of_two = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048,
+                   4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288]
+    val = int(val)
+    return val in pows_of_two
+
+
+def next_power_of_two(val):
+    """Returns the next higher power of two.
+
+    Parameters
+    ----------
+    val : numeric
+
+    Returns
+    -------
+    pow_of_two : int
+
+    """
+    return int(2**(np.log(val) // np.log(2) + 1))
+
+
+def process_resolution_argument(resolution):
+    """Warns about potentially too high or too low
+    values and picks the next higher power of two,
+    if it was no power of two initially.
+
+    Parameters
+    ----------
+    resolution
+
+    Returns
+    -------
+
+    """
+    if not isinstance(resolution, int):
+        print("Resolution is not of type int. Trying to cast it to int...")
+        resolution = int(resolution)
+    if resolution < 100:
+        warn_msg = "You are using a rather small resolution. " \
+                   "This may potentially lead to inaccurate results..."
+        warnings.warn(warn_msg, RuntimeWarning)
+    elif resolution > 10000:
+        warn_msg = "You are using a rather large resolution. " \
+                   "Amongst other things, this may potentially lead to very long runtimes " \
+                   "without necessarily improving the accuracy of the result..."
+        warnings.warn(warn_msg, RuntimeWarning)
+
+    if not is_power_of_two(resolution):
+        resolution = next_power_of_two(resolution)
+    return resolution
+
+
+def process_method_argument(method, available_methods=["simpson", "riemann"]):
+    """Catches unknown integration methods on a python
+    level. Deals with upper and lower case writing.
+
+    """
+    if not (method.lower() in available_methods):
+        err_msg = "{} is not a valid integration method\nChoose from {}.".format(method, available_methods)
+        raise ValueError(err_msg)
+    return method.lower().capitalize()  # first letter caps, rest lower case
+
+
+def calculateEntropy(dihedralArr, resolution=4096, method="Simpson", verbose=False):
     """Calculate the dihedral entropy of a trajectory.
 
     The dihedral entropy of a number of different dihedral angles can be calculated using this
@@ -23,8 +101,11 @@ def calculateEntropy(dihedralArr, resolution=4096, method="Simpson"):
         A 2D array holding all the dihedrals of a simulation (number Atoms,
         number Dihedrals)
     resolution: int, optional
-        The resolution used for the initial construction of the histogram
-        bin size (default is 16,000)
+        The resolution for the estimation of the probability density function.
+        This value is applied on the mirrored data. Therefore the resolution in
+        real space will be $resolution / 3.
+        If no power of two is given, the next higher power of two
+        is picked.(default is 4,096)
     method: str, optional
         The method for the numerical integration scheme. Can be one of 
         "Riemann" or "Simpson" (default is "Simpson")
@@ -34,19 +115,12 @@ def calculateEntropy(dihedralArr, resolution=4096, method="Simpson"):
     list:
     A list of floats that are the entropies for the different dihedrals
     """
-    if not isinstance(resolution, int):
-        print("Resolution is not of type int. Trying to cast it to int...")
-        resolution = int(resolution)
-    if resolution < 100:
-        warn_msg = "You are using a rather small resolution. " \
-                   "This may potentially lead to inaccurate results..."
-        warnings.warn(warn_msg, RuntimeWarning)
-    elif resolution > 10000:
-        warn_msg = "You are using a rather large resolution. " \
-                   "Amongst other things, this may potentially lead to very long runtimes " \
-                   "without necessarily improving the accuracy of the result..."
-        warnings.warn(warn_msg, RuntimeWarning)
+    resolution = process_resolution_argument(resolution)
+    method = process_method_argument(method)
 
+    if verbose:
+        print("Using a resolution of {}.".format(resolution))
+        print("Using the following method for integration: {}.".format(method))
     values = []
 
     if isinstance(dihedralArr[0], (float)):
@@ -58,6 +132,7 @@ def calculateEntropy(dihedralArr, resolution=4096, method="Simpson"):
         values.append(entropyCalculator.getResult() * -1)
 
     return values
+
 
 # TODO temperature is of no use here
 def calculateReweightedEntropy(dihedralArr, weightArr, resolution = 16000, method = "Simpson", mc_order=10, temp=300):
