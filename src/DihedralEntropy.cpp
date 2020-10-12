@@ -6,9 +6,7 @@
  *										                                                          *
  ********************************************************************************/
 
-namespace py = boost::python;
-
-DihedralEntropy::DihedralEntropy(py::list &l, int n) : m_entropy(0), m_res(n) {
+DihedralEntropy::DihedralEntropy(const std::vector<double> &l, int n) : m_entropy(0), m_res(n) {
   m_res = std::pow(2, static_cast<int>(log(m_res)/log(2)) + 1);
   for (int i = 0; i < static_cast<int>(py::len(l)); ++i) {
     m_angles.push_back(py::extract<double>(l[i]));
@@ -17,10 +15,10 @@ DihedralEntropy::DihedralEntropy(py::list &l, int n) : m_entropy(0), m_res(n) {
   integrate();
 }
 
-DihedralEntropy::DihedralEntropy(py::list &l) 
+DihedralEntropy::DihedralEntropy(const std::vector<double> &l) 
 : DihedralEntropy{ l, (2 << 12) } {}
 
-DihedralEntropy::DihedralEntropy(py::list &l, int n, py::str &numericalIntegral)
+DihedralEntropy::DihedralEntropy(const std::vector<double> &l, int n, const std::string &numericalIntegral)
 : m_entropy{ 0.0 }, m_res{ n } {
   m_res =std::pow(2, static_cast<int>(log(m_res)/log(2)) + 1);
   for (int i = 0; i < static_cast<int>( py::len(l) ); ++i) {
@@ -31,7 +29,7 @@ DihedralEntropy::DihedralEntropy(py::list &l, int n, py::str &numericalIntegral)
   integrate(getFunction(numInt));
 }
 
-DihedralEntropy::DihedralEntropy(py::list &l, py::str &numericalIntegral) : 
+DihedralEntropy::DihedralEntropy(const std::vector<double> &l, const std::string &numericalIntegral) : 
   DihedralEntropy{ l, (2 << 12), numericalIntegral } {}
 
 /****
