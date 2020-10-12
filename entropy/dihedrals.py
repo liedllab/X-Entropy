@@ -147,7 +147,8 @@ def maclaurin_series(xs, mac_order=10):
     -------
 
     """
-    return np.sum([xs ** i / np.math.factorial(i) for i in np.arange(mac_order)], axis=0)
+    # going to the nth order includes [0,n]!!
+    return np.sum([xs ** i / np.math.factorial(i) for i in np.arange(mac_order+1)], axis=0)
 
 
 def calculate_amd_weight(boostEne, mac_order=10, T=300.0, kb=KB_kcal):
@@ -175,4 +176,4 @@ def calculate_amd_weight(boostEne, mac_order=10, T=300.0, kb=KB_kcal):
     # for x in range(mc_order+1):
     #     MCweight = np.add(MCweight, (np.divide(np.power(boostEne, x), math.factorial(x))))
     # return MCweight
-    return maclaurin_series(scaled_biasE, mc_order=mac_order)
+    return maclaurin_series(scaled_biasE, mac_order=mac_order)
