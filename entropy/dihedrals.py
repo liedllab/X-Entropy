@@ -138,7 +138,7 @@ def calculateEntropy(dihedralArr, resolution=4096, method="Simpson", verbose=Fal
 
 
 
-def calculateReweightedEntropy(dihedralArr, weightArr, resolution=16000, method="Simpson", id_gas=8.3145):
+def calculateReweightedEntropy(dihedralArr, weightArr, resolution=4096, method="Simpson", id_gas=8.3145):
     """Calculate the dihedral entropy of an accelerated MD (aMD) trajectory using Maclaurin series
        expansion for reweighing (see https://doi.org/10.1021/ct500090q).
 
@@ -161,7 +161,9 @@ def calculateReweightedEntropy(dihedralArr, weightArr, resolution=16000, method=
     values:
     A list of floats that are the entropies for the different dihedrals in J/mol/K
     """
-
+    resolution = process_resolution_argument(resolution)
+    method = process_method_argument(method)
+    
     values = []
 
     if isinstance(dihedralArr[0], float):
