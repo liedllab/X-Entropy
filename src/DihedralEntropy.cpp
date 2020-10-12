@@ -68,15 +68,22 @@ void DihedralEntropy::integrate(const std::unique_ptr<IIntegration>& inte) {
   //for (int i = 0; i < (int) finalDens.size(); ++i) {
   //  norm += finalDens.at(i);
   //}
+
+  OMPExceptionHandler except;
+
   #pragma omp parallel for
   for (int i = 0; i < (int) finalDens.size(); ++i) {
-    finalDens.at(i) /= norm;
-    if (finalDens.at(i) > 0) {
-      finalDens.at(i) = finalDens.at(i) * log(finalDens.at(i));
-    } else if (finalDens.at(i) != finalDens.at(i) ) {
-      throw IntegrationError("Created a NAN during integration!");
-    }
+
+    except.Run([&] {
+      finalDens.at(i) /= norm;
+      if (finalDens.at(i) > 0) {
+        finalDens.at(i) = finalDens.at(i) * log(finalDens.at(i));
+      } else if (finalDens.at(i) != finalDens.at(i) ) {
+        throw IntegrationError("Created a NAN during integration!");
+      }
+    });
   }
+  except.Rethrow();
   m_entropy = (*inte)(finalDens, 360);
   // Finally done, just multiply with the universal gasconstant 
   // (which you will find to be defined in the header)

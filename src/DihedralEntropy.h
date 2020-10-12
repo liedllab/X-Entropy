@@ -6,6 +6,7 @@
 #include <boost/python.hpp>
 
 #include "Integrators.h"
+#include "OMPExceptionHandler.h"
 #include "kde.h"
 
 
