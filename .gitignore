@@ -5,3 +5,4 @@ __pycache__
 testapp
 build
 *.egg-info
+dist

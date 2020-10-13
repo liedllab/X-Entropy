@@ -15,9 +15,9 @@ setup(
 
         ext_modules = cythonize([
             Extension(
-                'entropy.kde',
+                'entropy.kde_kernel',
                 sources = [
-                  'entropy/kde/kde.pyx',
+                  'entropy/kde_kernel/kde_kernel.pyx',
                   'src/Integrators.cpp'
                 ],
                 libraries=['fftw3', 'm', 'gomp'],

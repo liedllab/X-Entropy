@@ -1,5 +1,5 @@
-from entropy.kde import DihedralEntropy as ent
-from entropy.kde import GCE
+#from entropy.kde import DihedralEntropy as ent
+#from entropy.kde import GCE
 import numpy as np
 import warnings
 
