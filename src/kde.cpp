@@ -125,7 +125,7 @@ Gce::Gce(double *array, int length, int res = -1)
   for (int i = 0; i < length; ++i) {
     for (int j = 0; j < static_cast<int>(m_xgrid.size() - 1); ++j) {
       if ( (array[i] > m_xgrid.at(j)) && (array[i] < m_xgrid.at(j + 1)) ) {
-        #pragma omp critical
+        #pragma omp atomic
         m_histogram[j] += histogram_normalizer;
         break;
       }

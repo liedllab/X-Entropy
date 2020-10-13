@@ -18,6 +18,7 @@ setup(
                 'entropy.kde',
                 sources = [
                   'entropy/kde/kde.pyx',
+                  'src/Integrators.cpp'
                 ],
                 libraries=['fftw3', 'm', 'gomp'],
                 extra_compile_args=['-O3', '-fopenmp'],
