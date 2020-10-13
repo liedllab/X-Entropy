@@ -163,8 +163,8 @@ std::pair<double, double> Gce::extrema(const std::vector<double> &array) const n
  * @brief Starts the calculation, could have guessed, right?
  */
 void Gce::calculate() {
-  std::vector<double> i_arr(m_xgrid.size());
-  std::vector<double> dct_data(m_xgrid.size());
+  std::vector<double> i_arr(m_xgrid.size() - 1);
+  std::vector<double> dct_data(m_xgrid.size() - 1);
   double error = std::numeric_limits<double>::max();
 
   // Precalculate the squared indices for the matrix
@@ -175,9 +175,9 @@ void Gce::calculate() {
   dct(&m_histogram[0], &dct_data[0]);
 
 
-  std::vector<double> a2(m_xgrid.size());
+  std::vector<double> a2(dct_data.size() );
 //	#pragma omp parallel for
-  for (int i = 1; i < static_cast<int>( m_xgrid.size() ); ++i) {
+  for (int i = 1; i < static_cast<int>( dct_data.size() ); ++i) {
     a2[i - 1] = (dct_data[i] * 0.5);
     a2[i - 1] *= a2[i - 1];
   }
@@ -186,17 +186,17 @@ void Gce::calculate() {
     error = fixedpoint(a2, i_arr);
   }
 //	#pragma omp parallel for
-  for (int i = 0; i < static_cast<int>( m_xgrid.size() ); ++i) {
+  for (int i = 0; i < static_cast<int>( dct_data.size() ); ++i) {
     dct_data[i] *= std::exp(-0.5 * i * i * M_PI* M_PI * m_tStar);
   }
-  std::vector<double> density(m_xgrid.size());
+  std::vector<double> density(dct_data.size());
 
   // Get the data back into real space with the inverse discrete cosine transform
   idct(&dct_data[0], &density[0]);
 
 
   double inv_range{ 1.0 / (m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0)) };
-  for (int i = 0; i < (int) m_xgrid.size(); ++i) {
+  for (int i = 0; i < (int) dct_data.size(); ++i) {
     m_densityEstimation.push_back(density[i] * (0.5 * inv_range));
   }
 }
@@ -340,17 +340,19 @@ double Gce::integrate(const std::string &type, double min, double max) {
   std::vector<double> grid;
   std::vector<double> fDens;
 
-  for (int i = 0; i < (int) m_xgrid.size(); ++i) {
-    if ((m_xgrid.at(i) >= min) && (m_xgrid.at(i) <= max)) {
-      grid.push_back(m_xgrid.at(i));
+  double stepsize_half{ (m_xgrid.at(1) - m_xgrid.at(0)) / 2 };
+
+  for (int i = 0; i < (int) m_xgrid.size() - 1; ++i) {
+    if ((m_xgrid.at(i) >= min) && (m_xgrid.at(i + 1) <= max)) {
+      grid.push_back( m_xgrid.at(i) + stepsize_half );
       fDens.push_back(m_densityEstimation.at(i));
-    } else if (m_xgrid.at(i) > max) {
+    } else if (m_xgrid.at(i + 1) > max) {
       break;
     }
   }
 
   norm = 0;
-  norm = (*inte)(fDens, grid.at(grid.size() - 1) - grid.at(0));
+  norm = (*inte)(fDens, (grid.at(grid.size() - 1) + stepsize_half) - (grid.at(0) - stepsize_half));
 
   OMPExceptionHandler except;
 

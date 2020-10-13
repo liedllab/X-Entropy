@@ -24,5 +24,5 @@ TEST(GceTest, CalculateTest)
   ASSERT_EQ(gce.getGrid().size(), 11);
   gce.calculate();
   EXPECT_DOUBLE_EQ(gce.getDensityEstimation()[0] / gce.getDensityEstimation()[4], 0.5);
-  EXPECT_DOUBLE_EQ(gce.integrate("Simpson", 0.0, 1.0), 0.084713366281552571);
+  EXPECT_DOUBLE_EQ(gce.integrate("Simpson", 0.0, 1.0), 0.074124195496358458);
 }
