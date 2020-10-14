@@ -22,6 +22,64 @@
 
 #include "kde.h"
 
+double Gce::calcHistogramNormalizer(const std::vector<double>& weights) const
+{
+    double normalizer{ 0.0 };
+    for (auto weight : weights) {
+        normalizer += weight;
+    }
+    return 1.0 / normalizer;
+}
+
+double Gce::calcHistogramNormalizer(int size) const
+{
+    return 1.0 / static_cast<double>(size);
+}
+
+
+void Gce::calculateHistogram( double histogramNormalizer, const std::vector<double>& weights )
+{
+  auto ext{ extrema(m_angles) };
+  m_range = ext.second - ext.first;
+  
+  
+  ext.first -= (m_range * 0.1);
+  m_range *= 1.2;
+  
+  
+  // Necessary steps for the calculation of the histogram.
+  double stepsize{ m_range / static_cast<double>(m_resolution) };
+  for (int i = 0; i <= m_resolution; i++) {
+    m_xgrid.push_back(ext.first + i * stepsize);
+    if (i >= 1) {
+        m_centers.push_back(m_xgrid.at(i - 1) + 0.5 * stepsize);
+    }
+  }
+
+  m_histogram.resize(m_xgrid.size() - 1);
+
+  /*
+   * Here a first density is approximated via a histogram. This is the
+   * first step for the Cross Entropy Postulate, i.e., a prior
+   * probability density p.
+   */
+  //#pragma omp parallel for
+  for (int i = 0; i < (int) m_angles.size(); ++i) {
+    for (int j = 0; j < (int) (m_xgrid.size() - 1); ++j) {
+      if ( (m_angles.at(i) > m_xgrid.at(j)) && (m_angles.at(i) <= m_xgrid.at(j + 1)) ) {
+        if (static_cast<int>(weights.size()) != 0) {
+            m_histogram[j] += histogramNormalizer * weights[i];
+        } else {
+            m_histogram[j] += histogramNormalizer;
+        }
+        break;
+      }
+    }
+  }
+}
+
+
+
 /****
  * @brief Constructor
  * Constructor for the GCE class, to make a python importable library, the
@@ -40,52 +98,36 @@ Gce::Gce(const std::vector<double> &array, int res)
   {
     throw EmptyListError("Could not construct the GCE object.");
   }
-  auto ext{ extrema(m_angles) };
-  m_range = ext.second - ext.first;
-  double histogram_normalizer{ 1.0 / static_cast<double>(m_angles.size()) };
   
-  ext.first -= (m_range * 0.1);
-  m_range *= 1.2;
-  
-  
-  // Necessary steps for the calculation of the histogram.
-  double stepsize{ m_range / static_cast<double>(m_resolution) };
-  for (int i = 0; i <= m_resolution; i++) {
-    m_xgrid.push_back(ext.first + i * stepsize);
-    if (i >= 1) {
-        m_centers.push_back(m_xgrid.at(i - 1) + 0.5 * stepsize);
-    }
-  }
-  m_histogram.resize(m_xgrid.size() - 1);
+  double histogramNormalizer{ calcHistogramNormalizer( m_angles.size() ) };
+  calculateHistogram(histogramNormalizer, std::vector<double>());
 
-  /*
-   * Here a first density is approximated via a histogram. This is the
-   * first step for the Cross Entropy Postulate, i.e., a prior
-   * probability density p.
-   */
-  //#pragma omp parallel for
-  for (int i = 0; i < (int) array.size(); ++i) {
-    for (int j = 0; j < (int) (m_xgrid.size() - 1); ++j) {
-      if ( (array.at(i) > m_xgrid.at(j)) && (array.at(i) <= m_xgrid.at(j + 1)) ) {
-        //#pragma omp critical
-        m_histogram[j] += histogram_normalizer;
-        break;
-      }
-    }
-  }
+  
 }
 
 /*****
  * @brief Constructor
  * Constructor for the GCE class, uses grid and histogram. Also takes number Frames.
- * @param histogram The histogram of the data points
- * @param xGrid The grid in x Dimension
- * @param nFrames The number of observations
+ * @param data The histogram of the data points
+ * @param weigths The grid in x Dimension
+ * @param resolution The number of observations
  */
-Gce::Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int nFrames)
-: m_histogram{ histogram }, m_xgrid{ xGrid }, m_resolution{ static_cast<int>(xGrid.size()) }, m_nFrames(nFrames)
+Gce::Gce(const std::vector<double>& data, const std::vector<double>& weights, int resolution)
+: m_resolution{ resolution }, m_nFrames{ static_cast<int>(data.size()) }, m_angles{ data }, m_tStar{ 0.0 }
 {
-
+  if (weights.size() != m_angles.size()) {
+      throw ValueError("Lists weigths and data are of different size.");
+  }
+  if (m_resolution == -1) {
+    m_resolution = 2 << 13;
+  }
+  if (m_nFrames <= 0)
+  {
+    throw EmptyListError("Could not construct the GCE object.");
+  }
+  
+  double histogramNormalizer{ calcHistogramNormalizer( weights ) };
+  calculateHistogram(histogramNormalizer, weights);
 }
 
 /****
@@ -198,9 +240,17 @@ void Gce::calculate() {
   idct(&dct_data[0], &density[0]);
 
 
-  double inv_range{ 1.0 / (m_xgrid.at(m_xgrid.size() - 1) - m_xgrid.at(0)) };
-  for (int i = 0; i < (int) dct_data.size(); ++i) {
-    m_densityEstimation.push_back(density[i] * (0.5 * inv_range));
+  double inv_range{ 0.5 / m_resolution };
+
+  for (int i = 0; i < static_cast<int>(dct_data.size()); ++i) {
+    m_densityEstimation.push_back(density[i] * inv_range);
+  }
+
+  Simpson simps;
+  double stepsize_half{ (m_xgrid.at(1) - m_xgrid.at(0)) / 2 };
+  double norm{ simps(m_densityEstimation,m_xgrid.at(m_xgrid.size() - 2) -  m_xgrid.at(0)) };
+  for (int i = 0; i < static_cast<int>(m_densityEstimation.size()); ++i) {
+    m_densityEstimation[i] /= norm;
   }
 }
 
@@ -372,7 +422,6 @@ double Gce::integrate(const std::string &type, double min, double max) {
  * @return The integrated value within the given bounds.
  */
 double Gce::entropy(const std::string &type, double min, double max) {
-  double norm{ 0 };
   auto inte{ getFunction(type) };
   std::vector<double> grid;
   std::vector<double> fDens;
@@ -388,17 +437,11 @@ double Gce::entropy(const std::string &type, double min, double max) {
     }
   }
 
-  norm = 0;
-  norm = (*inte)(fDens, (grid.at(grid.size() - 1) + stepsize_half) - (grid.at(0) - stepsize_half));
-
   OMPExceptionHandler except;
 
   #pragma omp parallel for
   for (int i = 0; i < static_cast<int>( fDens.size() ); ++i) {
     except.Run([&]{
-
-      fDens.at(i) /= norm;
-
       if (fDens.at(i) > 0) 
       {
         fDens.at(i) = fDens.at(i) * log(fDens.at(i));
