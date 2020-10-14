@@ -28,17 +28,20 @@ private:
 	std::vector<double> m_histogram;
 	std::vector<double> m_angles;
 	std::vector<double> m_densityEstimation;
-	void dct(double *, double  *);
-	void idct(double *, double  *);
 	double fixedpoint(const std::vector<double> &, const std::vector<double> &);
 	std::pair<double, double> extrema(const std::vector<double> &) const noexcept;
 	double csiszar(double, int, const std::vector<double>&, const std::vector<double>&) const noexcept;
     double calcIntPow(double, int) const noexcept;
+    double calcHistogramNormalizer(int) const;
+    double calcHistogramNormalizer(const std::vector<double>&) const;
+    void calculateHistogram( double histogramNormalizer, const std::vector<double>& weights );
 public:
 	Gce(double *, int, int);
 	Gce(const std::vector<double>&, int);
     Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int res);
 
+    void dct(double *, double  *);
+	void idct(double *, double  *);
 	void calculate(void);
 	double integrate(const std::string &, double, double);
     double entropy(const std::string &type, double min, double max);

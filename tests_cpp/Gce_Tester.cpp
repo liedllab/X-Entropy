@@ -28,5 +28,16 @@ TEST(GceTest, CalculateTest)
   gce.calculate();
   ASSERT_EQ(gce.getDensityEstimation().size(), 10);
   EXPECT_DOUBLE_EQ(gce.getDensityEstimation()[0] / gce.getDensityEstimation()[4], 0.5);
-  EXPECT_DOUBLE_EQ(gce.integrate("Simpson", 0.0, 1.0), 0.74242424242424232);
+  EXPECT_DOUBLE_EQ(gce.integrate("Simpson", -0.1, 1.1), 1.0);
+}
+
+TEST(GceTest, WeightsTest)
+{
+    Gce gce{ {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0}, {1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1}, 10};
+    Gce gce2{ {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0}, 10};
+    gce.calculate();
+    gce2.calculate();
+    EXPECT_DOUBLE_EQ(gce.integrate("Simpson", 0.0, 1.0), gce2.integrate("Simpson", 0.0, 1.0));
+
+    EXPECT_THROW(Gce( {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0}, {1, 1, 1, 1, 1, 2, 1, 1, 1, 1}, 10), ValueError);
 }

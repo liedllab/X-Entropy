@@ -4,7 +4,7 @@ part of the entroPy module
 @author: paq
 """
 import numpy as np
-from entropy.kde_kernel import __kde_kernel as kernel
+from entropy.kde_kernel import _kde_kernel
 from .resolution import process_resolution_argument
 
 
@@ -54,14 +54,14 @@ class kde(object):
 
         if verbose:
             print("Initializing C++ kernel for kde...")
-        k = kernel(self.data, self.resolution)
-        k.calculate()
+        kernel = _kde_kernel(self.data, self.resolution)
+        kernel.calculate()
         self.set_is_finished(True)
         if verbose:
             print("KDE finished.")
-        self.set_pdf_x(center_grid(k.get_grid()))
-        self.set_bandwidth(k.get_bandwidth())
-        self.set_pdf(k.get_pdf())
+        self.set_pdf_x(center_grid(kernel.get_grid()))
+        self.set_bandwidth(kernel.get_bandwidth())
+        self.set_pdf(kernel.get_pdf())
 
     # Getter #
     def get_resolution(self):

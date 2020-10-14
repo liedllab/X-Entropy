@@ -10,6 +10,7 @@ cdef extern from "../../src/kde.cpp":
 cdef extern from "../../src/kde.h":
     cdef cppclass Gce:
         Gce(vector[double]&, int) except +
+        Gce(vector[double]&, vector[double] &, int) except +
 
         void calculate() except +
         double integrate(string &, double, double) except +
@@ -20,17 +21,20 @@ cdef extern from "../../src/kde.h":
         double getBandwidth()
 
 @cython.embedsignature(True)
-cdef class __kde_kernel:
+cdef class _kde_kernel:
     """
     This is a Docstring.
     """
-    def __init__(self, data, resolution):
+    def __init__(self, data, resolution, weights=None):
         pass
 
     cdef Gce* m_gce_kernel
-
-    def __cinit__(self, vector[double] data, int resolution):
-        self.m_gce_kernel = new Gce(data, resolution)
+    
+    def __cinit__(self, data, resolution, weights=None):
+        if weights:
+            self.m_gce_kernel = new Gce(data, weights, resolution)
+        else:
+            self.m_gce_kernel = new Gce(data, resolution)
     
     def __dealloc__(self):
         del self.m_gce_kernel
@@ -42,7 +46,7 @@ cdef class __kde_kernel:
         return self.m_gce_kernel.integrate(method.encode("utf-8"), start, end)
     
     def calculate_entropy(self, start, end, method="Simpson"):
-        return self.m_gce_kernel.entropy(method, start, end)
+        return self.m_gce_kernel.entropy(method.encode("utf-8"), start, end)
 
     def get_grid(self):
         return np.array(self.m_gce_kernel.getCenters())
