@@ -1,17 +1,20 @@
-#from entropy.kde import DihedralEntropy as ent
-#from entropy.kde import GCE
-from .resolution import process_resolution_argument
+
+"""
+part of the entroPy module
+
+@author: paq
+"""
 import numpy as np
+from entropy.kde_kernel import __kde_kernel as kernel
+from .resolution import process_resolution_argument
+from .reweighting import reweighting, calculate_amd_weight
 import warnings
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
 warnings.simplefilter("always")
 
-# Boltzmann constant in kCal/(mol*K):
-KB_kcal = 0.001987204118
 
-
-def process_method_argument(method, available_methods=["simpson", "riemann"]):
+def process_method_argument(method, available_methods=("simpson", "riemann")):
     """Catches unknown integration methods on a python
     level. Deals with upper and lower case writing.
 
@@ -22,169 +25,201 @@ def process_method_argument(method, available_methods=["simpson", "riemann"]):
     return method.lower().capitalize()  # first letter caps, rest lower case
 
 
-def calculateEntropy(dihedralArr, resolution=4096, method="Simpson", verbose=False):
-    """Calculate the dihedral entropy of a trajectory.
+def process_weights_argument(weights, verbose=False):
+    """This function will mainly return a switch, whether
+    or whether not weights will be passed on to the kde"""
+    weight_switch = True
+    if weights is None:
+        if verbose:
+            print("No weights been given.")
+        weight_switch = False
+    else:
+        if verbose:
+            print("Weights have been given.")
+        weights = np.array(weights)
 
-    The dihedral entropy of a number of different dihedral angles can be calculated using this
-    function. The output will be a number for the entropy in each direction. This is calculated
-    using a generalized cross entropy method, published by Y.Botev et al.
-
-    >>> calculateEntropy([[1] * 600000, [1] * 600000])
-    [0.00627780151892203, 0.00627780151892203]
-
-    Parameters
-    ----------
-    dihedralArr: list(list(float)) or list(float)
-        A 2D array holding all the dihedrals of a simulation (number Atoms,
-        number Dihedrals)
-    resolution: int, optional
-        The resolution for the estimation of the probability density function.
-        This value is applied on the mirrored data. Therefore the resolution in
-        real space will be $resolution / 3.
-        If no power of two is given, the next higher power of two
-        is picked.(default is 4,096)
-    method: str, optional
-        The method for the numerical integration scheme. Can be one of
-        "Riemann" or "Simpson" (default is "Simpson")
-
-    Returns
-    -------
-    list:
-    A list of floats that are the entropies for the different dihedrals
-    """
-    resolution = process_resolution_argument(resolution)
-    method = process_method_argument(method)
-
-    if verbose:
-        print("Using a resolution of {}.".format(resolution))
-        print("Using the following method for integration: {}.".format(method))
-    values = []
-
-    if isinstance(dihedralArr[0], (float)):
-        dihedralArr = [dihedralArr]
-
-    for dihedrals in dihedralArr:
-        # The mirroring is not necessary, all of this is done via the ent module
-        entropyCalculator = ent(list(dihedrals), resolution, method)
-        values.append(entropyCalculator.getResult() * -1)
-
-    return values
+    return weights, weight_switch
 
 
-
-def calculateReweightedEntropy(dihedralArr, weightArr, resolution=4096, method="Simpson", id_gas=8.3145):
-    """Calculate the dihedral entropy of an accelerated MD (aMD) trajectory using Maclaurin series
-       expansion for reweighing (see https://doi.org/10.1021/ct500090q).
-
-    Parameters
-    ----------
-    dihedralArr: list(list(float)) or list(float)
-        A 2D-array, holding all the dihedrals of the trajectory.
-    weightArr: list(list(double))
-        The weights of the aMD trajectory.
-    resolution: int, optional
-        The resolution of the initial Histogram approximation (default is 16000)
-    method: str, optional
-        The method for the numerical integral, at the moment only
-        Riemann and Simpson is available (default is Simpson)
-    id_gas: float, optional
-        Default is 8.314 J/mol/K
-
-    Returns
-    -------
-    values:
-    A list of floats that are the entropies for the different dihedrals in J/mol/K
-    """
-    resolution = process_resolution_argument(resolution)
-    method = process_method_argument(method)
-    
-    values = []
-
-    if isinstance(dihedralArr[0], float):
-        dihedralArr = [dihedralArr]
-
-    for dihedral in dihedralArr:
-        inHist = reweighting(dihedral, weightArr, resolution=resolution)
-        kernel = GCE(list(inHist), list(np.linspace(-180 - 360, 180 + 360, num=resolution)), len(dihedral))
-        kernel.calculate()
-        values.append(kernel.integrate(method, -180, 180) * - id_gas)
-
-    return values
+def preprocess_dihedral_data(data):
+    # TODO
+    return data
 
 
-def reweighting(diheds, weights, bins=None, resolution=(2 << 12)):
-    """Reweight the histogram using the given weights.
+class dihedralEntropy(object):
+    __bins = None
+    __data = None
+    __weights= None
+    __has_weights = None
+    __resolution = None
+    __kde_done = False
+    __successful = None
+    __verbose = None
+    __pdf = None
+    __pdf_x = None
+    __bandwidth = None
+    __is_finished = None
 
-    Parameters
-    ----------
-    diheds: list(list(float))
-        Array, which holds the data values to be histogrammed
-    weights: list(list(float))
-        The weights used for the histogram
-    bins: list or None, optional
-        The bins used for histogramming (default is None)
-    resolution: resolution used to construct the bins if bins is None (default 2<<12)
+    def __init__(self, data, weights=None, resolution=4096, verbose=False):
+        self.__data = preprocess_dihedral_data(data)
+        weights, weight_switch = process_weights_argument(weights, verbose=verbose)
+        self.__has_weights = weight_switch
+        self.__weights = weights
+        self.__resolution = process_resolution_argument(resolution)
+        self.__verbose = verbose
+        self.__is_finished = False
 
-    Returns
-    -------
-    The reweighed histogram of the input data.
-    """
+    def calculate_legacy(self, verbose=None, ):
+        """
+        copy from kde module, to sneak a peak for me
 
-    def mirror(arr):
-        return list(arr) + list(arr) + list(arr)
+        """
 
-    diheds = np.array(mirror(diheds))
-    weights = np.array(mirror(weights))
+        if verbose:
+            print("Initializing C++ kernel for kde...")
+        k = kernel(self.data, self.resolution)
+        k.calculate()
+        self.set_is_finished(True)
+        if verbose:
+            print("KDE finished.")
+        self.set_pdf_x(center_grid(k.get_grid()))
+        self.set_bandwidth(k.get_bandwidth())
+        self.set_pdf(k.get_pdf())
 
-    if bins is None:
-        bins = np.linspace(-180 - 360, 180 + 360, num=resolution)
+    def calculate(self, dihedralArr, resolution=4096, method="Simpson", verbose=False):
+        """Calculate the dihedral entropy of a trajectory.
 
-    hist = np.histogram(diheds, bins=bins, weights=weights)[0]
-    norm = np.linalg.norm(hist)
-    hist = np.divide(hist, norm)
-    return hist
+        The dihedral entropy of a number of different dihedral angles can be calculated using this
+        function. The output will be a number for the entropy in each direction. This is calculated
+        using a generalized cross entropy method, published by Y.Botev et al.
 
+        >>> calculateEntropy([[1] * 600000, [1] * 600000])
+        [0.00627780151892203, 0.00627780151892203]
 
-def maclaurin_series(xs, mac_order=10):
-    """Maclaurin series to estimate e^{x}.
+        Parameters
+        ----------
+        dihedralArr: list(list(float)) or list(float)
+            A 2D array holding all the dihedrals of a simulation (number Atoms,
+            number Dihedrals)
+        resolution: int, optional
+            The resolution for the estimation of the probability density function.
+            This value is applied on the mirrored data. Therefore the resolution in
+            real space will be $resolution / 3.
+            If no power of two is given, the next higher power of two
+            is picked.(default is 4,096)
+        method: str, optional
+            The method for the numerical integration scheme. Can be one of
+            "Riemann" or "Simpson" (default is "Simpson")
 
-    Parameters
-    ----------
-    xs: array of floats
-    mc_order: int
-        max order for the Maclaurin series
+        Returns
+        -------
+        list:
+        A list of floats that are the entropies for the different dihedrals
+        """
+        verbose = verbose or self.verbose
+        if not (resolution is None):
+            new_res = process_resolution_argument(resolution)
+            if verbose:
+                print("Using resolution of {}".format(new_res))
+            self.set_resolution(new_res)
+        method = process_method_argument(method)
+        if verbose:
+            print("Using the following method for integration: {}.".format(method))
 
-    Returns
-    -------
+        if self.has_weights:
+            k = kernel_weights(self.data, self.weights, self.resolution)
+        else:
+            k = kernel(self.data, self.resolution)
+        k.calculate()
+        # integrate and calculat entropy from that...
 
-    """
-    # going to the nth order includes [0,n]!!
-    return np.sum([xs ** i / np.math.factorial(i) for i in np.arange(mac_order+1)], axis=0)
+        # old
+        values = []
 
+        if isinstance(dihedralArr[0], float):
+            dihedralArr = [dihedralArr]
 
-def calculate_amd_weight(boostEne, mac_order=10, T=300.0, kb=KB_kcal):
-    """Calculate weights from aMD simulation boost energies for histogram
-    reweighing using Maclaurin series expansion (see https://doi.org/10.1021/ct500090q).
+        for dihedrals in dihedralArr:
+            # The mirroring is not necessary, all of this is done via the ent module
+            entropyCalculator = ent(list(dihedrals), resolution, method)
+            values.append(entropyCalculator.getResult() * -1)
 
-    Paramteres:
-    -----------------------------
-    boostEne: list(list(float))
-        Boost energies from the aMD simulation
-    mc_order: int, optional
-        The order of the Maclaurin series (default is 10)
-    T: float, optional
-        The simulation temperature, used to calculate the Boltzmann factor from the energies (default is 300.0)
-    kb: float, optional
-        Boltzmann constant. Default: 0.001987204118 kCal/(mol*K)
+        return values
 
-    Returns
-    -----------------------------
-    Weights for the histogram calculation
-    """
+    # Getter #
+    def get_resolution(self):
+        return self.__resolution
 
-    scaled_biasE = np.array(boostEne) / (T * kb)
-    # MCweight = np.zeroslike(boostEne)
-    # for x in range(mc_order+1):
-    #     MCweight = np.add(MCweight, (np.divide(np.power(boostEne, x), math.factorial(x))))
-    # return MCweight
-    return maclaurin_series(scaled_biasE, mac_order=mac_order)
+    def get_weights(self):
+        return self.__weights
+
+    def get_has_weights(self):
+        return self.__has_weights
+
+    def get_verbose(self):
+        return self.__verbose
+
+    def get_data(self):
+        return self.__data
+
+    def get_is_finished(self):
+        return self.__is_finished
+
+    def get_pdf_x(self):
+        if not self.is_finished:
+            self.calculate()
+        return self.__pdf_x
+
+    def get_bandwidth(self):
+        if not self.is_finished:
+            self.calculate()
+        return self.__bandwidth
+
+    def get_pdf(self):
+        if not self.is_finished:
+            self.calculate()
+        return self.__pdf
+
+    # setter #
+    def set_resolution(self, value):
+        self.__resolution = value
+
+    def set_weights(self, value):
+        print("Weights cannot be changed after initialization...")
+        pass
+
+    def set_has_weights(self, value):
+        print("This flag cannot be changed after initialization...")
+        pass
+
+    def set_verbose(self, value):
+        print("Verbosity cannot be changed after initialization...")
+        pass
+
+    def set_data(self, value):
+        print("Data cannot be changed after initialization...")
+        pass
+
+    def set_is_finished(self, value):
+        self.__is_finished = value
+
+    def set_pdf_x(self, value):
+        self.__pdf_x = value
+
+    def set_bandwidth(self, value):
+        self.__bandwidth = value
+
+    def set_pdf(self, value):
+        self.__pdf = value
+
+    resolution = property(get_resolution, set_resolution, None, "resolution for kde")
+    verbose = property(get_verbose, set_verbose, None, "Extend of print messages")
+    data = property(get_data, set_data, None, "Data to do kde on.")
+    weights = property(get_weights, set_weights, None, "Weights for the reweighting.")
+    has_weights = property(get_has_weights, set_has_weights, None, "Flag, whether weights for the reweighting "
+                                                                   "have been given for initialization.")
+    is_finished = property(get_is_finished, set_is_finished, None, "Data to do kde on.")
+    bandwidth = property(get_bandwidth, set_bandwidth, None, "bandwidth")
+    pdf_x = property(get_pdf_x, set_pdf_x, None, "Pprobability densite sxfvsj_x ")
+    pdf = property(get_pdf, set_pdf, None, "Pprobability densite sxfvsj ")
+
