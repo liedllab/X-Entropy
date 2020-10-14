@@ -1,5 +1,4 @@
-#ifndef KDE_H
-#define KDE_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -22,9 +21,10 @@ class Gce {
 private:
 	int m_resolution;
 	int m_nFrames;
-  double m_range;
+    double m_range;
 	double m_tStar;
 	std::vector<double> m_xgrid;
+    std::vector<double> m_centers;
 	std::vector<double> m_histogram;
 	std::vector<double> m_angles;
 	std::vector<double> m_densityEstimation;
@@ -33,23 +33,22 @@ private:
 	double fixedpoint(const std::vector<double> &, const std::vector<double> &);
 	std::pair<double, double> extrema(const std::vector<double> &) const noexcept;
 	double csiszar(double, int, const std::vector<double>&, const std::vector<double>&) const noexcept;
-  double calcIntPow(double, int) const noexcept;
+    double calcIntPow(double, int) const noexcept;
 public:
 	Gce(double *, int, int);
 	Gce(const std::vector<double>&, int);
-  Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int res);
+    Gce(const std::vector<double>& histogram, const std::vector<double>& xGrid, int res);
 
 	void calculate(void);
 	double integrate(const std::string &, double, double);
+    double entropy(const std::string &type, double min, double max);
 	int getGridLength() const;
 	int getResolution() const;
 	double getTStar() const;
 	const std::vector<double>& getHistogram() const;
 	const std::vector<double>& getGrid() const;
+    const std::vector<double>& getCenters() const;
 	std::vector<double> getDensityEstimation();
 	const std::vector<double>& getAngles() const;
-  double getBandwidth() const;
-//	boost::python::list getResult(void);
+    double getBandwidth() const;
 };
-
-#endif

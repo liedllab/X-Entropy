@@ -1,8 +1,8 @@
-from distutils.core import setup, Extension
-import sys
-from glob import glob
-
-version = glob("/usr/lib/x86_64*/libboost_python-py3*.so")[0][-5:][:-3]
+#from distutils.core import setup, Extension
+#import sys
+#from glob import glob
+from setuptools import Extension, setup
+from Cython.Build import cythonize
 
 setup(
         name = 'DihedralEntropy',
@@ -11,19 +11,18 @@ setup(
         author = "Johannes Kraml",
         author_email="johannes.kraml@uibk.ac.at",
 
-        py_modules=['entropy.dihedrals'],
+        py_modules=['entropy.dihedrals', 'entropy.kde', 'entropy.resolution'],
 
-        ext_modules = [
+        ext_modules = cythonize([
             Extension(
-                'entropy.kde',
-                [
-                  'src/kde.cpp',
-                  'src/Integrators.cpp',
-                  'src/DihedralEntropy.cpp',
-                  'src/Module.cpp'
+                'entropy.kde_kernel',
+                sources = [
+                  'entropy/kde_kernel/kde_kernel.pyx',
+                  'src/Integrators.cpp'
                 ],
-                libraries=['fftw3', 'm', 'boost_python-py{}'.format(version), 'gomp'],
+                libraries=['fftw3', 'm', 'gomp'],
                 extra_compile_args=['-O3', '-fopenmp'],
+                language = "c++",
             ),
-        ]
+        ])
 )

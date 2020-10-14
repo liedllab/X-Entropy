@@ -22,7 +22,11 @@ TEST(GceTest, CalculateTest)
   ASSERT_EQ(gce.getHistogram().size(), 10);
   ASSERT_EQ(gce.getGridLength(), 11);
   ASSERT_EQ(gce.getGrid().size(), 11);
+  ASSERT_EQ(gce.getCenters().size(), 10);
+  ASSERT_DOUBLE_EQ(gce.getCenters().at(0), -0.04);
+  ASSERT_DOUBLE_EQ(gce.getCenters().at(9), 1.04);
   gce.calculate();
+  ASSERT_EQ(gce.getDensityEstimation().size(), 10);
   EXPECT_DOUBLE_EQ(gce.getDensityEstimation()[0] / gce.getDensityEstimation()[4], 0.5);
-  EXPECT_DOUBLE_EQ(gce.integrate("Simpson", 0.0, 1.0), 0.084713366281552571);
+  EXPECT_DOUBLE_EQ(gce.integrate("Simpson", 0.0, 1.0), 0.74242424242424232);
 }
