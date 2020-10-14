@@ -59,9 +59,9 @@ class kde(object):
         self.set_is_finished(True)
         if verbose:
             print("KDE finished.")
-        self.set_pdf_x(center_grid(k.getGrid()))
-        self.set_bandwidth(k.getBandwidth())
-        self.set_pdf(k.getPDF())
+        self.set_pdf_x(center_grid(k.get_grid()))
+        self.set_bandwidth(k.get_bandwidth())
+        self.set_pdf(k.get_pdf())
 
     # Getter #
     def get_resolution(self):
