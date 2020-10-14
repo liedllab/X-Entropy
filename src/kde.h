@@ -1,5 +1,4 @@
-#ifndef KDE_H
-#define KDE_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -25,6 +24,7 @@ private:
     double m_range;
 	double m_tStar;
 	std::vector<double> m_xgrid;
+    std::vector<double> m_centers;
 	std::vector<double> m_histogram;
 	std::vector<double> m_angles;
 	std::vector<double> m_densityEstimation;
@@ -41,14 +41,14 @@ public:
 
 	void calculate(void);
 	double integrate(const std::string &, double, double);
+    double entropy(const std::string &type, double min, double max);
 	int getGridLength() const;
 	int getResolution() const;
 	double getTStar() const;
 	const std::vector<double>& getHistogram() const;
 	const std::vector<double>& getGrid() const;
+    const std::vector<double>& getCenters() const;
 	std::vector<double> getDensityEstimation();
 	const std::vector<double>& getAngles() const;
     double getBandwidth() const;
 };
-
-#endif

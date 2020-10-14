@@ -13,9 +13,10 @@ cdef extern from "../../src/kde.h":
 
         void calculate() except +
         double integrate(string &, double, double) except +
+        double entropy(string &, double, double) except +
 
         vector[double] getDensityEstimation()
-        vector[double] getGrid()
+        vector[double] getCenters()
         double getBandwidth()
 
 @cython.embedsignature(True)
@@ -39,12 +40,15 @@ cdef class __kde_kernel:
 
     def integrate(self, start, end, method="Simpson"):
         return self.m_gce_kernel.integrate(method.encode("utf-8"), start, end)
+    
+    def calculate_entropy(self, start, end, method="Simpson"):
+        return self.m_gce_kernel.entropy(method, start, end)
 
-    def getGrid(self):
-        return np.array(self.m_gce_kernel.getGrid())
+    def get_grid(self):
+        return np.array(self.m_gce_kernel.getCenters())
 
-    def getPDF(self):
+    def get_pdf(self):
         return np.array(self.m_gce_kernel.getDensityEstimation())
     
-    def getBandwidth(self):
+    def get_bandwidth(self):
         return self.m_gce_kernel.getBandwidth()

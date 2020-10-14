@@ -52,6 +52,9 @@ Gce::Gce(const std::vector<double> &array, int res)
   double stepsize{ m_range / static_cast<double>(m_resolution) };
   for (int i = 0; i <= m_resolution; i++) {
     m_xgrid.push_back(ext.first + i * stepsize);
+    if (i >= 1) {
+        m_centers.push_back(m_xgrid.at(i - 1) + 0.5 * stepsize);
+    }
   }
   m_histogram.resize(m_xgrid.size() - 1);
 
@@ -163,8 +166,8 @@ std::pair<double, double> Gce::extrema(const std::vector<double> &array) const n
  * @brief Starts the calculation, could have guessed, right?
  */
 void Gce::calculate() {
-  std::vector<double> i_arr(m_xgrid.size() - 1);
-  std::vector<double> dct_data(m_xgrid.size() - 1);
+  std::vector<double> i_arr(m_histogram.size());
+  std::vector<double> dct_data(m_histogram.size());
   double error = std::numeric_limits<double>::max();
 
   // Precalculate the squared indices for the matrix
@@ -177,9 +180,9 @@ void Gce::calculate() {
 
   std::vector<double> a2(dct_data.size() );
 //	#pragma omp parallel for
-  for (int i = 1; i < static_cast<int>( dct_data.size() ); ++i) {
-    a2[i - 1] = (dct_data[i] * 0.5);
-    a2[i - 1] *= a2[i - 1];
+  for (int i = 0; i < static_cast<int>( dct_data.size() ); ++i) {
+    a2[i] = (dct_data[i] * 0.5);
+    a2[i] *= a2[i];
   }
   // Minimize the error iteratively, until the convergence criterion is met.
   while (abs(error) > (DBL_EPSILON)) {
@@ -187,7 +190,7 @@ void Gce::calculate() {
   }
 //	#pragma omp parallel for
   for (int i = 0; i < static_cast<int>( dct_data.size() ); ++i) {
-    dct_data[i] *= std::exp(-0.5 * i * i * M_PI* M_PI * m_tStar);
+    dct_data[i] *= std::exp(-0.5 * M_PI * M_PI * i_arr[i] * m_tStar);
   }
   std::vector<double> density(dct_data.size());
 
@@ -208,7 +211,7 @@ void Gce::calculate() {
  * @param after_dct The values of the function after fourier transformation
  */
 void Gce::dct(double *before_dct, double *after_dct){
-  fftw_plan p{ fftw_plan_r2r_1d(static_cast<int>(m_xgrid.size()), before_dct, after_dct, FFTW_REDFT10, FFTW_ESTIMATE) };
+  fftw_plan p{ fftw_plan_r2r_1d(static_cast<int>(m_histogram.size()), before_dct, after_dct, FFTW_REDFT10, FFTW_ESTIMATE) };
   fftw_execute(p);
   fftw_destroy_plan(p);
 }
@@ -221,7 +224,7 @@ void Gce::dct(double *before_dct, double *after_dct){
  * @param after_idct The values of the function after inverse fourier transformation
  */
 void Gce::idct(double *before_idct, double *after_idct) {
-  fftw_plan p{ fftw_plan_r2r_1d( static_cast<int>(m_xgrid.size()), before_idct, after_idct, FFTW_REDFT01, FFTW_ESTIMATE) };
+  fftw_plan p{ fftw_plan_r2r_1d( static_cast<int>(m_histogram.size()), before_idct, after_idct, FFTW_REDFT01, FFTW_ESTIMATE) };
   fftw_execute(p);
   fftw_destroy_plan(p);
 }
@@ -335,6 +338,40 @@ double Gce::calcIntPow(double value, int exponent) const noexcept {
  * @return The integrated value within the given bounds.
  */
 double Gce::integrate(const std::string &type, double min, double max) {
+  auto inte{ getFunction(type) };
+  std::vector<double> grid;
+  std::vector<double> fDens;
+
+  double stepsize_half{ (m_xgrid.at(1) - m_xgrid.at(0)) / 2 };
+
+  for (int i = 0; i < (int) m_xgrid.size() - 1; ++i) {
+    if ((m_xgrid.at(i) >= min) && (m_xgrid.at(i + 1) <= max)) {
+      grid.push_back( m_xgrid.at(i) + stepsize_half );
+      fDens.push_back(m_densityEstimation.at(i));
+    } else if (m_xgrid.at(i + 1) > max) {
+      break;
+    }
+  }
+  return (*inte)(fDens, grid.at(grid.size() - 1) - grid.at(0));
+}
+
+
+/*****
+ * @brief Calculate the entropy for a given histogram.
+ * The integration is done between min and max of a given histogram.
+ * The integration scheme is gathered from the getFunction function, which
+ * returns the appropriate integration function as a IIntegrator pointer.
+ * The data is integrated twice, first to normalize the area under the curve
+ * to 1, then from this, p log(p) is calculated, which is finally integrated
+ * using a numerical integration scheme to yield the continuous entropy of the
+ * curve.
+ * @param type The type of the integration scheme, can be either Simpson
+ *             or Riemann integral.
+ * @param min The minimal value in the integration (on the x coordinate)
+ * @param max The maximum value in the integration (on the x coordinate)
+ * @return The integrated value within the given bounds.
+ */
+double Gce::entropy(const std::string &type, double min, double max) {
   double norm{ 0 };
   auto inte{ getFunction(type) };
   std::vector<double> grid;
@@ -398,6 +435,10 @@ const std::vector<double>& Gce::getAngles() const {
 
 const std::vector<double>& Gce::getGrid() const {
   return m_xgrid;
+}
+
+const std::vector<double>& Gce::getCenters() const {
+  return m_centers;
 }
 
 const std::vector<double>& Gce::getHistogram() const {
