@@ -1,56 +1,30 @@
 #pragma once
 
 #include <exception>
+#include <stdexcept>
 #include <string>
 
-class UnknownIntegrator : std::exception 
+class UnknownIntegrator : std::runtime_error 
 {
-private:
-  std::string m_error_message;
 
 public:
   UnknownIntegrator(const std::string& err_msg)
-  : m_error_message{ "Error: Unknown Integrator: " + err_msg }
-  {
-
-  }
-
-  virtual const char *what() const throw() override
-  {
-    return m_error_message.c_str();
-  }
+  : std::runtime_error{ "Error: Unknown Integrator: " + err_msg }
+  {}
 };
 
-class IntegrationError : std::exception
+class IntegrationError : std::runtime_error
 {
-private:
-  std::string m_error_message;
 public:
   IntegrationError(const std::string& err_msg)
-  : m_error_message{ "Integration Error: " + err_msg }
-  {
-
-  }
-
-  virtual const char *what() const throw() override
-  {
-    return m_error_message.c_str();
-  }
+  : std::runtime_error{ "Integration Error: " + err_msg }
+  {}
 };
 
-class EmptyListError : std::exception
+class EmptyListError : std::runtime_error
 {
-  private:
-  std::string m_error_message;
 public:
   EmptyListError(const std::string& err_msg)
-  : m_error_message{ "Empty List: " + err_msg }
-  {
-
-  }
-
-  virtual const char *what() const throw() override
-  {
-    return m_error_message.c_str();
-  }
+  : std::runtime_error{ "Empty List Error: " + err_msg }
+  {}
 };
