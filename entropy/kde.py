@@ -17,6 +17,7 @@ class kde(object):
         self.__pdf_x = None
         self.__bandwidth = None
         # input
+        # TODO preprocess and sanitycheck data here, too (code in dihedrals.py should be applicable)
         self.__data = data
         self.__weights = weights
         if not (weights is None):

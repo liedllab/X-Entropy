@@ -40,12 +40,39 @@ def process_weights_argument(weights, verbose=False):
     return weights, weight_switch
 
 
-def preprocess_dihedral_data(data):
-    # TODO mirroring and so on...
-    return data
+def preprocess_dihedral_data(diheds, weights, weight_switch):
+    # mirror data
+    diheds_out = []
+    for dihed in diheds:
+        diheds_out.append(np.concatenate([dihed-360, dihed, dihed+360]))
+    diheds = np.array(diheds_out)
+    if weight_switch:  #
+        weights_out = []
+        for weight in weights:
+            weights_out.append(np.conatenate([weight, weight, weight]))
+        weights = np.array(weights_out)
+
+    return diheds, weights
+
+
+def postprocess_dihedral_pdf(pdf, pdf_x):
+    # mirror data
+    lower_idx = np.argmin(np.abs(pdf_x + 180))
+    if pdf_x[lower_idx] < -180:
+        lower_idx = lower_idx + 1
+    upper_idx = np.argmin(np.abs(pdf_x - 180))
+    if pdf_x[upper_idx] > 180:
+        upper_idx = upper_idx - 1
+
+    pdf_out = pdf[lower_idx:upper_idx]
+    pdf_out *= 3  # we normalized in the "mirrored data", which is 3 times the actual data
+    pdf_x_out = pdf_x[lower_idx:upper_idx]
+    assert len(pdf_out)==len(pdf_x_out)
+    return pdf_out, pdf_x_out
 
 
 def start_end_from_grid(grid):
+    # You will need this for non dihedrals...
     return np.nanmin(grid), np.nanmax(grid)
 
 
@@ -86,17 +113,17 @@ class dihedralEntropy(object):
 
     def __init__(self, data, weights=None, resolution=4096, verbose=False, method="Simpson"):
         # flags and output
-        self.__pdf = None
-        self.__pdf_x = None
+        self.__pdfs = None
+        self.__pdf_xs = None
         self.__bandwidth = None
-        self.__kde_is_calculated = False
-        self.__entropy_is_calculated = False
+        self.__is_finished = False
         self.__entropies = None
         # input data
         weights, weight_switch = process_weights_argument(weights, verbose=verbose)
         self.__has_weights = weight_switch
         data, weights = process_data_shapes(data, weights, weight_switch)
-        self.__data = preprocess_dihedral_data(data)
+        data, weights = preprocess_dihedral_data(data, weights, weight_switch)
+        self.__data = data
         self.__weights = weights
         # other input
         self.__method = process_method_argument(method)
@@ -132,50 +159,64 @@ class dihedralEntropy(object):
         list:
         A list of floats that are the entropies for the different dihedrals
         """
-        verbose = verbose or self.verbose
-        if not (resolution is None):
+        if not (verbose is None):  # it is possible to overwrite kde.verbose for this subroutine
+            verbose = verbose
+        else:
+            verbose = self.verbose
+
+        if not (resolution is None):  # reset resolution eventually
             new_res = process_resolution_argument(resolution)
+            self.__resolution = new_res
             if verbose:
-                print("Using resolution of {}".format(new_res))
-            self.set_resolution(new_res)
-        method = method or process_method_argument(method)
-        if verbose:
-            print("Using the following method for integration: {}.".format(method))
+                print("Using resolution of {}".format(self.resolution))
+
+        if not (method is None):    # reset method eventually
+            new_method = process_method_argument(method)
+            self.__method = new_method
+            if verbose:
+                print("Using the following method for integration: {}.".format(self.method))
 
         if verbose:
             print("Initializing C++ kernel for kde...")
+        # if weights are given, zip with weights, if not, give None
         if self.has_weights:
             if verbose:
                 print("Weights have been given for the calculation of the histograms.")
             iterable = zip(self.data, self.weights)
         else:
-            iterable = zip(self.data, np.full(None,len(self.data)))
+            iterable = zip(self.data, np.full(len(self.data), None))
 
-        bws, pdfxs, pdfs, ents, ints = [], [], [], [], []
+        bws, pdf_xs, pdfs, ents = [], [], [], []
         for dat, ws in iterable:
             # depending on whether weights are None or not, you will get a weighted pdf or a simple pdf
-            kernel = _kde_kernel(data, weights, resolution)
+            kernel = _kde_kernel(dat, self.resolution, ws)
             kernel.calculate()
 
             bws.append(kernel.get_bandwidth())
-            pdfxs.append(kernel.get_grid())
-            pdfs.append(kernel.get_pdf())
 
-            start, end = start_end_from_grid(self.pdf_x)
-            integral = kernel.integrate(start, end, method=method)
-            ints.append(integral)
-            entropy = integral * id_gas
+            pdf_temp = kernel.get_pdf()
+            pdf_x_temp = kernel.get_grid()
+
+            pdf_temp, pdf_x_temp = postprocess_dihedral_pdf(pdf_temp, pdf_x_temp)
+            # start, end = start_end_from_grid(pdf_x_temp)
+
+            pdf_xs.append(pdf_x_temp)
+            pdfs.append(pdf_temp)
+
+            # integral = kernel.integrate(start, end, method=self.method)
+            p_logp = kernel.calculate_entropy(-180, 180, method=self.method)
+
+            entropy = - p_logp * id_gas
             ents.append(entropy)
         if verbose:
             print("KDE finished.")
 
-        self.__pdf_x = np.array(pdfxs)
+        self.__pdf_xs = np.array(pdf_xs)
         self.__bandwidth = np.array(bws)
-        self.__pdf = np.array(pdfs)
-        self.set_entropies(np.array(ent))
+        self.__pdfs = np.array(pdfs)
+        self.__entropies = np.array(ents)
 
-        self.set_kde_is_calculated(True)
-        self.set_entropy_is_calculated(True)
+        self.__is_finished = True
         return np.array(ents)
 
     @property
@@ -234,14 +275,14 @@ class dihedralEntropy(object):
         pass
 
     @property
-    def pdf(self):
+    def pdfs(self):
         """Probability density function. """
         if not self.is_finished:
             self.calculate()
-        return self.__pdf
+        return self.__pdfs
 
-    @pdf.setter
-    def pdf(self, value):
+    @pdfs.setter
+    def pdfs(self, value):
         print("You really shouldn't change .pdf yourself. Use .calculate()")
         pass
 
@@ -266,50 +307,35 @@ class dihedralEntropy(object):
         pass
 
     @property
-    def pdf_x(self):
+    def pdf_xs(self):
         """Grid for probability density function. """
         if not self.is_finished:
             self.calculate()
-        return self.__pdf_x
+        return self.__pdf_xs
 
-    @pdf_x.setter
-    def pdf_x(self, value):
+    @pdf_xs.setter
+    def pdf_xs(self, value):
         print("You really shouldn't change .pdf_x yourself. Use .calculate()")
         pass
 
-    # Getter #
-    def get_kde_is_calculated(self):
-        return self.__kde_is_calculated
+    #getter
 
     def get_method(self):
-        return self.__is_finished
+        return self.__method
 
     def get_entropies(self):
-        if not self.entropy_is_calculated:
+        if not self.is_finished:
             self.calculate()
         return self.__entropies
-
-    def get_entropy_is_calculated(self):
-        return self.__entropy_is_calculated
 
     # setter #
 
     def set_method(self, value):
         self.__method = value
 
-    def set_kde_is_calculated(self, value):
-        self.__kde_is_calculated = value
-
     def set_entropies(self, value):
         self.__entropies = value
 
-    def set_entropy_is_calculated(self, value):
-        self.__entropy_is_calculated = value
 
-    kde_is_calculated = property(get_kde_is_calculated, set_kde_is_calculated, None, "Has the kde calculation "
-                                                                                     "already been done?")
-    entropy_is_calculated = property(get_entropy_is_calculated, set_entropy_is_calculated, None, "Has the entropy "
-                                                                                                 "calculation already "
-                                                                                                 "been done?")
     method = property(get_method, set_method, None, "Method for integrating the probability density function.")
     entropies = property(get_entropies, set_entropies, None, "Calculated entropies for the data sets.")
