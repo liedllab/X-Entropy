@@ -11,7 +11,7 @@ setup(
         author = "Johannes Kraml",
         author_email="johannes.kraml@uibk.ac.at",
 
-        py_modules=['entropy.dihedrals', 'entropy.kde', 'entropy.resolution'],
+        py_modules=['entropy.dihedrals', 'entropy.kde', 'entropy.internal.resolution', 'entropy.internal.pre_post_processing'],
 
         ext_modules = cythonize([
             Extension(
