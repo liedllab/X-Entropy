@@ -6,53 +6,13 @@ part of the entroPy module
 """
 import numpy as np
 from entropy.kde_kernel import _kde_kernel
-from .resolution import process_resolution_argument
+from .internal.resolution import process_resolution_argument
+from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
+    process_weights_argument, process_method_argument
 import warnings
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
 warnings.simplefilter("always")
-
-
-def process_method_argument(method, available_methods=("simpson", "riemann")):
-    """Catches unknown integration methods on a python
-    level. Deals with upper and lower case writing.
-
-    """
-    if not (method.lower() in available_methods):
-        err_msg = "{} is not a valid integration method\nChoose from {}.".format(method, available_methods)
-        raise ValueError(err_msg)
-    return method.lower().capitalize()  # first letter caps, rest lower case
-
-
-def process_weights_argument(weights, verbose=False):
-    """This function will mainly return a switch, whether
-    or whether not weights will be passed on to the kde"""
-    weight_switch = True
-    if weights is None:
-        if verbose:
-            print("No weights been given.")
-        weight_switch = False
-    else:
-        if verbose:
-            print("Weights have been given.")
-        weights = np.array(weights)
-
-    return weights, weight_switch
-
-
-def preprocess_dihedral_data(diheds, weights, weight_switch):
-    # mirror data
-    diheds_out = []
-    for dihed in diheds:
-        diheds_out.append(np.concatenate([dihed-360, dihed, dihed+360]))
-    diheds = np.array(diheds_out)
-    if weight_switch:  #
-        weights_out = []
-        for weight in weights:
-            weights_out.append(np.conatenate([weight, weight, weight]))
-        weights = np.array(weights_out)
-
-    return diheds, weights
 
 
 def postprocess_dihedral_pdf(pdf, pdf_x):
@@ -69,44 +29,6 @@ def postprocess_dihedral_pdf(pdf, pdf_x):
     pdf_x_out = pdf_x[lower_idx:upper_idx]
     assert len(pdf_out)==len(pdf_x_out)
     return pdf_out, pdf_x_out
-
-
-def start_end_from_grid(grid):
-    # You will need this for non dihedrals...
-    return np.nanmin(grid), np.nanmax(grid)
-
-
-def process_data_shapes(data, weights=None, weight_switch=True):
-    data = np.array(data)
-    if False in np.isfinite(data):
-        err_msg = "Non-finite values in data!"
-        raise ValueError(err_msg)
-
-    if weight_switch:
-        weights = np.array(weights)
-        if False in np.isfinite(weights):
-            err_msg = "Non-finite values in weights!"
-            raise ValueError(err_msg)
-        if data.shape != weights.shape:
-            err_msg = "Shapes of data and weights is inconsistent!\n" \
-                      "data: {}, weights: {}".format(data.shape,weights.shape)
-            raise ValueError(err_msg)
-
-    if len(data.shape) == 0:
-        err_msg = "Shape of data is suspicious\n" \
-                  "{}".format(data.shape)
-        raise ValueError(err_msg)
-    elif len(data.shape) == 1:
-        data = np.array([data])
-        if weight_switch:
-            weights = np.array([weights])
-    elif len(data.shape) == 2:
-        pass  # This ia all good
-    else:
-        err_msg = "Shape of data is suspicious\n" \
-                  "{}".format(data.shape)
-        raise ValueError(err_msg)
-    return data, weights
 
 
 class dihedralEntropy(object):
@@ -319,23 +241,26 @@ class dihedralEntropy(object):
         pass
 
     #getter
-
-    def get_method(self):
+    @property
+    def method(self):
         return self.__method
 
-    def get_entropies(self):
+    @method.setter
+    def method(self, value):
+        """Method for integrating the probability density function."""
+        if self.is_finished:
+            print("After changing the method you should use .calculate() again, before accessing any results...\n"
+                  "It is probably better to explicitly call calculate with a specific method.")
+        self.__method = process_method_argument(value)
+
+    @property
+    def entropies(self):
+        """Calculated entropies for the data sets."""
         if not self.is_finished:
             self.calculate()
         return self.__entropies
 
-    # setter #
-
-    def set_method(self, value):
-        self.__method = value
-
-    def set_entropies(self, value):
-        self.__entropies = value
-
-
-    method = property(get_method, set_method, None, "Method for integrating the probability density function.")
-    entropies = property(get_entropies, set_entropies, None, "Calculated entropies for the data sets.")
+    @entropies.setter
+    def entropies(self, value):
+        print("You really shouldn't change .entropies yourself. Use .calculate()")
+        pass
