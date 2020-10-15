@@ -31,7 +31,7 @@ cdef class _kde_kernel:
     cdef Gce* m_gce_kernel
     
     def __cinit__(self, data, resolution, weights=None):
-        if weights:
+        if not (weights is None):
             self.m_gce_kernel = new Gce(data, weights, resolution)
         else:
             self.m_gce_kernel = new Gce(data, resolution)
