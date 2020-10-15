@@ -17,6 +17,8 @@ def center_grid(grid):
 class kde(object):
     __bins = None
     __data = None
+    __weights = None
+    __has_weights = None
     __resolution = None
     __kde_done = False
     __successful = None
@@ -26,8 +28,13 @@ class kde(object):
     __bandwidth = None
     __is_finished = None
 
-    def __init__(self, data, resolution=4096, verbose=False):
+    def __init__(self, data, weights=None, resolution=4096, verbose=False):
         self.__data = data
+        self.__weights = weights
+        if not (weights is None):
+            self.__has_weights = True
+        else:
+            self.__has_weights = False
         self.__resolution = process_resolution_argument(resolution)
         self.__verbose = verbose
         self.__is_finished = False
@@ -54,7 +61,10 @@ class kde(object):
 
         if verbose:
             print("Initializing C++ kernel for kde...")
-        kernel = _kde_kernel(self.data, self.resolution)
+        if self.has_weights:
+            kernel = _kde_kernel(self.data, self.resolution, self.weights)
+        else:
+            kernel = _kde_kernel(self.data, self.resolution)
         kernel.calculate()
         self.set_is_finished(True)
         if verbose:
@@ -73,8 +83,14 @@ class kde(object):
     def get_data(self):
         return self.__data
 
+    def get_weights(self):
+        return self.__weights
+
     def get_is_finished(self):
         return self.__is_finished
+
+    def get_has_weights(self):
+        return self.__has_weights
 
     def get_pdf_x(self):
         if not self.is_finished:
@@ -103,8 +119,16 @@ class kde(object):
         print("Data cannot be changed after initialization...")
         pass
 
+    def set_weights(self, value):
+        print("Weights cannot be changed after initialization...")
+        pass
+
     def set_is_finished(self, value):
         self.__is_finished = value
+
+    def set_has_weights(self, value):
+        print("This flag cannot be changed after initialization.")
+        pass
 
     def set_pdf_x(self, value):
         self.__pdf_x = value
@@ -118,7 +142,9 @@ class kde(object):
     resolution = property(get_resolution, set_resolution, None, "resolution for kde")
     verbose = property(get_verbose, set_verbose, None, "Extend of print messages")
     data = property(get_data, set_data, None, "Data to do kde on.")
+    weights = property(get_weights, set_weights, None, "Weights for the pdf calculation.")
     is_finished = property(get_is_finished, set_is_finished, None, "Data to do kde on.")
+    has_weights = property(get_has_weights, set_has_weights, None, "Have weights been given?")
     bandwidth = property(get_bandwidth, set_bandwidth, None, "bandwidth")
     pdf_x = property(get_pdf_x, set_pdf_x, None, "Pprobability densite sxfvsj_x ")
     pdf = property(get_pdf, set_pdf, None, "Pprobability densite sxfvsj ")
