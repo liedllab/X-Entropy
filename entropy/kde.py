@@ -64,7 +64,6 @@ class kde(object):
         self.__bandwidth = kernel.get_bandwidth()
         self.__pdf = kernel.get_pdf()
 
-    # Getter #
     @property
     def resolution(self):
         """Resolution for kde. Needs to be a power of 2. If no power of two is given,
