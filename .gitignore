@@ -6,3 +6,4 @@ testapp
 build
 *.egg-info
 dist
+.ipynb_checkpoints
