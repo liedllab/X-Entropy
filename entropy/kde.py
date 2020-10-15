@@ -8,56 +8,47 @@ from entropy.kde_kernel import _kde_kernel
 from .resolution import process_resolution_argument
 
 
-def center_grid(grid):
-    # TODO center grid
-    # return np.mean(list(zip(grid, grid[1:])), axis=1)
-    return grid
-
-
 class kde(object):
-    __bins = None
-    __data = None
-    __weights = None
-    __has_weights = None
-    __resolution = None
-    __kde_done = False
-    __successful = None
-    __verbose = None
-    __pdf = None
-    __pdf_x = None
-    __bandwidth = None
-    __is_finished = None
 
     def __init__(self, data, weights=None, resolution=4096, verbose=False):
+        # to be set after calculation
+        self.__is_finished = False
+        self.__pdf = None
+        self.__pdf_x = None
+        self.__bandwidth = None
+        # input
         self.__data = data
         self.__weights = weights
         if not (weights is None):
             self.__has_weights = True
         else:
             self.__has_weights = False
-        self.__resolution = process_resolution_argument(resolution)
+        self.resolution = process_resolution_argument(resolution)
         self.__verbose = verbose
-        self.__is_finished = False
 
     def calculate(self, verbose=None, resolution=None):
-        """
+        """Perform the kde
 
         Parameters
         ----------
-        data
-        nbins
-        verbose
+        verbose: bool
+            You may overwrite the kde.verbose property for this function specifically
+        resolution: int
+            You may specifically reset the resolution for the kde calculation.
 
         Returns
         -------
 
         """
-        verbose = verbose or self.verbose
+        if not (verbose is None):  # it is possible to overwrite kde.verbose for this subroutine
+            verbose = verbose
+        else:
+            verbose = self.verbose
         if not (resolution is None):
             new_res = process_resolution_argument(resolution)
             if verbose:
                 print("Using resolution of {}".format(new_res))
-            self.set_resolution(new_res)
+            self.__resolution = new_res
 
         if verbose:
             print("Initializing C++ kernel for kde...")
@@ -66,86 +57,109 @@ class kde(object):
         else:
             kernel = _kde_kernel(self.data, self.resolution)
         kernel.calculate()
-        self.set_is_finished(True)
+        self.__is_finished = True
         if verbose:
             print("KDE finished.")
-        self.set_pdf_x(center_grid(kernel.get_grid()))
-        self.set_bandwidth(kernel.get_bandwidth())
-        self.set_pdf(kernel.get_pdf())
+        self.__pdf_x = kernel.get_grid()
+        self.__bandwidth = kernel.get_bandwidth()
+        self.__pdf = kernel.get_pdf()
 
     # Getter #
-    def get_resolution(self):
+    @property
+    def resolution(self):
+        """Resolution for kde. Needs to be a power of 2. If no power of two is given,
+        the next higher power of two is set automatically."""
         return self.__resolution
 
-    def get_verbose(self):
+    @resolution.setter
+    def resolution(self, value):
+        if self.is_finished:
+            print("After changing the resolution you should use .calculate() again, before accessing any results...\n"
+                  "It is probably better to explicitly call calculate with a specific resolution.")
+        self.__resolution = process_resolution_argument(value)
+
+    @property
+    def verbose(self):
+        """Extend of print messages. """
         return self.__verbose
 
-    def get_data(self):
-        return self.__data
+    @verbose.setter
+    def verbose(self, value):
+        print("Verbosity cannot be changed after initialization...")
+        pass
 
-    def get_weights(self):
-        return self.__weights
-
-    def get_is_finished(self):
+    @property
+    def is_finished(self):
+        """Is the kde finished? """
         return self.__is_finished
 
-    def get_has_weights(self):
+    @is_finished.setter
+    def is_finished(self, value):
+        print("You really shouldn't change this flag yourself. Use .calculate()")
+        pass
+
+    @property
+    def has_weights(self):
+        """Have weights been given?"""
         return self.__has_weights
 
-    def get_pdf_x(self):
-        if not self.is_finished:
-            self.calculate()
-        return self.__pdf_x
+    @has_weights.setter
+    def has_weights(self, value):
+        print("This flag cannot be changed after initialization.")
+        pass
 
-    def get_bandwidth(self):
+    @property
+    def bandwidth(self):
+        """Bandwidth from the kde. """
         if not self.is_finished:
             self.calculate()
         return self.__bandwidth
 
-    def get_pdf(self):
+    @bandwidth.setter
+    def bandwidth(self, value):
+        print("You really shouldn't change this property yourself. Use .calculate()")
+        pass
+
+    @property
+    def pdf(self):
+        """Probability density function. """
         if not self.is_finished:
             self.calculate()
         return self.__pdf
 
-    # setter #
-    def set_resolution(self, value):
-        self.__resolution = value
-
-    def set_verbose(self, value):
-        print("Verbosity cannot be changed after initialization...")
+    @pdf.setter
+    def pdf(self, value):
+        print("You really shouldn't change .pdf yourself. Use .calculate()")
         pass
 
-    def set_data(self, value):
+    @property
+    def data(self):
+        """"Data to do kde on. """
+        return self.__data
+
+    @data.setter
+    def data(self, value):
         print("Data cannot be changed after initialization...")
         pass
 
-    def set_weights(self, value):
+    @property
+    def weights(self):
+        """Weights for the pdf calculation. """
+        return self.__weights
+
+    @weights.setter
+    def weights(self, value):
         print("Weights cannot be changed after initialization...")
         pass
 
-    def set_is_finished(self, value):
-        self.__is_finished = value
+    @property
+    def pdf_x(self):
+        """Grid for probability density function. """
+        if not self.is_finished:
+            self.calculate()
+        return self.__pdf_x
 
-    def set_has_weights(self, value):
-        print("This flag cannot be changed after initialization.")
+    @pdf_x.setter
+    def pdf_x(self, value):
+        print("You really shouldn't change .pdf_x yourself. Use .calculate()")
         pass
-
-    def set_pdf_x(self, value):
-        self.__pdf_x = value
-
-    def set_bandwidth(self, value):
-        self.__bandwidth = value
-
-    def set_pdf(self, value):
-        self.__pdf = value
-
-    resolution = property(get_resolution, set_resolution, None, "resolution for kde")
-    verbose = property(get_verbose, set_verbose, None, "Extend of print messages")
-    data = property(get_data, set_data, None, "Data to do kde on.")
-    weights = property(get_weights, set_weights, None, "Weights for the pdf calculation.")
-    is_finished = property(get_is_finished, set_is_finished, None, "Data to do kde on.")
-    has_weights = property(get_has_weights, set_has_weights, None, "Have weights been given?")
-    bandwidth = property(get_bandwidth, set_bandwidth, None, "bandwidth")
-    pdf_x = property(get_pdf_x, set_pdf_x, None, "Pprobability densite sxfvsj_x ")
-    pdf = property(get_pdf, set_pdf, None, "Pprobability densite sxfvsj ")
-
