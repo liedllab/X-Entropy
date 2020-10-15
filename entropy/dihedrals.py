@@ -5,7 +5,7 @@ part of the entroPy module
 @author: paq
 """
 import numpy as np
-from entropy.kde_kernel import __kde_kernel as kernel
+from entropy.kde_kernel import _kde_kernel
 from .resolution import process_resolution_argument
 from .reweighting import reweighting, calculate_amd_weight
 import warnings
@@ -42,7 +42,7 @@ def process_weights_argument(weights, verbose=False):
 
 
 def preprocess_dihedral_data(data):
-    # TODO
+    # TODO mirroring and so on...
     return data
 
 
@@ -50,9 +50,17 @@ def start_end_from_grid(grid):
     return np.nanmin(grid), np.nanmax(grid)
 
 
-def process_shapes(data, weights=None):
-    if not (weights is None):
-        data, weights = np.array(data), np.array(weights)
+def process_data_shapes(data, weights=None, weight_switch=True):
+    data = np.array(data)
+    if False in np.isfinite(data):
+        err_msg = "Non-finite values in data!"
+        raise ValueError(err_msg)
+
+    if weight_switch:
+        weights = np.array(weights)
+        if False in np.isfinite(weights):
+            err_msg = "Non-finite values in weights!"
+            raise ValueError(err_msg)
         if data.shape != weights.shape:
             err_msg = "Shapes of data and weights is inconsistent!\n" \
                       "data: {}, weights: {}".format(data.shape,weights.shape)
@@ -63,14 +71,16 @@ def process_shapes(data, weights=None):
                   "{}".format(data.shape)
         raise ValueError(err_msg)
     elif len(data.shape) == 1:
-        pass  # CONTINUE HERE
+        data = np.array([data])
+        if weight_switch:
+            weights = np.array([weights])
     elif len(data.shape) == 2:
-        pass  # CONTINUE HERE
+        pass  # This ia all good
     else:
         err_msg = "Shape of data is suspicious\n" \
                   "{}".format(data.shape)
         raise ValueError(err_msg)
-
+    return data, weights
 
 
 class dihedralEntropy(object):
@@ -83,11 +93,13 @@ class dihedralEntropy(object):
         self.__kde_is_calculated = False
         self.__entropy_is_calculated = False
         self.__entropies = None
-        # input
-        self.__data = preprocess_dihedral_data(data)
+        # input data
         weights, weight_switch = process_weights_argument(weights, verbose=verbose)
         self.__has_weights = weight_switch
+        data, weights = process_data_shapes(data, weights, weight_switch)
+        self.__data = preprocess_dihedral_data(data)
         self.__weights = weights
+        # other input
         self.__method = process_method_argument(method)
         self.__resolution = process_resolution_argument(resolution)
         self.__verbose = verbose
@@ -134,37 +146,38 @@ class dihedralEntropy(object):
         if verbose:
             print("Initializing C++ kernel for kde...")
         if self.has_weights:
-            k = kernel_weights(self.data, self.weights, self.resolution)
             if verbose:
                 print("Weights have been given for the calculation of the histograms.")
+            iterable = zip(self.data, self.weights)
         else:
-            k = kernel(self.data, self.resolution)
-        k.calculate()
-        self.set_kde_is_calculated(True)
+            iterable = zip(self.data, np.full(None,len(self.data)))
+
+        bws, pdfxs, pdfs, ents, ints = [], [], [], [], []
+        for dat, ws in iterable:
+            # depending on whether weights are None or not, you will get a weighted pdf or a simple pdf
+            kernel = _kde_kernel(data, weights, resolution)
+            kernel.calculate()
+
+            bws.append(kernel.get_bandwidth())
+            pdfxs.append(kernel.get_grid())
+            pdfs.append(kernel.get_pdf())
+
+            start, end = start_end_from_grid(self.pdf_x)
+            integral = kernel.integrate(start, end, method=method)
+            ints.append(integral)
+            entropy = integral * id_gas
+            ents.append(entropy)
         if verbose:
             print("KDE finished.")
-        self.set_pdf_x(k.get_grid())
-        self.set_bandwidth(k.get_bandwidth())
-        self.set_pdf(k.get_pdf())
-        start, end = start_end_from_grid(self.pdf_x)
-        integral = k.integrate(start, end, method=method)
-        entropies = integral * id_gas
-        self.set_entropies(entropies)
-        self.set_entropy_is_calculated(True)
-        ### old
-        # values = []
-        #
-        # if isinstance(dihedralArr[0], float):
-        #     dihedralArr = [dihedralArr]
-        #
-        # for dihedrals in dihedralArr:
-        #     # The mirroring is not necessary, all of this is done via the ent module
-        #     entropyCalculator = ent(list(dihedrals), resolution, method)
-        #     values.append(entropyCalculator.getResult() * -1)
-        #
-        # return values
 
-        return entropies
+        self.set_pdf_x(np.array(pdfxs))
+        self.set_bandwidth(np.array(bws))
+        self.set_pdf(np.array(pdfs))
+        self.set_entropies(np.array(ent))
+
+        self.set_kde_is_calculated(True)
+        self.set_entropy_is_calculated(True)
+        return np.array(ents)
 
     # Getter #
     def get_resolution(self):
