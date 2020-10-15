@@ -5,7 +5,7 @@ part of the entroPy module
 """
 import numpy as np
 from entropy.kde_kernel import _kde_kernel
-from .resolution import process_resolution_argument
+from .internal.resolution import process_resolution_argument
 
 
 class kde(object):
