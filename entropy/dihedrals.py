@@ -7,7 +7,6 @@ part of the entroPy module
 import numpy as np
 from entropy.kde_kernel import _kde_kernel
 from .resolution import process_resolution_argument
-from .reweighting import reweighting, calculate_amd_weight
 import warnings
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
@@ -170,51 +169,120 @@ class dihedralEntropy(object):
         if verbose:
             print("KDE finished.")
 
-        self.set_pdf_x(np.array(pdfxs))
-        self.set_bandwidth(np.array(bws))
-        self.set_pdf(np.array(pdfs))
+        self.__pdf_x = np.array(pdfxs)
+        self.__bandwidth = np.array(bws)
+        self.__pdf = np.array(pdfs)
         self.set_entropies(np.array(ent))
 
         self.set_kde_is_calculated(True)
         self.set_entropy_is_calculated(True)
         return np.array(ents)
 
-    # Getter #
-    def get_resolution(self):
+    @property
+    def resolution(self):
+        """Resolution for kde. Needs to be a power of 2. If no power of two is given,
+        the next higher power of two is set automatically."""
         return self.__resolution
 
-    def get_weights(self):
-        return self.__weights
+    @resolution.setter
+    def resolution(self, value):
+        if self.is_finished:
+            print("After changing the resolution you should use .calculate() again, before accessing any results...\n"
+                  "It is probably better to explicitly call calculate with a specific resolution.")
+        self.__resolution = process_resolution_argument(value)
 
-    def get_has_weights(self):
-        return self.__has_weights
-
-    def get_verbose(self):
+    @property
+    def verbose(self):
+        """Extend of print messages. """
         return self.__verbose
 
-    def get_data(self):
+    @verbose.setter
+    def verbose(self, value):
+        print("Verbosity cannot be changed after initialization...")
+        pass
+
+    @property
+    def is_finished(self):
+        """Is the kde finished? """
+        return self.__is_finished
+
+    @is_finished.setter
+    def is_finished(self, value):
+        print("You really shouldn't change this flag yourself. Use .calculate()")
+        pass
+
+    @property
+    def has_weights(self):
+        """Have weights been given?"""
+        return self.__has_weights
+
+    @has_weights.setter
+    def has_weights(self, value):
+        print("This flag cannot be changed after initialization.")
+        pass
+
+    @property
+    def bandwidth(self):
+        """Bandwidth from the kde. """
+        if not self.is_finished:
+            self.calculate()
+        return self.__bandwidth
+
+    @bandwidth.setter
+    def bandwidth(self, value):
+        print("You really shouldn't change this property yourself. Use .calculate()")
+        pass
+
+    @property
+    def pdf(self):
+        """Probability density function. """
+        if not self.is_finished:
+            self.calculate()
+        return self.__pdf
+
+    @pdf.setter
+    def pdf(self, value):
+        print("You really shouldn't change .pdf yourself. Use .calculate()")
+        pass
+
+    @property
+    def data(self):
+        """"Data to do kde on. """
         return self.__data
 
+    @data.setter
+    def data(self, value):
+        print("Data cannot be changed after initialization...")
+        pass
+
+    @property
+    def weights(self):
+        """Weights for the pdf calculation. """
+        return self.__weights
+
+    @weights.setter
+    def weights(self, value):
+        print("Weights cannot be changed after initialization...")
+        pass
+
+    @property
+    def pdf_x(self):
+        """Grid for probability density function. """
+        if not self.is_finished:
+            self.calculate()
+        return self.__pdf_x
+
+    @pdf_x.setter
+    def pdf_x(self, value):
+        print("You really shouldn't change .pdf_x yourself. Use .calculate()")
+        pass
+
+    # Getter #
     def get_kde_is_calculated(self):
         return self.__kde_is_calculated
 
     def get_method(self):
         return self.__is_finished
-
-    def get_pdf_x(self):
-        if not self.kde_is_calculated:
-            self.calculate()
-        return self.__pdf_x
-
-    def get_bandwidth(self):
-        if not self.kde_is_calculated:
-            self.calculate()
-        return self.__bandwidth
-
-    def get_pdf(self):
-        if not self.kde_is_calculated:
-            self.calculate()
-        return self.__pdf
 
     def get_entropies(self):
         if not self.entropy_is_calculated:
@@ -225,24 +293,6 @@ class dihedralEntropy(object):
         return self.__entropy_is_calculated
 
     # setter #
-    def set_resolution(self, value):
-        self.__resolution = value
-
-    def set_weights(self, value):
-        print("Weights cannot be changed after initialization...")
-        pass
-
-    def set_has_weights(self, value):
-        print("This flag cannot be changed after initialization...")
-        pass
-
-    def set_verbose(self, value):
-        print("Verbosity cannot be changed after initialization...")
-        pass
-
-    def set_data(self, value):
-        print("Data cannot be changed after initialization...")
-        pass
 
     def set_method(self, value):
         self.__method = value
@@ -250,34 +300,16 @@ class dihedralEntropy(object):
     def set_kde_is_calculated(self, value):
         self.__kde_is_calculated = value
 
-    def set_pdf_x(self, value):
-        self.__pdf_x = value
-
-    def set_bandwidth(self, value):
-        self.__bandwidth = value
-
-    def set_pdf(self, value):
-        self.__pdf = value
-
     def set_entropies(self, value):
         self.__entropies = value
 
     def set_entropy_is_calculated(self, value):
         self.__entropy_is_calculated = value
 
-    resolution = property(get_resolution, set_resolution, None, "resolution for kde")
-    verbose = property(get_verbose, set_verbose, None, "Extend of print messages")
-    data = property(get_data, set_data, None, "Data to do kde on.")
-    weights = property(get_weights, set_weights, None, "Weights for the reweighting.")
-    has_weights = property(get_has_weights, set_has_weights, None, "Flag, whether weights for the reweighting "
-                                                                   "have been given for initialization.")
     kde_is_calculated = property(get_kde_is_calculated, set_kde_is_calculated, None, "Has the kde calculation "
                                                                                      "already been done?")
     entropy_is_calculated = property(get_entropy_is_calculated, set_entropy_is_calculated, None, "Has the entropy "
                                                                                                  "calculation already "
                                                                                                  "been done?")
-    bandwidth = property(get_bandwidth, set_bandwidth, None, "bandwidth")
-    pdf_x = property(get_pdf_x, set_pdf_x, None, "Grid for probability density function.")
-    pdf = property(get_pdf, set_pdf, None, "Probability density function.")
     method = property(get_method, set_method, None, "Method for integrating the probability density function.")
     entropies = property(get_entropies, set_entropies, None, "Calculated entropies for the data sets.")
