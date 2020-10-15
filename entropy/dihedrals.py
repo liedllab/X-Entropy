@@ -50,23 +50,40 @@ def start_end_from_grid(grid):
     return np.nanmin(grid), np.nanmax(grid)
 
 
+def process_shapes(data, weights=None):
+    if not (weights is None):
+        data, weights = np.array(data), np.array(weights)
+        if data.shape != weights.shape:
+            err_msg = "Shapes of data and weights is inconsistent!\n" \
+                      "data: {}, weights: {}".format(data.shape,weights.shape)
+            raise ValueError(err_msg)
+
+    if len(data.shape) == 0:
+        err_msg = "Shape of data is suspicious\n" \
+                  "{}".format(data.shape)
+        raise ValueError(err_msg)
+    elif len(data.shape) == 1:
+        pass  # CONTINUE HERE
+    elif len(data.shape) == 2:
+        pass  # CONTINUE HERE
+    else:
+        err_msg = "Shape of data is suspicious\n" \
+                  "{}".format(data.shape)
+        raise ValueError(err_msg)
+
+
+
 class dihedralEntropy(object):
-    __bins = None
-    __data = None
-    __weights = None
-    __has_weights = None
-    __resolution = None
-    __successful = None
-    __verbose = None
-    __method = None
-    __pdf = None
-    __pdf_x = None
-    __bandwidth = None
-    __kde_is_calculated = None
-    __entropy_is_calculated = None
-    __entropies = None
 
     def __init__(self, data, weights=None, resolution=4096, verbose=False, method="Simpson"):
+        # flags and output
+        self.__pdf = None
+        self.__pdf_x = None
+        self.__bandwidth = None
+        self.__kde_is_calculated = False
+        self.__entropy_is_calculated = False
+        self.__entropies = None
+        # input
         self.__data = preprocess_dihedral_data(data)
         weights, weight_switch = process_weights_argument(weights, verbose=verbose)
         self.__has_weights = weight_switch
@@ -74,9 +91,6 @@ class dihedralEntropy(object):
         self.__method = process_method_argument(method)
         self.__resolution = process_resolution_argument(resolution)
         self.__verbose = verbose
-        self.__kde_is_calculated = False
-        self.__entropy_is_calculated = False
-        self.__entropies = None
 
     def calculate(self, resolution=4096, method=None, verbose=None, id_gas=8.314):
         """Calculate the dihedral entropy of a set of dihedrals.
