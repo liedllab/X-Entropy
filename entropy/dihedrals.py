@@ -121,7 +121,6 @@ class dihedralEntropy(object):
             pdf_x_temp = kernel.get_grid()
 
             norm_for_mirrored_data = kernel.integrate(-180, 180, method=self.method)
-            print(norm_for_mirrored_data)
             pdf_temp, pdf_x_temp = postprocess_dihedral_pdf(pdf_temp, pdf_x_temp, norm_for_mirrored_data)
             # start, end = start_end_from_grid(pdf_x_temp)
 
