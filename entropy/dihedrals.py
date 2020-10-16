@@ -9,13 +9,14 @@ from entropy.kde_kernel import _kde_kernel
 from .internal.resolution import process_resolution_argument
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
     process_weights_argument, process_method_argument
+from .constants import id_gas_SI
 import warnings
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
 warnings.simplefilter("always")
 
 
-def postprocess_dihedral_pdf(pdf, pdf_x):
+def postprocess_dihedral_pdf(pdf, pdf_x, norm_for_mirrored_data=1/3):
     # mirror data
     lower_idx = np.argmin(np.abs(pdf_x + 180))
     if pdf_x[lower_idx] < -180:
@@ -25,7 +26,7 @@ def postprocess_dihedral_pdf(pdf, pdf_x):
         upper_idx = upper_idx - 1
 
     pdf_out = pdf[lower_idx:upper_idx]
-    pdf_out *= 3  # we normalized in the "mirrored data", which is 3 times the actual data
+    pdf_out /= norm_for_mirrored_data  # we normalized in the "mirrored data", which is 3 times the actual data
     pdf_x_out = pdf_x[lower_idx:upper_idx]
     assert len(pdf_out)==len(pdf_x_out)
     return pdf_out, pdf_x_out
@@ -52,7 +53,7 @@ class dihedralEntropy(object):
         self.__resolution = process_resolution_argument(resolution)
         self.__verbose = verbose
 
-    def calculate(self, resolution=4096, method=None, verbose=None, id_gas=8.314):
+    def calculate(self, resolution=4096, method=None, verbose=None, id_gas=id_gas_SI):
         """Calculate the dihedral entropy of a set of dihedrals.
         # TODO Docstring
         The dihedral entropy of a number of different dihedral angles can be calculated using this
@@ -119,7 +120,9 @@ class dihedralEntropy(object):
             pdf_temp = kernel.get_pdf()
             pdf_x_temp = kernel.get_grid()
 
-            pdf_temp, pdf_x_temp = postprocess_dihedral_pdf(pdf_temp, pdf_x_temp)
+            norm_for_mirrored_data = kernel.integrate(-180, 180, method=self.method)
+            print(norm_for_mirrored_data)
+            pdf_temp, pdf_x_temp = postprocess_dihedral_pdf(pdf_temp, pdf_x_temp, norm_for_mirrored_data)
             # start, end = start_end_from_grid(pdf_x_temp)
 
             pdf_xs.append(pdf_x_temp)
