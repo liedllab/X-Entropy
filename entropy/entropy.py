@@ -8,7 +8,7 @@ import numpy as np
 from entropy.kde_kernel import _kde_kernel
 from .internal.resolution import process_resolution_argument
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
-    process_weights_argument, process_method_argument
+    process_weights_argument, process_method_argument, start_end_from_grid
 import warnings
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
