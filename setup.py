@@ -6,7 +6,7 @@ from Cython.Build import cythonize
 
 setup(
         name = 'DihedralEntropy',
-        version = '1.3',
+        version = '1.8',
         description = "Calculate the entropy of a given set of data, using the fftw3 library.",
         author = "Johannes Kraml",
         author_email="johannes.kraml@uibk.ac.at",
