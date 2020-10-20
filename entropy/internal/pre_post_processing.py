@@ -37,8 +37,7 @@ def preprocess_dihedral_data(diheds, weights, weight_switch):
     return diheds, weights
 
 
-def process_data_shapes(data, weights=None, weight_switch=True):
-    data = np.array(data)
+def sanity_check_input_data(data, weights=None, weight_switch=True):
     if False in np.isfinite(data):
         err_msg = "Non-finite values in data!"
         raise ValueError(err_msg)
@@ -50,8 +49,13 @@ def process_data_shapes(data, weights=None, weight_switch=True):
             raise ValueError(err_msg)
         if data.shape != weights.shape:
             err_msg = "Shapes of data and weights is inconsistent!\n" \
-                      "data: {}, weights: {}".format(data.shape,weights.shape)
+                      "data: {}, weights: {}".format(data.shape, weights.shape)
             raise ValueError(err_msg)
+
+
+def process_data_shapes(data, weights=None, weight_switch=True):
+    data = np.array(data)
+    sanity_check_input_data(data, weights, weight_switch)
 
     if len(data.shape) == 0:
         err_msg = "Shape of data is suspicious\n" \
