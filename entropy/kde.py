@@ -27,7 +27,7 @@ class kde(object):
         self.resolution = process_resolution_argument(resolution, self.data)
         self.__verbose = verbose
 
-    def calculate(self, verbose=None, resolution=None):
+    def calculate(self, resolution=None, verbose=None):
         """Perform the kde
 
         Parameters
