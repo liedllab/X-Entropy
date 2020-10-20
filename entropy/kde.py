@@ -6,6 +6,7 @@ part of the entroPy module
 import numpy as np
 from entropy.kde_kernel import _kde_kernel
 from .internal.resolution import process_resolution_argument
+from .internal.pre_post_processing import sanity_check_input_data, process_weights_argument
 
 
 class kde(object):
@@ -18,12 +19,11 @@ class kde(object):
         self.__bandwidth = None
         # input
         # TODO preprocess and sanitycheck data here, too (code in dihedrals.py should be applicable)
+        weights, weight_switch = process_weights_argument(weights, verbose=verbose)
+        self.__has_weights = weight_switch
+        sanity_check_input_data(data, weights, weight_switch)
         self.__data = data
         self.__weights = weights
-        if not (weights is None):
-            self.__has_weights = True
-        else:
-            self.__has_weights = False
         self.resolution = process_resolution_argument(resolution, self.data)
         self.__verbose = verbose
 

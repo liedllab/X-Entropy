@@ -91,7 +91,14 @@ def resolution_from_rule_of_thumb(resolution, data):
         err_msg = "Cannot interpret given argument for resolution. " \
                   "Give either an integer, or choose of the following:\n{}".format(rules_of_thumb.keys())
         raise ValueError(err_msg)
-    return rules_of_thumb[resolution](data)
+    if len(data.shape)==1:
+        return rules_of_thumb[resolution](data)
+    elif len(data.shape) == 2:
+        print("Found multiple data sets. Applying rule of thumb on all, and take the maximum resolution estimated.")
+        return np.max([rules_of_thumb[resolution](dat) for dat in data])
+    else:  # bad paq. you really should handle this properly...
+        print("Suspicious data shape...")
+        return 4096
 
 
 def interquartiles(data):
