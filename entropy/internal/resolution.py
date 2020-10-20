@@ -1,5 +1,6 @@
 import warnings
 import numpy as np
+from .pre_post_processing import start_end_from_grid
 
 
 def is_power_of_two(val):
@@ -53,7 +54,7 @@ def process_resolution_argument(resolution, data):
 
     """
     if isinstance(resolution, str):
-        return resolution_from_rule_of_thumb(resolution, data)
+        return next_power_of_two(resolution_from_rule_of_thumb(resolution, data))
     elif isinstance(resolution, int):
         pass
     elif isinstance(resolution, float):
@@ -85,6 +86,11 @@ def resolution_from_rule_of_thumb(resolution, data):
                       "silverman": res_from_silverman}
     resolution = resolution.lower()
     resolution = resolution.replace(" ", "_")
+
+    if not (resolution in list(rules_of_thumb.keys())):
+        err_msg = "Cannot interpret given argument for resolution. " \
+                  "Give either an integer, or choose of the following:\n{}".format(rules_of_thumb.keys())
+        raise ValueError(err_msg)
     return rules_of_thumb[resolution](data)
 
 

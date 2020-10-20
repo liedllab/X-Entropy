@@ -53,7 +53,7 @@ class dihedralEntropy(object):
         self.__resolution = process_resolution_argument(resolution, self.data)
         self.__verbose = verbose
 
-    def calculate(self, resolution=4096, method=None, verbose=None, id_gas=id_gas_SI):
+    def calculate(self, resolution=None, method=None, verbose=None, id_gas=id_gas_SI):
         """Calculate the dihedral entropy of a set of dihedrals.
         # TODO Docstring
         The dihedral entropy of a number of different dihedral angles can be calculated using this
