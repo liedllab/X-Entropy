@@ -10,7 +10,7 @@ from .internal.resolution import process_resolution_argument
 
 class kde(object):
 
-    def __init__(self, data, weights=None, resolution=4096, verbose=False):
+    def __init__(self, data, weights=None, resolution="src", verbose=False):
         # to be set after calculation
         self.__is_finished = False
         self.__pdf = None
@@ -24,7 +24,7 @@ class kde(object):
             self.__has_weights = True
         else:
             self.__has_weights = False
-        self.resolution = process_resolution_argument(resolution)
+        self.resolution = process_resolution_argument(resolution, self.data)
         self.__verbose = verbose
 
     def calculate(self, verbose=None, resolution=None):
@@ -46,7 +46,7 @@ class kde(object):
         else:
             verbose = self.verbose
         if not (resolution is None):
-            new_res = process_resolution_argument(resolution)
+            new_res = process_resolution_argument(resolution, self.data)
             if verbose:
                 print("Using resolution of {}".format(new_res))
             self.__resolution = new_res
@@ -76,7 +76,7 @@ class kde(object):
         if self.is_finished:
             print("After changing the resolution you should use .calculate() again, before accessing any results...\n"
                   "It is probably better to explicitly call calculate with a specific resolution.")
-        self.__resolution = process_resolution_argument(value)
+        self.__resolution = process_resolution_argument(value, self.data)
 
     @property
     def verbose(self):

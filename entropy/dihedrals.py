@@ -50,7 +50,7 @@ class dihedralEntropy(object):
         self.__weights = weights
         # other input
         self.__method = process_method_argument(method)
-        self.__resolution = process_resolution_argument(resolution)
+        self.__resolution = process_resolution_argument(resolution, self.data)
         self.__verbose = verbose
 
     def calculate(self, resolution=4096, method=None, verbose=None, id_gas=id_gas_SI):
@@ -88,7 +88,7 @@ class dihedralEntropy(object):
             verbose = self.verbose
 
         if not (resolution is None):  # reset resolution eventually
-            new_res = process_resolution_argument(resolution)
+            new_res = process_resolution_argument(resolution, self.data)
             self.__resolution = new_res
             if verbose:
                 print("Using resolution of {}".format(self.resolution))
@@ -154,7 +154,7 @@ class dihedralEntropy(object):
         if self.is_finished:
             print("After changing the resolution you should use .calculate() again, before accessing any results...\n"
                   "It is probably better to explicitly call calculate with a specific resolution.")
-        self.__resolution = process_resolution_argument(value)
+        self.__resolution = process_resolution_argument(value, self.data)
 
     @property
     def verbose(self):
