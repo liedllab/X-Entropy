@@ -12,12 +12,13 @@ from .internal.pre_post_processing import preprocess_dihedral_data, process_data
 import warnings
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
-warnings.simplefilter("always")
+# warnings.simplefilter("always")
+warnings.simplefilter("default")
 
 
 class Entropy(object):
 
-    def __init__(self, data, weights=None, resolution="src", verbose=False, method="Simpson"):
+    def __init__(self, data, weights=None, resolution="auto", verbose=False, method="Simpson"):
         # flags and output
         self.__pdf = None
         self.__pdf_x = None
@@ -32,8 +33,8 @@ class Entropy(object):
         self.__weights = weights
         # other input
         self.__method = process_method_argument(method)
-        self.__resolution = process_resolution_argument(resolution, self.data)
         self.__verbose = verbose
+        self.__resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose)
 
     def calculate(self, resolution=None, method=None, verbose=None, id_gas=8.314):
         """Calculate the dihedral entropy of a set of dihedrals.
@@ -70,7 +71,7 @@ class Entropy(object):
             verbose = self.verbose
 
         if not (resolution is None):  # reset resolution eventually
-            new_res = process_resolution_argument(resolution, self.data)
+            new_res = process_resolution_argument(resolution, self.data, verbose=verbose)
             self.__resolution = new_res
             if verbose:
                 print("Using resolution of {}".format(self.resolution))
