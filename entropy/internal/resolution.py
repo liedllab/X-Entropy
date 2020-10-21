@@ -54,7 +54,8 @@ def process_resolution_argument(resolution, data, verbose=False):
 
     """
     if isinstance(resolution, str):
-        return next_power_of_two(resolution_from_rule_of_thumb(resolution, data, verbose=verbose))
+        resolution = resolution_from_rule_of_thumb(resolution, data, verbose=verbose)
+        # will be checked for whether it is a power of two or not below
     elif isinstance(resolution, int):
         pass
     elif isinstance(resolution, float):
@@ -93,7 +94,8 @@ def resolution_from_rule_of_thumb(resolution, data, verbose=False):
         err_msg = "Cannot interpret given argument for resolution. " \
                   "Give either an integer, or choose of the following:\n{}".format(rules_of_thumb.keys())
         raise ValueError(err_msg)
-    squeezed_shape = np.squeeze(data).shape
+    data = np.squeeze(data)  # you need to do this, because otherwise, you will have issues with single data sets...
+    squeezed_shape = data.shape
     if len(squeezed_shape) == 1:
         return rules_of_thumb[resolution](data)
     elif len(squeezed_shape) == 2:
