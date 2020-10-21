@@ -50,8 +50,8 @@ class dihedralEntropy(object):
         self.__weights = weights
         # other input
         self.__method = process_method_argument(method)
-        self.__resolution = process_resolution_argument(resolution, self.data)
         self.__verbose = verbose
+        self.__resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose)
 
     def calculate(self, resolution=None, method=None, verbose=None, id_gas=id_gas_SI):
         """Calculate the dihedral entropy of a set of dihedrals.
@@ -88,7 +88,7 @@ class dihedralEntropy(object):
             verbose = self.verbose
 
         if not (resolution is None):  # reset resolution eventually
-            new_res = process_resolution_argument(resolution, self.data)
+            new_res = process_resolution_argument(resolution, self.data, verbose=verbose)
             self.__resolution = new_res
             if verbose:
                 print("Using resolution of {}".format(self.resolution))
@@ -243,7 +243,6 @@ class dihedralEntropy(object):
         print("You really shouldn't change .pdf_x yourself. Use .calculate()")
         pass
 
-    #getter
     @property
     def method(self):
         return self.__method

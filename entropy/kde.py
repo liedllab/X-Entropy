@@ -11,7 +11,7 @@ from .internal.pre_post_processing import sanity_check_input_data, process_weigh
 
 class kde(object):
 
-    def __init__(self, data, weights=None, resolution="src", verbose=False):
+    def __init__(self, data, weights=None, resolution="auto", verbose=False):
         # to be set after calculation
         self.__is_finished = False
         self.__pdf = None
@@ -24,8 +24,8 @@ class kde(object):
         sanity_check_input_data(data, weights, weight_switch)
         self.__data = data
         self.__weights = weights
-        self.resolution = process_resolution_argument(resolution, self.data)
         self.__verbose = verbose
+        self.resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose)
 
     def calculate(self, resolution=None, verbose=None):
         """Perform the kde
@@ -46,7 +46,7 @@ class kde(object):
         else:
             verbose = self.verbose
         if not (resolution is None):
-            new_res = process_resolution_argument(resolution, self.data)
+            new_res = process_resolution_argument(resolution, self.data, verbose=verbose)
             if verbose:
                 print("Using resolution of {}".format(new_res))
             self.__resolution = new_res
