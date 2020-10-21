@@ -25,7 +25,7 @@ class kde(object):
         self.__data = data
         self.__weights = weights
         self.__verbose = verbose
-        self.resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose)
+        self.__resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose)
 
     def calculate(self, resolution=None, verbose=None):
         """Perform the kde
