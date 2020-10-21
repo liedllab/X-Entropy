@@ -8,7 +8,7 @@ import numpy as np
 from entropy.kde_kernel import _kde_kernel
 from .internal.resolution import process_resolution_argument
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
-    process_weights_argument, process_method_argument
+    process_weights_argument, process_method_argument, reshape_arrays_eventually
 from .constants import id_gas_SI
 import warnings
 
@@ -36,11 +36,11 @@ class dihedralEntropy(object):
 
     def __init__(self, data, weights=None, resolution=4096, verbose=False, method="Simpson"):
         # flags and output
-        self.__pdfs = None
-        self.__pdf_xs = None
+        self.__pdf = None
+        self.__pdf_x = None
         self.__bandwidth = None
         self.__is_finished = False
-        self.__entropies = None
+        self.__entropy = None
         # input data
         weights, weight_switch = process_weights_argument(weights, verbose=verbose)
         self.__has_weights = weight_switch
@@ -135,13 +135,14 @@ class dihedralEntropy(object):
         if verbose:
             print("KDE finished.")
 
-        self.__pdf_xs = np.array(pdf_xs)
+        ents = reshape_arrays_eventually(np.array(ents))
+        self.__pdf_x = reshape_arrays_eventually(np.array(pdf_xs))
         self.__bandwidth = np.array(bws)
-        self.__pdfs = np.array(pdfs)
-        self.__entropies = np.array(ents)
+        self.__pdf = reshape_arrays_eventually(np.array(pdfs))
+        self.__entropy = ents
 
         self.__is_finished = True
-        return np.array(ents)
+        return ents
 
     @property
     def resolution(self):
@@ -199,14 +200,14 @@ class dihedralEntropy(object):
         pass
 
     @property
-    def pdfs(self):
+    def pdf(self):
         """Probability density function. """
         if not self.is_finished:
             self.calculate()
-        return self.__pdfs
+        return self.__pdf
 
-    @pdfs.setter
-    def pdfs(self, value):
+    @pdf.setter
+    def pdf(self, value):
         print("You really shouldn't change .pdf yourself. Use .calculate()")
         pass
 
@@ -231,14 +232,14 @@ class dihedralEntropy(object):
         pass
 
     @property
-    def pdf_xs(self):
+    def pdf_x(self):
         """Grid for probability density function. """
         if not self.is_finished:
             self.calculate()
-        return self.__pdf_xs
+        return self.__pdf_x
 
-    @pdf_xs.setter
-    def pdf_xs(self, value):
+    @pdf_x.setter
+    def pdf_x(self, value):
         print("You really shouldn't change .pdf_x yourself. Use .calculate()")
         pass
 
@@ -256,13 +257,13 @@ class dihedralEntropy(object):
         self.__method = process_method_argument(value)
 
     @property
-    def entropies(self):
+    def entropy(self):
         """Calculated entropies for the data sets."""
         if not self.is_finished:
             self.calculate()
-        return self.__entropies
+        return self.__entropy
 
-    @entropies.setter
-    def entropies(self, value):
+    @entropy.setter
+    def entropy(self, value):
         print("You really shouldn't change .entropies yourself. Use .calculate()")
         pass

@@ -1,6 +1,13 @@
 import numpy as np
 
 
+def reshape_arrays_eventually(some_array):
+    out = np.squeeze(some_array)
+    if out.shape == ():  # special case: single number
+        out = out[()]  # weird way of accessing a squeezed single number for np arrays
+    return out
+
+
 def start_end_from_grid(grid):
     # You will need this for non dihedrals...
     return np.nanmin(grid), np.nanmax(grid)
