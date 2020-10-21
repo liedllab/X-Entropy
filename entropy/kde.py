@@ -6,7 +6,7 @@ part of the entroPy module
 import numpy as np
 from entropy.kde_kernel import _kde_kernel
 from .internal.resolution import process_resolution_argument
-from .internal.pre_post_processing import sanity_check_input_data, process_weights_argument
+from .internal.pre_post_processing import sanity_check_input_data, process_weights_argument, reshape_arrays_eventually
 
 
 class kde(object):
@@ -61,9 +61,9 @@ class kde(object):
         self.__is_finished = True
         if verbose:
             print("KDE finished.")
-        self.__pdf_x = kernel.get_grid()
+        self.__pdf_x = reshape_arrays_eventually(kernel.get_grid())
         self.__bandwidth = kernel.get_bandwidth()
-        self.__pdf = kernel.get_pdf()
+        self.__pdf = reshape_arrays_eventually(kernel.get_pdf())
 
     @property
     def resolution(self):
