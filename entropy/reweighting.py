@@ -2,7 +2,7 @@ import numpy as np
 
 
 # Boltzmann constant in kCal/(mol*K):
-from .constants import id_gas_SI
+from .constants import id_gas_SI, id_gas_kcal
 
 
 def maclaurin_series(xs, mac_order=10):
@@ -34,8 +34,8 @@ def calculate_amd_weight_maclau(boostEne, mac_order=10, T=300.0, id_gas=id_gas_S
         The order of the Maclaurin series (default is 10)
     T: float, optional
         The simulation temperature, used to calculate the Boltzmann factor from the energies (default is 300.0)
-    kb: float, optional
-        Boltzmann constant. Default: 0.001987204118 kCal/(mol*K)
+    id_gas: float, optional
+        ideal gas constant. Default: 8.314 J/(mol*K)
 
     Returns
     -----------------------------
@@ -47,10 +47,11 @@ def calculate_amd_weight_maclau(boostEne, mac_order=10, T=300.0, id_gas=id_gas_S
     # for x in range(mc_order+1):
     #     MCweight = np.add(MCweight, (np.divide(np.power(boostEne, x), math.factorial(x))))
     # return MCweight
-    return maclaurin_series(scaled_biasE, mac_order=mac_order)
+    non_norm_weights = maclaurin_series(scaled_biasE, mac_order=mac_order)
+    return non_norm_weights/np.sum(non_norm_weights)
 
 
-def calculate_amd_weight_exp(boostEne, T=300.0, kb=KB_kcal):
+def calculate_amd_weight_exp(boostEne, T=300.0, id_gas=id_gas_kcal):
     """Calculate weights from aMD simulation boost energies for histogram
     reweighing using Maclaurin series expansion (see https://doi.org/10.1021/ct500090q).
 
