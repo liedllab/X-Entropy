@@ -20,7 +20,7 @@ def is_power_of_two(val):
 
     pows_of_two = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048,
                    4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288]
-    val = int(val)
+    # val = int(val)  # this will cut off decimals, therefore example: int(16.6) in pows_of_two -> True
     return val in pows_of_two
 
 
@@ -107,7 +107,7 @@ def resolution_from_rule_of_thumb(resolution, data, verbose=False):
         return 4096
 
 
-def minim_or_sqrt(data, minim=16):
+def minim_or_sqrt(data, minim=32):
     return np.max([minim, square_root_choice(data)])
 
 
