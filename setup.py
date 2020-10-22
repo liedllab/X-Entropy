@@ -3,6 +3,7 @@
 #from glob import glob
 from setuptools import Extension, setup
 from Cython.Build import cythonize
+#from datetime import datetime
 
 setup(
         name = 'DihedralEntropy',
@@ -12,7 +13,8 @@ setup(
         author_email="johannes.kraml@uibk.ac.at",
 
         py_modules=['entropy.dihedrals', 'entropy.kde', 'entropy.constants', 'entropy.entropy',
-                    'entropy.internal.resolution', 'entropy.internal.pre_post_processing'],
+            'entropy.reweighting','entropy.internal.resolution', 
+            'entropy.internal.pre_post_processing'],
 
         ext_modules = cythonize([
             Extension(
@@ -27,3 +29,5 @@ setup(
             ),
         ])
 )
+#print("Installed at:\n{}".format(datetime.now()))
+

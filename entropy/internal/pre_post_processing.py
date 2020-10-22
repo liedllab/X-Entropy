@@ -38,7 +38,7 @@ def preprocess_dihedral_data(diheds, weights, weight_switch):
     if weight_switch:  #
         weights_out = []
         for weight in weights:
-            weights_out.append(np.conatenate([weight, weight, weight]))
+            weights_out.append(np.concatenate([weight, weight, weight]))
         weights = np.array(weights_out)
 
     return diheds, weights
