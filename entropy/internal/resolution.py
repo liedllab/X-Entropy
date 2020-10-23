@@ -1,6 +1,6 @@
 import warnings
 import numpy as np
-from .pre_post_processing import start_end_from_grid
+from entropy.internal.pre_post_processing import start_end_from_grid
 
 
 def is_power_of_two(val):
@@ -39,72 +39,22 @@ def next_power_of_two(val):
     return int(2**(np.log(val) // np.log(2) + 1))
 
 
-def process_resolution_argument(resolution, data, verbose=False):
-    """Warns about potentially too high or too low
-    values and picks the next higher power of two,
-    if it was no power of two initially.
-
-    Parameters
-    ----------
-    resolution
-    data
-
-    Returns
-    -------
-
-    """
-    if isinstance(resolution, str):
-        resolution = resolution_from_rule_of_thumb(resolution, data, verbose=verbose)
-        # will be checked for whether it is a power of two or not below
-    elif isinstance(resolution, int):
-        pass
-    elif isinstance(resolution, float):
-        print("Resolution is not of type int. Trying to cast it to int...")
-        resolution = int(resolution)
-    else:
-        err_msg = "Cannot interpret given argument for resolution:\n{}\n" \
-                  "Please give either a single integer or a string.".format(resolution)
-        raise ValueError(err_msg)
-    if resolution < 100:
-        warn_msg = "You are using a rather small resolution. " \
-                   "This may potentially lead to inaccurate results..."
-        warnings.warn(warn_msg, RuntimeWarning)
-    elif resolution > 10000:
-        warn_msg = "You are using a rather large resolution. " \
-                   "Amongst other things, this may potentially lead to very long runtimes " \
-                   "without necessarily improving the accuracy of the result..."
-        warnings.warn(warn_msg, RuntimeWarning)
-
-    if not is_power_of_two(resolution):
-        resolution = next_power_of_two(resolution)
-    return resolution
+def is_integer(resolution):
+    return isinstance(resolution, int) or isinstance(resolution, np.int64) or \
+           isinstance(resolution, np.int) or isinstance(resolution, np.int32)
 
 
-def resolution_from_rule_of_thumb(resolution, data, verbose=False):
-    rules_of_thumb = {"auto": minim_or_sqrt,
-                      "freedman_diaconis": freedman_diaconis, "fd": freedman_diaconis,
-                      "sturges": sturges,
-                      "doane": doane,
-                      "sqrt": square_root_choice,
-                      "scott": scott}
-    resolution = resolution.lower()
-    resolution = resolution.replace(" ", "_")
+def is_float(resolution):
+    return isinstance(resolution, float) or isinstance(resolution, np.float64) or \
+           isinstance(resolution, np.float) or isinstance(resolution, np.float32)
 
-    if not (resolution in list(rules_of_thumb.keys())):
-        err_msg = "Cannot interpret given argument for resolution. " \
-                  "Give either an integer, or choose of the following:\n{}".format(rules_of_thumb.keys())
-        raise ValueError(err_msg)
-    data = np.squeeze(data)  # you need to do this, because otherwise, you will have issues with single data sets...
-    squeezed_shape = data.shape
-    if len(squeezed_shape) == 1:
-        return rules_of_thumb[resolution](data)
-    elif len(squeezed_shape) == 2:
-        if verbose:
-            print("Found multiple data sets. Applying rule of thumb on all, and take the maximum resolution estimated.")
-        return np.max([rules_of_thumb[resolution](dat) for dat in data])
-    else:  # bad paq. you really should handle this properly...
-        print("Suspicious data shape...")
-        return 4096
+
+def auto_dihedral_resolution(data):
+    data_size = len(data)
+    step = (np.sqrt(data_size*6)//64+1)*256
+    if not is_power_of_two(step):
+        step = next_power_of_two(step)
+    return np.min([step, 4096])
 
 
 def minim_or_sqrt(data, minim=32):
@@ -156,3 +106,83 @@ def res_from_silverman(data):
     data_range = end-start
     predicted_bandw = silverman(data)
     return data_range / predicted_bandw
+
+
+def rules_of_thumb():
+    return {"auto": minim_or_sqrt,
+            "freedman_diaconis": freedman_diaconis, "fd": freedman_diaconis,
+            "sturges": sturges,
+            "doane": doane,
+            "sqrt": square_root_choice,
+            "scott": scott}
+
+
+def rules_of_thumb_dihedral():
+    return {"auto": auto_dihedral_resolution,
+            "freedman_diaconis": freedman_diaconis, "fd": freedman_diaconis,
+            "sturges": sturges,
+            "doane": doane,
+            "sqrt": square_root_choice,
+            "scott": scott}
+
+
+def resolution_from_rule_of_thumb(resolution, data, verbose=False, rules_of_thumb=rules_of_thumb()):
+    resolution = resolution.lower()
+    resolution = resolution.replace(" ", "_")
+
+    if not (resolution in list(rules_of_thumb.keys())):
+        err_msg = "Cannot interpret given argument for resolution. " \
+                  "Give either an integer, or choose of the following:\n{}".format(rules_of_thumb.keys())
+        raise ValueError(err_msg)
+    data = np.squeeze(data)  # you need to do this, because otherwise, you will have issues with single data sets...
+    squeezed_shape = data.shape
+    if len(squeezed_shape) == 1:
+        return rules_of_thumb[resolution](data)
+    elif len(squeezed_shape) == 2:
+        if verbose:
+            print("Found multiple data sets. Applying rule of thumb on all, and take the maximum resolution estimated.")
+        return np.max([rules_of_thumb[resolution](dat) for dat in data])
+    else:  # bad paq. you really should handle this properly...
+        print("Suspicious data shape...")
+        return 4096
+
+
+def process_resolution_argument(resolution, data, rules_of_thumb=rules_of_thumb(), verbose=False):
+    """Warns about potentially too high or too low
+    values and picks the next higher power of two,
+    if it was no power of two initially.
+
+    Parameters
+    ----------
+    resolution
+    data
+
+    Returns
+    -------
+
+    """
+    if isinstance(resolution, str):
+        resolution = resolution_from_rule_of_thumb(resolution, data, verbose=verbose, rules_of_thumb=rules_of_thumb)
+        # will be checked for whether it is a power of two or not below
+    elif is_integer(resolution):
+        pass
+    elif is_float(resolution):
+        print("Resolution is not of type int. Trying to cast it to int...")
+        resolution = int(resolution)
+    else:
+        err_msg = "Cannot interpret given argument for resolution:\n{}\n" \
+                  "Please give either a single integer or a string.".format(resolution)
+        raise ValueError(err_msg)
+    if resolution < 100:
+        warn_msg = "You are using a rather small resolution. " \
+                   "This may potentially lead to inaccurate results..."
+        warnings.warn(warn_msg, RuntimeWarning)
+    elif resolution > 10000:
+        warn_msg = "You are using a rather large resolution. " \
+                   "Amongst other things, this may potentially lead to very long runtimes " \
+                   "without necessarily improving the accuracy of the result..."
+        warnings.warn(warn_msg, RuntimeWarning)
+
+    if not is_power_of_two(resolution):
+        resolution = next_power_of_two(resolution)
+    return resolution
