@@ -54,7 +54,7 @@ def auto_dihedral_resolution(data):
     step = (np.sqrt(data_size*6)//64+1)*256
     if not is_power_of_two(step):
         step = next_power_of_two(step)
-    return np.min([step, 4096])
+    return np.min([int(step), 4096])
 
 
 def minim_or_sqrt(data, minim=32):
