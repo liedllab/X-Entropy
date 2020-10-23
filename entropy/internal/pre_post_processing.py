@@ -31,17 +31,38 @@ def process_weights_argument(weights, verbose=False):
 
 def preprocess_dihedral_data(diheds, weights, weight_switch):
     # mirror data
-    diheds_out = []
-    for dihed in diheds:
-        diheds_out.append(np.concatenate([dihed-360, dihed, dihed+360]))
-    diheds = np.array(diheds_out)
+    # # <- for multiple data sets <- # #
+    # diheds_out = []
+    # for dihed in diheds:
+    #     diheds_out.append(np.concatenate([dihed-360, dihed, dihed+360]))
+    # diheds = np.array(diheds_out)
+    # if weight_switch:  #
+    #     weights_out = []
+    #     for weight in weights:
+    #         weights_out.append(np.concatenate([weight, weight, weight]))
+    #     weights = np.array(weights_out)
+
+    diheds = np.concatenate([diheds - 360, diheds, diheds + 360])
     if weight_switch:  #
-        weights_out = []
-        for weight in weights:
-            weights_out.append(np.concatenate([weight, weight, weight]))
-        weights = np.array(weights_out)
+        weights = np.concatenate([weights, weights, weights])
 
     return diheds, weights
+
+
+def postprocess_dihedral_pdf(pdf, pdf_x, norm_for_mirrored_data=1/3):
+    # mirror data
+    lower_idx = np.argmin(np.abs(pdf_x + 180))
+    if pdf_x[lower_idx] < -180:
+        lower_idx = lower_idx + 1
+    upper_idx = np.argmin(np.abs(pdf_x - 180))
+    if pdf_x[upper_idx] > 180:
+        upper_idx = upper_idx - 1
+
+    pdf_out = pdf[lower_idx:upper_idx]
+    pdf_out /= norm_for_mirrored_data  # we normalized in the "mirrored data", which is 3 times the actual data
+    pdf_x_out = pdf_x[lower_idx:upper_idx]
+    assert len(pdf_out)==len(pdf_x_out)
+    return pdf_out, pdf_x_out
 
 
 def sanity_check_input_data(data, weights=None, weight_switch=True):

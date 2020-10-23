@@ -11,7 +11,7 @@ from entropy.internal.resolution import minim_or_sqrt
 from .internal.resolution import process_resolution_argument, rules_of_thumb_dihedral
 
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
-    process_weights_argument, process_method_argument, reshape_arrays_eventually
+    process_weights_argument, process_method_argument, reshape_arrays_eventually, postprocess_dihedral_pdf
 from .constants import id_gas_SI
 import warnings
 
@@ -19,43 +19,28 @@ import warnings
 warnings.simplefilter("always")
 
 
-def postprocess_dihedral_pdf(pdf, pdf_x, norm_for_mirrored_data=1/3):
-    # mirror data
-    lower_idx = np.argmin(np.abs(pdf_x + 180))
-    if pdf_x[lower_idx] < -180:
-        lower_idx = lower_idx + 1
-    upper_idx = np.argmin(np.abs(pdf_x - 180))
-    if pdf_x[upper_idx] > 180:
-        upper_idx = upper_idx - 1
-
-    pdf_out = pdf[lower_idx:upper_idx]
-    pdf_out /= norm_for_mirrored_data  # we normalized in the "mirrored data", which is 3 times the actual data
-    pdf_x_out = pdf_x[lower_idx:upper_idx]
-    assert len(pdf_out)==len(pdf_x_out)
-    return pdf_out, pdf_x_out
-
-
 class dihedralEntropy(object):
 
-    def __init__(self, data, weights=None, resolution=4096, verbose=False, method="Simpson"):
+    def __init__(self, data, weights=None, resolution="auto", verbose=False, method="Simpson"):
         # flags and output
+        self.__verbose = verbose
         self.__pdf = None
         self.__pdf_x = None
         self.__bandwidth = None
         self.__is_finished = False
         self.__entropy = None
         # input data
+        # determine resolution from non mirrored data!!
+        self.__resolution = process_resolution_argument(resolution, data, verbose=self.verbose,
+                                                        rules_of_thumb=rules_of_thumb_dihedral())
+        # process input arrays
         weights, weight_switch = process_weights_argument(weights, verbose=verbose)
         self.__has_weights = weight_switch
         data, weights = process_data_shapes(data, weights, weight_switch)
-        data, weights = preprocess_dihedral_data(data, weights, weight_switch)
         self.__data = data
         self.__weights = weights
         # other input
         self.__method = process_method_argument(method)
-        self.__verbose = verbose
-        self.__resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose,
-                                                        rules_of_thumb=rules_of_thumb_dihedral())
 
     def calculate(self, resolution=None, method=None, verbose=None, id_gas=id_gas_SI):
         """Calculate the dihedral entropy of a set of dihedrals.
@@ -116,6 +101,8 @@ class dihedralEntropy(object):
 
         bws, pdf_xs, pdfs, ents = [], [], [], []
         for dat, ws in iterable:
+            # apply periodic copies here
+            dat, ws = preprocess_dihedral_data(dat, ws, self.has_weights)
             # depending on whether weights are None or not, you will get a weighted pdf or a simple pdf
             kernel = _kde_kernel(dat, self.resolution, ws)
             kernel.calculate()
