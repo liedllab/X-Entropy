@@ -6,7 +6,10 @@ part of the entroPy module
 """
 import numpy as np
 from entropy.kde_kernel import _kde_kernel
-from .internal.resolution import process_resolution_argument
+
+from entropy.internal.resolution import minim_or_sqrt
+from .internal.resolution import process_resolution_argument, rules_of_thumb_dihedral
+
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
     process_weights_argument, process_method_argument, reshape_arrays_eventually
 from .constants import id_gas_SI
@@ -51,7 +54,8 @@ class dihedralEntropy(object):
         # other input
         self.__method = process_method_argument(method)
         self.__verbose = verbose
-        self.__resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose)
+        self.__resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose,
+                                                        rules_of_thumb=rules_of_thumb_dihedral())
 
     def calculate(self, resolution=None, method=None, verbose=None, id_gas=id_gas_SI):
         """Calculate the dihedral entropy of a set of dihedrals.
@@ -88,7 +92,8 @@ class dihedralEntropy(object):
             verbose = self.verbose
 
         if not (resolution is None):  # reset resolution eventually
-            new_res = process_resolution_argument(resolution, self.data, verbose=verbose)
+            new_res = process_resolution_argument(resolution, self.data, verbose=verbose,
+                                                  rules_of_thumb=rules_of_thumb_dihedral())
             self.__resolution = new_res
             if verbose:
                 print("Using resolution of {}".format(self.resolution))
@@ -155,7 +160,7 @@ class dihedralEntropy(object):
         if self.is_finished:
             print("After changing the resolution you should use .calculate() again, before accessing any results...\n"
                   "It is probably better to explicitly call calculate with a specific resolution.")
-        self.__resolution = process_resolution_argument(value, self.data)
+        self.__resolution = process_resolution_argument(value, self.data, rules_of_thumb=rules_of_thumb_dihedral())
 
     @property
     def verbose(self):
