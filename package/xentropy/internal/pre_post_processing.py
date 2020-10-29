@@ -75,7 +75,7 @@ def sanity_check_input_data(data, weights=None, weight_switch=True):
         if False in np.isfinite(weights):
             err_msg = "Non-finite values in weights!"
             raise ValueError(err_msg)
-        if data.shape != weights.shape:
+        if data.shape[-1] != weights.shape[-1]:
             err_msg = "Shapes of data and weights is inconsistent!\n" \
                       "data: {}, weights: {}".format(data.shape, weights.shape)
             raise ValueError(err_msg)
@@ -92,7 +92,8 @@ def process_data_shapes(data, weights=None, weight_switch=True):
     elif len(data.shape) == 1:
         data = np.array([data])
         if weight_switch:
-            weights = np.array([weights])
+            weights = np.array(weights)
+            # this is as good as pass...
     elif len(data.shape) == 2:
         pass  # This ia all good
     else:
