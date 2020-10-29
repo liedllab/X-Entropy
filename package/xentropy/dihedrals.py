@@ -95,14 +95,11 @@ class dihedralEntropy(object):
         if self.has_weights:
             if verbose:
                 print("Weights have been given for the calculation of the histograms.")
-            iterable = zip(self.data, self.weights)
-        else:
-            iterable = zip(self.data, np.full(len(self.data), None))
 
         bws, pdf_xs, pdfs, ents = [], [], [], []
-        for dat, ws in iterable:
+        for dat in self.data:
             # apply periodic copies here
-            dat, ws = preprocess_dihedral_data(dat, ws, self.has_weights)
+            dat, ws = preprocess_dihedral_data(dat, self.weights, self.has_weights)
             # depending on whether weights are None or not, you will get a weighted pdf or a simple pdf
             kernel = _kde_kernel(dat, self.resolution, ws)
             kernel.calculate()
