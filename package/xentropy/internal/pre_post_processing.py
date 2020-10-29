@@ -61,7 +61,7 @@ def postprocess_dihedral_pdf(pdf, pdf_x, norm_for_mirrored_data=1/3):
     pdf_out = pdf[lower_idx:upper_idx]
     pdf_out /= norm_for_mirrored_data  # we normalized in the "mirrored data", which is 3 times the actual data
     pdf_x_out = pdf_x[lower_idx:upper_idx]
-    assert len(pdf_out)==len(pdf_x_out)
+    assert len(pdf_out) == len(pdf_x_out)
     return pdf_out, pdf_x_out
 
 
@@ -95,6 +95,10 @@ def process_data_shapes(data, weights=None, weight_switch=True):
             weights = np.array(weights)
             # this is as good as pass...
     elif len(data.shape) == 2:
+        if data.shape[0] > data.shape[1]:
+            warn_msg = "Your input data has suspicious shape. First dim is expected to be smaller than second dim. " \
+                       "Data should have shape: (N_features, N_frames)."
+            raise RuntimeWarning(warn_msg)
         pass  # This ia all good
     else:
         err_msg = "Shape of data is suspicious\n" \
