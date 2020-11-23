@@ -243,7 +243,7 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
 
   // This part of the code is used to calculate the inital functional, only that no new t_star will be calculated.
   #pragma omp parallel for reduction(+: f)
-  for (int i = 0; i < (int) (m_xgrid.size() - 1); ++i) {
+  for (int i = 0; i < static_cast<int>(m_xgrid.size() - 1); ++i) {
     f += calcIntPow(i_arr[i], 5) * data[i] * exp(-1 * i_arr[i] * M_PI * M_PI * m_tStar);
   }
 

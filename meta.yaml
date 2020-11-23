@@ -1,0 +1,30 @@
+package:
+  name: entropy
+  version: "3.1a"
+
+source:
+  path: .
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  build:
+    - fftw
+
+  host:
+    - python
+    - setuptools
+    - Cython
+    - fftw
+    - numpy x.x
+  
+  run:
+    - python
+    - fftw
+    - numpy x.x
+
+test:
+  imports:
+    - entropy

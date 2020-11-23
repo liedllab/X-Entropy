@@ -1,8 +1,8 @@
-from distutils.core import setup, Extension
-import sys
-from glob import glob
-
-version = glob("/usr/lib/x86_64*/libboost_python-py3*.so")[0][-5:][:-3]
+#from distutils.core import setup, Extension
+#import sys
+#from glob import glob
+from setuptools import Extension, setup, find_packages
+from Cython.Build import cythonize
 
 setup(
         name = 'DihedralEntropy',
@@ -11,7 +11,8 @@ setup(
         author = "Johannes Kraml",
         author_email="johannes.kraml@uibk.ac.at",
 
-        py_modules=['entropy.dihedrals'],
+        #py_modules=['entropy.dihedrals', 'entropy.kde', 'entropy.resolution'],
+        packages = find_packages(),
 
         ext_modules = [
             Extension(

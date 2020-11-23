@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: DihedralEntropy
+Version: 1.3
+Summary: Calculate the entropy of a given set of data, using the fftw3 library.
+Home-page: UNKNOWN
+Author: Johannes Kraml
+Author-email: johannes.kraml@uibk.ac.at
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
