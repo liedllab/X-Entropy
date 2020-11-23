@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <vector>
 #include <memory>
 #include <algorithm>
@@ -9,19 +8,18 @@
 
 #include "Exceptions.h"
 
-
-
-
-class IIntegration {
+class IIntegration
+{
 public:
-  virtual ~IIntegration() {}
-	virtual double operator() (const std::vector<double> &function, double range) const noexcept = 0;
+    virtual ~IIntegration() {}
+    virtual double operator()(const std::vector<double> &function, double range) const noexcept = 0;
 };
 
-class Simpson : public IIntegration {
+class Simpson : public IIntegration
+{
 public:
-	Simpson() {}
-  /*****
+    Simpson() {}
+    /*****
    * @brief Uses the composite Simpson's Rule.
    * This function implements the Simpson's rule of numerical integration.
    * In the following is the formula, it is split into different lines in
@@ -43,13 +41,14 @@ public:
    * 
    * @returns The integral for the function, assuming range as a - b.
    */
-	virtual double operator() (const std::vector<double> &function, double range) const noexcept override;
+    virtual double operator()(const std::vector<double> &function, double range) const noexcept override;
 };
 
-class Riemann : public IIntegration {
+class Riemann : public IIntegration
+{
 public:
-	Riemann() {};
-  /*****
+    Riemann(){};
+    /*****
    * @brief Uses the Riemann type integral.
    * This function implements the Riemann type integral, which uses rectangles
    * to approximate the area under the curve of a dataset.
@@ -60,9 +59,8 @@ public:
    * 
    * @returns The integral for the function, assuming range as a - b.
    */
-	virtual double operator() (const std::vector<double> &function, double range) const noexcept override;
+    virtual double operator()(const std::vector<double> &function, double range) const noexcept override;
 };
-
 
 /****
  * @brief Returns the integration functor.
@@ -77,4 +75,4 @@ public:
  * @see Simpson
  * @see Riemann
  */
-std::unique_ptr<IIntegration> getFunction(const std::string& type);
+std::unique_ptr<IIntegration> getFunction(const std::string &type);

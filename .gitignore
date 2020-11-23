@@ -4,3 +4,6 @@ __pycache__
 *.out
 testapp
 build
+*.egg-info
+dist
+.ipynb_checkpoints
