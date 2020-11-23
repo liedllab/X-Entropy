@@ -1,0 +1,28 @@
+{
+  "info": {
+    "subdir": "linux-64"
+  },
+  "packages": {
+    "entropy-3.1a-np111py38_0.tar.bz2": {
+      "build": "np111py38_0",
+      "build_number": 0,
+      "depends": [
+        "cython",
+        "fftw >=3.3.8,<3.4.0a0",
+        "numpy >=1.11,<1.12.0a0",
+        "python >=3.8,<3.9.0a0",
+        "setuptools"
+      ],
+      "md5": "d11b5c04c83e84fde9b3aa96036a91d8",
+      "name": "entropy",
+      "sha256": "c90cc89635b4a588facd8301e54033433223b1b72f0e3be6926568789769ea31",
+      "size": 3328893,
+      "subdir": "linux-64",
+      "timestamp": 1602621095930,
+      "version": "3.1a"
+    }
+  },
+  "packages.conda": {},
+  "removed": [],
+  "repodata_version": 1
+}
