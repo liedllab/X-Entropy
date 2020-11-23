@@ -33,7 +33,7 @@ This is the easiest way to use this library on windows.
 A standard way to do this would be by downloading the appropriate conda file (win-64, osx, linux) and add it to the conda-bld directory.
 The user then needs to create a channel there, if this is not yet done, he can do it by using 
 ```bash
-conda index [PATH/TO/ANACONDA]/conda-bld.
+conda index [PATH/TO/ANACONDA]/conda-bld
 ```
 Then copy the folder in there and from channeldata.update copy the entropy JSON into channeldata and change to the appropriate subdir 
 (default win-64).
@@ -46,12 +46,14 @@ After this, the package is callable by using
 import entropy
 ```
 
-Dependencies:
+### Dependencies
 
 - openmp
 - fftw3
 
 If installed using conda, these are added automatically.
+
+## Bugs
 
 As of now, there are no known bugs, if you find any, please contact me.
 
