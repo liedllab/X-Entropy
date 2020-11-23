@@ -1,0 +1,26 @@
+{
+  "info": {
+    "subdir": "win-64"
+  },
+  "packages": {
+    "entropy-3.1a-np111py37_0.tar.bz2": {
+      "build": "np111py37_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "numpy >=1.11,<1.12.0a0",
+        "python >=3.7,<3.8.0a0"
+      ],
+      "md5": "ff45b1e0b1a5342d2e017bd4ced1be30",
+      "name": "entropy",
+      "sha256": "9b0dbaf497bc9e6eecbf7652da0e03364773a2c9cdc213bbef0a16e3d28ee1db",
+      "size": 15831391,
+      "subdir": "win-64",
+      "timestamp": 1602617212801,
+      "version": "3.1a"
+    }
+  },
+  "packages.conda": {},
+  "removed": [],
+  "repodata_version": 1
+}
