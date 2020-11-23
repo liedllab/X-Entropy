@@ -1,25 +1,3 @@
-/************************************************************************************************************************
- *															                                                            *
- *						GCE (1.0)					                                                                    *
- *	This is an implementation of the Generalized Cross Entropy Method, based on a matlab script by Z. Botev.	        *
- *	It was reprogrammed from the former GCE, for parallelization and to create a python connectable library.	        *
- *	The GCE Method calculates a density estimation, based on a prior probability density p, a generalized 		        *
- *	Cross Entropy distance D between two probability densities and a finite set of constraints connecting the	        *
- *	probability model with the data. The Cross Entropy Postulate states that, given the values stated before,	        *
- *	the posterior density g can be found uniquely, or more general, given any three of those entities, than 	        *
- *	fourth one can be found uniquely.										                                            *
- *	Here the Csiszar distance is used as a distance between two probability densities and is minimized to 		        *
- *	calculate the density estimation. And the constraint are all bona fide density functions on the set.		        *
- *															                                                            *
- ************************************************************************************************************************
- *															                                                            *
- *	Written by Johannes Kraml, based on Code by RG Huber and Z Botev. This program was implemented with the		        *
- *	help of Florian Hofer.												                                                *
- *															                                                            *
- *	Contact: johannes.kraml@uibk.ac.at										                                            *
- *															                                                            *
- ************************************************************************************************************************/
-
 #include "kde.h"
 
 double Gce::calcHistogramNormalizer(const std::vector<double> &weights) const
