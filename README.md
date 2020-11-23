@@ -10,18 +10,35 @@ Features were added to ensure better parallelism for the kde, as well as for the
 
 ## Installation
 
+### Building with pip
+
 Please ensure that you are having a python version higher than 3.3 for this package to work properly. First change to the directory containing the entropy module. The package can then be installed via
 
 ```bash
 pip install .
 ```
 
-If pip is not working correctly, the command
+### Building with setup.py
 
 ```bash
 python setup.py build
 python setup.py install
 ```
+
+### Using Conda
+
+The package is not yet uploaded to a conda channel. Thus, the user is tasked to create a local conda channel and copy the file there.
+This is the easiest way to use this library on windows.
+
+A standard way to do this would be by downloading the appropriate conda file (win-64, osx, linux) and add it to the conda-bld directory.
+The user then needs to create a channel there, if this is not yet done, he can do it by using 
+```bash
+conda index [PATH/TO/ANACONDA]/conda-bld.
+```
+Then copy the folder in there and from channeldata.update copy the entropy JSON into channeldata and change to the appropriate subdir 
+(default win-64).
+
+### Test if installation worked
 
 After this, the package is callable by using
 
@@ -30,10 +47,11 @@ import entropy
 ```
 
 Dependencies:
-The dependencies are not yet handled correctly, thus the user is asked to ensure he fulfills the necessary dependencies on his system.
 
 - openmp
 - fftw3
+
+If installed using conda, these are added automatically.
 
 As of now, there are no known bugs, if you find any, please contact me.
 
