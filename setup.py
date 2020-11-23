@@ -5,6 +5,12 @@ from setuptools import Extension, setup
 from Cython.Build import cythonize
 #from datetime import datetime
 
+win_flags = ['/O2', '/openmp']
+win_libs = ['fftw3']
+
+linux_flags = ['-O3', '-fopenmp']
+linux_libs = ['fftw3', 'm', 'gomp']
+
 setup(
         name = 'DihedralEntropy',
         version = '1.8',
@@ -23,8 +29,8 @@ setup(
                   'entropy/kde_kernel/kde_kernel.pyx',
                   'src/Integrators.cpp'
                 ],
-                libraries=['fftw3', 'm', 'gomp'],
-                extra_compile_args=['-O3', '-fopenmp'],
+                libraries=win_libs,
+                extra_compile_args=win_flags,
                 language = "c++",
             ),
         ])
