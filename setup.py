@@ -13,14 +13,14 @@ if platform.system() == 'Windows':
     inc_dirs=[]
     lib_dirs=[]
 elif platform.system() == 'Linux':
-    flags = ['-O3', '-fopenmp']
+    flags = ['-fopenmp']
     libs = ['fftw3', 'm', 'gomp']
     inc_dirs=[]
     lib_dirs=[]
     os.environ['CC'] = 'gcc'
     os.environ['CXX'] = 'g++'
 elif platform.system() == 'Darwin':
-    flags = ['-O3', '-fopenmp']
+    flags = ['-fopenmp']
     libs = ['fftw3', 'm', 'gomp']
     inc_dirs=[]
     lib_dirs=[]
