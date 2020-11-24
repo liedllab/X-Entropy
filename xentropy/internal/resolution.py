@@ -1,6 +1,6 @@
 import warnings
 import numpy as np
-from entropy.internal.pre_post_processing import start_end_from_grid
+from xentropy.internal.pre_post_processing import start_end_from_grid
 
 
 def is_power_of_two(val):

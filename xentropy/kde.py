@@ -4,7 +4,7 @@ part of the entroPy module
 @author: paq
 """
 import numpy as np
-from entropy.kde_kernel import _kde_kernel
+from xentropy.kde_kernel import _kde_kernel
 from .internal.resolution import process_resolution_argument
 from .internal.pre_post_processing import sanity_check_input_data, process_weights_argument, reshape_arrays_eventually
 
