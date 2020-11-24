@@ -5,35 +5,27 @@ part of the entroPy module
 @author: paq
 """
 import numpy as np
-from entropy.kde_kernel import _kde_kernel
-
-from entropy.internal.resolution import minim_or_sqrt
-from .internal.resolution import process_resolution_argument, rules_of_thumb_dihedral
-
+from xentropy.kde_kernel import _kde_kernel
+from .internal.resolution import process_resolution_argument
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
-    process_weights_argument, process_method_argument, reshape_arrays_eventually, postprocess_dihedral_pdf
-from .constants import id_gas_SI
+    process_weights_argument, process_method_argument, start_end_from_grid, reshape_arrays_eventually
 import warnings
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
-warnings.simplefilter("always")
+# warnings.simplefilter("always")
+warnings.simplefilter("default")
 
 
-class dihedralEntropy(object):
+class Entropy(object):
 
     def __init__(self, data, weights=None, resolution="auto", verbose=False, method="Simpson"):
         # flags and output
-        self.__verbose = verbose
         self.__pdf = None
         self.__pdf_x = None
         self.__bandwidth = None
         self.__is_finished = False
         self.__entropy = None
         # input data
-        # determine resolution from non mirrored data!!
-        self.__resolution = process_resolution_argument(resolution, data, verbose=self.verbose,
-                                                        rules_of_thumb=rules_of_thumb_dihedral())
-        # process input arrays
         weights, weight_switch = process_weights_argument(weights, verbose=verbose)
         self.__has_weights = weight_switch
         data, weights = process_data_shapes(data, weights, weight_switch)
@@ -41,8 +33,10 @@ class dihedralEntropy(object):
         self.__weights = weights
         # other input
         self.__method = process_method_argument(method)
+        self.__verbose = verbose
+        self.__resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose)
 
-    def calculate(self, resolution=None, method=None, verbose=None, id_gas=id_gas_SI):
+    def calculate(self, resolution=None, method=None, verbose=None, id_gas=8.314):
         """Calculate the dihedral entropy of a set of dihedrals.
         # TODO Docstring
         The dihedral entropy of a number of different dihedral angles can be calculated using this
@@ -77,8 +71,7 @@ class dihedralEntropy(object):
             verbose = self.verbose
 
         if not (resolution is None):  # reset resolution eventually
-            new_res = process_resolution_argument(resolution, self.data, verbose=verbose,
-                                                  rules_of_thumb=rules_of_thumb_dihedral())
+            new_res = process_resolution_argument(resolution, self.data, verbose=verbose)
             self.__resolution = new_res
             if verbose:
                 print("Using resolution of {}".format(self.resolution))
@@ -101,8 +94,6 @@ class dihedralEntropy(object):
 
         bws, pdf_xs, pdfs, ents = [], [], [], []
         for dat, ws in iterable:
-            # apply periodic copies here
-            dat, ws = preprocess_dihedral_data(dat, ws, self.has_weights)
             # depending on whether weights are None or not, you will get a weighted pdf or a simple pdf
             kernel = _kde_kernel(dat, self.resolution, ws)
             kernel.calculate()
@@ -112,15 +103,11 @@ class dihedralEntropy(object):
             pdf_temp = kernel.get_pdf()
             pdf_x_temp = kernel.get_grid()
 
-            norm_for_mirrored_data = kernel.integrate(-180, 180, method=self.method)
-            pdf_temp, pdf_x_temp = postprocess_dihedral_pdf(pdf_temp, pdf_x_temp, norm_for_mirrored_data)
-            # start, end = start_end_from_grid(pdf_x_temp)
+            start, end = start_end_from_grid(pdf_x_temp)
 
             pdf_xs.append(pdf_x_temp)
             pdfs.append(pdf_temp)
-
-            # integral = kernel.integrate(start, end, method=self.method)
-            p_logp = kernel.calculate_entropy(-180, 180, method=self.method)
+            p_logp = kernel.calculate_entropy(start, end, method=self.method)
 
             entropy = - p_logp * id_gas
             ents.append(entropy)
@@ -147,7 +134,7 @@ class dihedralEntropy(object):
         if self.is_finished:
             print("After changing the resolution you should use .calculate() again, before accessing any results...\n"
                   "It is probably better to explicitly call calculate with a specific resolution.")
-        self.__resolution = process_resolution_argument(value, self.data, rules_of_thumb=rules_of_thumb_dihedral())
+        self.__resolution = process_resolution_argument(value, self.data)
 
     @property
     def verbose(self):

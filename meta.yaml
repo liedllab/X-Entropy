@@ -1,5 +1,5 @@
 package:
-  name: entropy
+  name: xentropy
   version: "3.1a"
 
 source:
@@ -8,6 +8,7 @@ source:
 requirements:
   build:
     - fftw
+    - python
   
   host:
     - python
@@ -19,7 +20,8 @@ requirements:
   run:
     - fftw
     - numpy x.x
+    - python
 
 test:
   imports:
-    - entropy
+    - xentropy

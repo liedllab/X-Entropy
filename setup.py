@@ -28,21 +28,21 @@ elif platform.system() == 'Darwin':
     os.environ['CXX'] = 'g++'
 
 setup(
-        name = 'DihedralEntropy',
+        name = 'XEntropy',
         version = '1.8',
         description = "Calculate the entropy of a given set of data, using the fftw3 library.",
         author = "Johannes Kraml",
         author_email="johannes.kraml@uibk.ac.at",
 
-        py_modules=['entropy.dihedrals', 'entropy.kde', 'entropy.constants', 'entropy.entropy',
-            'entropy.reweighting','entropy.internal.resolution', 
-            'entropy.internal.pre_post_processing'],
+        py_modules=['xentropy.dihedrals', 'xentropy.kde', 'xentropy.constants', 'xentropy.entropy',
+            'xentropy.reweighting','xentropy.internal.resolution', 
+            'xentropy.internal.pre_post_processing'],
 
         ext_modules = cythonize([
             Extension(
-                'entropy.kde_kernel',
+                'xentropy.kde_kernel',
                 sources = [
-                  'entropy/kde_kernel/kde_kernel.pyx',
+                  'xentropy/kde_kernel/kde_kernel.pyx',
                   'src/Integrators.cpp'
                 ],
                 include_dirs=[],
