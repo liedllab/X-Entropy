@@ -3,13 +3,29 @@
 #from glob import glob
 from setuptools import Extension, setup
 from Cython.Build import cythonize
+import platform
+import os
 #from datetime import datetime
 
-win_flags = ['/O2', '/openmp']
-win_libs = ['fftw3']
-
-linux_flags = ['-O3', '-fopenmp']
-linux_libs = ['fftw3', 'm', 'gomp']
+if platform.system() == 'Windows':
+    flags = ['/O2', '/openmp']
+    libs = ['fftw3']
+    inc_dirs=[]
+    lib_dirs=[]
+elif platform.system() == 'Linux':
+    flags = ['-O3', '-fopenmp']
+    libs = ['fftw3', 'm', 'gomp']
+    inc_dirs=[]
+    lib_dirs=[]
+    os.environ['CC'] = 'gcc'
+    os.environ['CXX'] = 'g++'
+elif platform.system() == 'Darwin':
+    flags = ['-O3', '-fopenmp']
+    libs = ['fftw3', 'm', 'gomp']
+    inc_dirs=[]
+    lib_dirs=[]
+    os.environ['CC'] = 'gcc'
+    os.environ['CXX'] = 'g++'
 
 setup(
         name = 'DihedralEntropy',
@@ -29,8 +45,10 @@ setup(
                   'entropy/kde_kernel/kde_kernel.pyx',
                   'src/Integrators.cpp'
                 ],
-                libraries=win_libs,
-                extra_compile_args=win_flags,
+                include_dirs=[],
+                library_dirs=[],
+                libraries=libs,
+                extra_compile_args=flags,
                 language = "c++",
             ),
         ])
