@@ -7,7 +7,7 @@ part of the entroPy module
 import numpy as np
 from xentropy.kde_kernel import _kde_kernel
 
-from entropy.internal.resolution import minim_or_sqrt
+from xentropy.internal.resolution import minim_or_sqrt
 from .internal.resolution import process_resolution_argument, rules_of_thumb_dihedral
 
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
