@@ -1,0 +1,28 @@
+{
+  "info": {
+    "subdir": "win-64"
+  },
+  "packages": {
+    "xentropy-3.1a-py37h74a9793_0.tar.bz2": {
+      "build": "py37h74a9793_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "numpy",
+        "python >=3.7,<3.8.0a0",
+        "vc >=14.1,<15.0a0",
+        "vs2015_runtime >=14.16.27012,<15.0a0"
+      ],
+      "md5": "792f22cdcceb305960948158b0b3bbdd",
+      "name": "xentropy",
+      "sha256": "4113fdcde0fbbcdd38aea6636143cec3ab417315057b3673a1a69389d8cf9fb7",
+      "size": 64146,
+      "subdir": "win-64",
+      "timestamp": 1606324905255,
+      "version": "3.1a"
+    }
+  },
+  "packages.conda": {},
+  "removed": [],
+  "repodata_version": 1
+}
