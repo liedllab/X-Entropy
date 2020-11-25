@@ -10,22 +10,12 @@ import os
 if platform.system() == 'Windows':
     flags = ['/O2', '/openmp']
     libs = ['fftw3']
-    inc_dirs=[]
-    lib_dirs=[]
 elif platform.system() == 'Linux':
     flags = ['-fopenmp']
     libs = ['fftw3', 'm', 'gomp']
-    inc_dirs=[]
-    lib_dirs=[]
-    os.environ['CC'] = 'gcc'
-    os.environ['CXX'] = 'g++'
 elif platform.system() == 'Darwin':
     flags = ['-fopenmp']
     libs = ['fftw3', 'm', 'gomp']
-    inc_dirs=[]
-    lib_dirs=[]
-    os.environ['CC'] = 'gcc'
-    os.environ['CXX'] = 'g++'
 
 setup(
         name = 'XEntropy',
@@ -34,7 +24,7 @@ setup(
         author = "Johannes Kraml",
         author_email="johannes.kraml@uibk.ac.at",
 
-        py_modules=['xentropy.dihedrals', 'xentropy.kde', 'xentropy.constants', 'xentropy.entropy',
+        py_modules=['xentropy.dihedrals', 'xentropy.kde', 'xentropy.constants', 'xentropy.xentropy',
             'xentropy.reweighting','xentropy.internal.resolution', 
             'xentropy.internal.pre_post_processing'],
 
@@ -45,8 +35,6 @@ setup(
                   'xentropy/kde_kernel/kde_kernel.pyx',
                   'src/Integrators.cpp'
                 ],
-                include_dirs=[],
-                library_dirs=[],
                 libraries=libs,
                 extra_compile_args=flags,
                 language = "c++",

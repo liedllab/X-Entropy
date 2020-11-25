@@ -9,18 +9,18 @@ requirements:
   build:
     - fftw
     - python
+    - intel-openmp
+    - {{ compiler('cxx') }}
   
   host:
     - python
     - setuptools
     - Cython
     - fftw
-    - numpy x.x
+    - intel-openmp
   
   run:
-    - fftw
-    - numpy x.x
-    - python
+    - numpy
 
 test:
   imports:
