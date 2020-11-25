@@ -15,7 +15,7 @@ elif platform.system() == 'Linux':
     libs = ['fftw3', 'm', 'gomp']
 elif platform.system() == 'Darwin':
     flags = ['-fopenmp']
-    libs = ['fftw3', 'm', 'gomp']
+    libs = ['fftw3']
 
 setup(
         name = 'XEntropy',
