@@ -4,15 +4,16 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This is an adaption of the kernel density estimator (kde) of Z. Botev, based on a matlab implementation. It was ported to C++ by Johannes Kraml with the help of Florian Hofer (mostly debugging and stuff), both based on the matlab implementation (the names of the variables were kept for better comparison) and the C implementation of Roland Huber.
-
-Features were added to ensure better parallelism for the kde, as well as for the subsequent integration. Before the kernel density estimation is performed, the dihedral angles are mirrored, in order to circumvent boundary conditions. If this behaviour is undesired, a call to the kde class itself is necessary to calculate the density estimation alone.
+This is a library is primarily meant to calculate the dihedral entropy. However, we are using a KDE with automatic 
+bandwidth selection as suggested by K. Botev et al. We tried to keep the package as general as possible, therefore,
+the package can be used to calculate the entropy of any data, or also to simply calculate the KDE.
 
 ## Installation
 
 ### Building with pip
 
-Please ensure that you are having a python version higher than 3.3 for this package to work properly. First change to the directory containing the entropy module. The package can then be installed via
+Please ensure that you are having a python version higher than 3.3 for this package to work properly. First change 
+to the directory containing the entropy module. The package can then be installed via
 
 ```bash
 pip install .
@@ -48,7 +49,7 @@ https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.ht
 After this, the package is callable by using
 
 ```python
-import entropy
+import xentropy
 ```
 
 ### Dependencies
@@ -57,6 +58,12 @@ import entropy
 - fftw3
 
 If installed using conda, these are added automatically.
+
+## Contributors
+
+ - Johannes Kraml
+ - Patrick Quoika
+ - Florian Hofer
 
 ## Bugs
 
