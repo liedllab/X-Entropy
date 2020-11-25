@@ -1,0 +1,1 @@
+{"build": "np111py37_0", "build_number": 0, "depends": ["fftw >=3.3.8,<3.4.0a0", "numpy >=1.11,<1.12.0a0", "python >=3.7,<3.8.0a0"], "name": "xentropy", "subdir": "win-64", "timestamp": 1606228061666, "version": "3.1a", "size": 35082644, "md5": "92f967d15f79a3b2897e087d3e809b22", "sha256": "710191e2fb24445f42d9f301684cd63a46076c757eef3915c5af634a0e5f64a9"}
