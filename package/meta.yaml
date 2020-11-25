@@ -23,7 +23,6 @@ requirements:
     - fftw
     - numpy
     - python
-    - intel-openmp
 
 test:
   imports:
