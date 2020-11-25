@@ -27,16 +27,21 @@ python setup.py install
 
 ### Using Conda
 
-The package is not yet uploaded to a conda channel. Thus, the user is tasked to create a local conda channel and copy the file there.
-This is the easiest way to use this library on windows.
-
-A standard way to do this would be by downloading the appropriate conda file (win-64, osx, linux) and add it to the conda-bld directory.
-The user then needs to create a channel there, if this is not yet done, he can do it by using 
+This is probably the easiest way to install this package. After cloning this repository 
+(or downloading the conda directory directly), you can easily install the package using
+conda.
 ```bash
-conda index [PATH/TO/ANACONDA]/conda-bld
+conda install -c /PATH/TO/XENTROPY/CONDA/DIRECTORY xentropy
 ```
-Then copy the folder in there and from channeldata.update copy the entropy JSON into channeldata and change to the appropriate subdir 
-(default win-64).
+This should work for windows 10, linux, MacOS. If it for some reason does not work, you
+might have to build the conda installer yourself. If you want to do that, you need to
+install conda-build and then just build the installer when you are in the xentropy root 
+diretory with
+```bash
+conda-build .
+```
+On MacOS you will need to follow the instructions on 
+https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.html#macos-sdk
 
 ### Test if installation worked
 
