@@ -1,0 +1,28 @@
+{
+  "info": {
+    "subdir": "linux-64"
+  },
+  "packages": {
+    "xentropy-1.8-py38h6bb024c_0.tar.bz2": {
+      "build": "py38h6bb024c_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "libgcc-ng >=7.3.0",
+        "libstdcxx-ng >=7.3.0",
+        "numpy",
+        "python >=3.8,<3.9.0a0"
+      ],
+      "md5": "faa5ae506e81367f63ac3264cfdbb0cf",
+      "name": "xentropy",
+      "sha256": "44ffb6b183e62d3bad352e5a0dbc775bc0f3385c457517f0a6c185aadaa72b15",
+      "size": 70989,
+      "subdir": "linux-64",
+      "timestamp": 1606404649024,
+      "version": "1.8"
+    }
+  },
+  "packages.conda": {},
+  "removed": [],
+  "repodata_version": 1
+}
