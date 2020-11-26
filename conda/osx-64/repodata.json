@@ -1,0 +1,27 @@
+{
+  "info": {
+    "subdir": "osx-64"
+  },
+  "packages": {
+    "xentropy-3.1a-py38h41f2d22_0.tar.bz2": {
+      "build": "py38h41f2d22_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "libcxx >=10.0.0",
+        "numpy",
+        "python >=3.8,<3.9.0a0"
+      ],
+      "md5": "a4fa83098945fd3560bf01be3ff5fdfe",
+      "name": "xentropy",
+      "sha256": "335bf05b3aafb52ae41a87302c50cf042a317bf29562c7bd5de951b1c199fac9",
+      "size": 65611,
+      "subdir": "osx-64",
+      "timestamp": 1606324532437,
+      "version": "3.1a"
+    }
+  },
+  "packages.conda": {},
+  "removed": [],
+  "repodata_version": 1
+}

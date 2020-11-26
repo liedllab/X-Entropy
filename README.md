@@ -1,39 +1,89 @@
-# Dihedral Entropy
+# X-Entropy
 
 ![C++:CMake](https://github.com/jokr91/dihedral_entropy/workflows/C++:CMake/badge.svg) ![Python:Pip](https://github.com/jokr91/dihedral_entropy/workflows/Python:Pip/badge.svg)
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This is an adaption of the kernel density estimator (kde) of Z. Botev, based on a matlab implementation. It was ported to C++ by Johannes Kraml with the help of Florian Hofer (mostly debugging and stuff), both based on the matlab implementation (the names of the variables were kept for better comparison) and the C implementation of Roland Huber.
-
-Features were added to ensure better parallelism for the kde, as well as for the subsequent integration. Before the kernel density estimation is performed, the dihedral angles are mirrored, in order to circumvent boundary conditions. If this behaviour is undesired, a call to the kde class itself is necessary to calculate the density estimation alone.
+This library is primarily meant to calculate dihedral entropies from MD
+simulation data. For this, we use a KDE with automatic bandwidth selection as
+suggested by K. Botev et al. We tried to keep the package as generalized as
+possible, therefore, the package can be used to calculate the entropy of any
+data, or also to simply calculate the KDE.
 
 ## Installation
 
-Please ensure that you are having a python version higher than 3.3 for this package to work properly. First change to the directory containing the entropy module. The package can then be installed via
+### Using Conda
+
+This is probably the easiest way to install this package. After cloning this
+repository (or downloading the conda directory directly), you can easily install
+the package using conda. Be aware that in this case you need Python 3.8 installed
+for Linux and MacOS and Python 3.7 for Windows.
+```bash
+conda install -c ${ABSOLUTE_PATH_TO_XENTROPY_REPOSITORY}/conda xentropy
+```
+This should work for Windows 10, Linux, MacOS. Be aware, that for Windows you
+need to specify the full path to the conda directory. If it for some reason does
+not work, you might have to build the conda installer yourself. If you want to
+do that, you need to install conda-build and conda-verify and then just build the
+installer in the xentropy root diretory with
+```bash
+conda-build package
+```
+On MacOS you will need to follow the instructions on
+https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.html#macos-sdk
+before building the package.
+
+### Building with pip
+
+Be aware that you are responsible for the dependencies, if you decide to build 
+this way.
+
+Please ensure that you have a python version higher than 3.3 for this package to
+work properly. First change to the directory containing the entropy module. The
+package can then be installed via
 
 ```bash
 pip install .
 ```
 
-If pip is not working correctly, the command
+### Building with setup.py
+
+Be aware that you are responsible for the dependencies, if you decide to build 
+this way.
 
 ```bash
 python setup.py build
 python setup.py install
 ```
 
+### Import
+
 After this, the package is callable by using
 
 ```python
-import entropy
+import xentropy
 ```
 
-Dependencies:
-The dependencies are not yet handled correctly, thus the user is asked to ensure he fulfills the necessary dependencies on his system.
+### Dependencies
 
 - openmp
 - fftw3
+- numpy
+- Cython
+
+If installed using conda, these are added automatically.
+
+## Usage
+
+For usage examples, please check the examples folder.
+
+## Contributors
+
+ - Johannes Kraml
+ - Patrick Quoika
+ - Florian Hofer
+
+## Bugs
 
 As of now, there are no known bugs, if you find any, please contact me.
 
@@ -41,6 +91,6 @@ johannes@kraml.dev
 
 ## License Info
 
-This module was parallelized using the openmp toolkit (license: <https://github.com/llvm-mirror/openmp/blob/master/LICENSE.txt>). Parts of the module use the fftw3 library (<http://www.fftw.org/>).
-
-The module entropy is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. (<https://www.gnu.org/licenses/gpl-2.0.html>)
+This module was parallelized using the openmp toolkit (license:
+<https://github.com/llvm-mirror/openmp/blob/master/LICENSE.txt>). Parts of the
+module use the fftw3 library (<http://www.fftw.org/>).

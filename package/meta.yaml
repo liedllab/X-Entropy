@@ -1,0 +1,29 @@
+package:
+  name: xentropy
+  version: "3.1a"
+
+source:
+  path: .
+
+requirements:
+  build:
+    - fftw
+    - python
+    - intel-openmp
+    - {{ compiler('cxx') }}
+  
+  host:
+    - python
+    - fftw
+    - setuptools
+    - Cython
+    - intel-openmp
+  
+  run:
+    - fftw
+    - numpy
+    - python
+
+test:
+  imports:
+    - xentropy
