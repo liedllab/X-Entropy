@@ -12,6 +12,27 @@ data, or also to simply calculate the KDE.
 
 ## Installation
 
+### Using Conda
+
+This is probably the easiest way to install this package. After cloning this
+repository (or downloading the conda directory directly), you can easily install
+the package using conda. Be aware that in this case you need Python 3.8 installed
+for Linux and MacOS and Python 3.7 for Windows.
+```bash
+conda install -c /ABSOLUTE/PATH/TO/XENTROPY/CONDA/DIRECTORY xentropy
+```
+This should work for Windows 10, Linux, MacOS. Be aware, that for Windows you
+need to specify the full path to the conda directory. If it for some reason does
+not work, you might have to build the conda installer yourself. If you want to
+do that, you need to install conda-build and conda-verify and then just build the
+installer in the xentropy root diretory with
+```bash
+conda-build package
+```
+On MacOS you will need to follow the instructions on
+https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.html#macos-sdk
+before building the package.
+
 ### Building with pip
 
 Please ensure that you have a python version higher than 3.3 for this package to
@@ -28,26 +49,6 @@ pip install .
 python setup.py build
 python setup.py install
 ```
-
-### Using Conda
-
-This is probably the easiest way to install this package. After cloning this
-repository (or downloading the conda directory directly), you can easily install
-the package using conda.
-```bash
-conda install -c /ABSOLUTE/PATH/TO/XENTROPY/CONDA/DIRECTORY xentropy
-```
-This should work for Windows 10, Linux, MacOS. Be aware, that for Windows you
-need to specify the full path to the conda directory. If it for some reason does
-not work, you might have to build the conda installer yourself. If you want to
-do that, you need to install conda-build and conda-verify and then just build the
-installer in the xentropy root diretory with
-```bash
-conda-build package
-```
-On MacOS you will need to follow the instructions on
-https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.html#macos-sdk
-before building the package.
 
 ### Import
 
