@@ -63,6 +63,7 @@ import xentropy
 - openmp
 - fftw3
 - numpy
+- Cython
 
 If installed using conda, these are added automatically.
 
