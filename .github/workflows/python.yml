@@ -11,7 +11,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      working-directory: ./package
+      
     steps:
     - uses: actions/checkout@v1
 
@@ -26,5 +28,6 @@ jobs:
 
     - name: Build
       run: pip install .
+      working-directory: ${{ env.working-directory }}
 
     #TODO: Run Tests
