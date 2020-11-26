@@ -1,6 +1,6 @@
 package:
   name: xentropy
-  version: "3.1a"
+  version: "1.8"
 
 source:
   path: .
