@@ -35,7 +35,7 @@ This is probably the easiest way to install this package. After cloning this
 repository (or downloading the conda directory directly), you can easily install
 the package using conda.
 ```bash
-conda install -c ABSOLUTE/PATH/TO/XENTROPY/CONDA/DIRECTORY xentropy
+conda install -c /ABSOLUTE/PATH/TO/XENTROPY/CONDA/DIRECTORY xentropy
 ```
 This should work for Windows 10, Linux, MacOS. Be aware, that for Windows you
 need to specify the full path to the conda directory. If it for some reason does
@@ -47,14 +47,9 @@ conda-build .
 ```
 On MacOS you will need to follow the instructions on
 https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.html#macos-sdk
+before building the package.
 
-After installing the MacOS-SDK, you should be able to build the package from its
-root directory via 
-```bash
-conda-build .
-```
-
-### Test if installation worked
+### Import
 
 After this, the package is callable by using
 
