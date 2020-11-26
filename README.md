@@ -43,7 +43,7 @@ not work, you might have to build the conda installer yourself. If you want to
 do that, you need to install conda-build and conda-verify and then just build the
 installer in the xentropy root diretory with
 ```bash
-conda-build .
+conda-build package
 ```
 On MacOS you will need to follow the instructions on
 https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.html#macos-sdk
@@ -64,6 +64,10 @@ import xentropy
 - numpy
 
 If installed using conda, these are added automatically.
+
+## Usage
+
+For usage examples, please check the examples folder.
 
 ## Contributors
 
