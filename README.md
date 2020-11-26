@@ -19,7 +19,7 @@ repository (or downloading the conda directory directly), you can easily install
 the package using conda. Be aware that in this case you need Python 3.8 installed
 for Linux and MacOS and Python 3.7 for Windows.
 ```bash
-conda install -c /ABSOLUTE/PATH/TO/XENTROPY/CONDA/DIRECTORY xentropy
+conda install -c ${ABSOLUTE_PATH_TO_XENTROPY_REPOSITORY}/conda xentropy
 ```
 This should work for Windows 10, Linux, MacOS. Be aware, that for Windows you
 need to specify the full path to the conda directory. If it for some reason does
@@ -35,6 +35,9 @@ before building the package.
 
 ### Building with pip
 
+Be aware that you are responsible for the dependencies, if you decide to build 
+this way.
+
 Please ensure that you have a python version higher than 3.3 for this package to
 work properly. First change to the directory containing the entropy module. The
 package can then be installed via
@@ -44,6 +47,9 @@ pip install .
 ```
 
 ### Building with setup.py
+
+Be aware that you are responsible for the dependencies, if you decide to build 
+this way.
 
 ```bash
 python setup.py build
