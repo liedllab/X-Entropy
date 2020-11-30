@@ -3,6 +3,42 @@
     "subdir": "win-64"
   },
   "packages": {
+    "xentropy-1.8-py35h74a9793_0.tar.bz2": {
+      "build": "py35h74a9793_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "numpy",
+        "python >=3.5,<3.6.0a0",
+        "vc >=14.1,<15.0a0",
+        "vs2015_runtime >=14.16.27012,<15.0a0"
+      ],
+      "md5": "7994d305539ae132c2d1dbd0d431b0f7",
+      "name": "xentropy",
+      "sha256": "c8e247d051f038d49de743e8aae48c12820216aa2cb26a989dd4e23bd6d0261d",
+      "size": 63121,
+      "subdir": "win-64",
+      "timestamp": 1606730623989,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py36h74a9793_0.tar.bz2": {
+      "build": "py36h74a9793_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "numpy",
+        "python >=3.6,<3.7.0a0",
+        "vc >=14.1,<15.0a0",
+        "vs2015_runtime >=14.16.27012,<15.0a0"
+      ],
+      "md5": "ff6c3f2d60f86b98f8c4a17028e918e0",
+      "name": "xentropy",
+      "sha256": "3e3bb3e542c750f744ff096f88e1591910104f6ab8175c42f8b40f9bb50aced8",
+      "size": 64157,
+      "subdir": "win-64",
+      "timestamp": 1606731087024,
+      "version": "1.8"
+    },
     "xentropy-1.8-py37h74a9793_0.tar.bz2": {
       "build": "py37h74a9793_0",
       "build_number": 0,
@@ -13,12 +49,30 @@
         "vc >=14.1,<15.0a0",
         "vs2015_runtime >=14.16.27012,<15.0a0"
       ],
-      "md5": "4c679a899d5183fae26f816bdb0941db",
+      "md5": "df7a94d3b1de2ba1c99fa7ff02425eec",
       "name": "xentropy",
-      "sha256": "afa98c1190fb2f31b1e1d5306cf64f78883a0f4a653c7d4374ac92a908d4591a",
-      "size": 64160,
+      "sha256": "67669d87d6ef193615454b2b97ffb9ed3c2b31f80285c94cd5b280d81a8b0b52",
+      "size": 64178,
       "subdir": "win-64",
       "timestamp": 1606406258130,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py38h74a9793_0.tar.bz2": {
+      "build": "py38h74a9793_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "numpy",
+        "python >=3.8,<3.9.0a0",
+        "vc >=14.1,<15.0a0",
+        "vs2015_runtime >=14.16.27012,<15.0a0"
+      ],
+      "md5": "a587c309719c88692c93e77317fb13a2",
+      "name": "xentropy",
+      "sha256": "4c21382181de31c6fab9dc9ff2411db8c7bda4b86637ee4e60a71a31b8a42a45",
+      "size": 64311,
+      "subdir": "win-64",
+      "timestamp": 1606730373524,
       "version": "1.8"
     }
   },
