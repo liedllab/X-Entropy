@@ -3,6 +3,57 @@
     "subdir": "osx-64"
   },
   "packages": {
+    "xentropy-1.8-py35h41f2d22_0.tar.bz2": {
+      "build": "py35h41f2d22_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "libcxx >=10.0.0",
+        "numpy",
+        "python >=3.5,<3.6.0a0"
+      ],
+      "md5": "0a8545fc6dc734b1a4e21f1c5e8ac4a4",
+      "name": "xentropy",
+      "sha256": "a6edb9ef7171d749a00a7a880afa297398c4a8715a37646c4b0563e007d8a08d",
+      "size": 65904,
+      "subdir": "osx-64",
+      "timestamp": 1606734490489,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py36h41f2d22_0.tar.bz2": {
+      "build": "py36h41f2d22_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "libcxx >=10.0.0",
+        "numpy",
+        "python >=3.6,<3.7.0a0"
+      ],
+      "md5": "079ff60c39544d58ab122a2c760f14d7",
+      "name": "xentropy",
+      "sha256": "4bf733eb0765f2ee20dbab400e68971058929d6016060de34f54e88d6fd631fd",
+      "size": 65977,
+      "subdir": "osx-64",
+      "timestamp": 1606732206509,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py37h41f2d22_0.tar.bz2": {
+      "build": "py37h41f2d22_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "libcxx >=10.0.0",
+        "numpy",
+        "python >=3.7,<3.8.0a0"
+      ],
+      "md5": "f14a2640f23db512f2cdb239332b2259",
+      "name": "xentropy",
+      "sha256": "85282e2f06cd8035e9119f8766de601c12440aad070621855a7aff4f8d8c02ff",
+      "size": 65522,
+      "subdir": "osx-64",
+      "timestamp": 1606732075500,
+      "version": "1.8"
+    },
     "xentropy-1.8-py38h41f2d22_0.tar.bz2": {
       "build": "py38h41f2d22_0",
       "build_number": 0,
@@ -12,10 +63,10 @@
         "numpy",
         "python >=3.8,<3.9.0a0"
       ],
-      "md5": "67a085594d855a7d6ccdd2733267bf06",
+      "md5": "1f2c1dab5a8e5bc20abbc627d19ffd66",
       "name": "xentropy",
-      "sha256": "9975dfcaaed61fd8819110a13aca4ce2581d48a1bd0e5d52dc90a94bbc2cb11e",
-      "size": 65603,
+      "sha256": "93c37f3d0e3feb2cdeb837b6e4d17a152dd11c6183b2cc1078ac17722f666caf",
+      "size": 65585,
       "subdir": "osx-64",
       "timestamp": 1606407437011,
       "version": "1.8"

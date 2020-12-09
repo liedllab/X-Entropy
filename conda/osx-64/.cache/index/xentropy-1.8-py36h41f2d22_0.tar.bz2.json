@@ -1,0 +1,1 @@
+{"build": "py36h41f2d22_0", "build_number": 0, "depends": ["fftw >=3.3.8,<3.4.0a0", "libcxx >=10.0.0", "numpy", "python >=3.6,<3.7.0a0"], "name": "xentropy", "subdir": "osx-64", "timestamp": 1606732206509, "version": "1.8", "size": 65977, "md5": "079ff60c39544d58ab122a2c760f14d7", "sha256": "4bf733eb0765f2ee20dbab400e68971058929d6016060de34f54e88d6fd631fd"}

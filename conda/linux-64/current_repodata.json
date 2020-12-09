@@ -3,6 +3,60 @@
     "subdir": "linux-64"
   },
   "packages": {
+    "xentropy-1.8-py35h6bb024c_0.tar.bz2": {
+      "build": "py35h6bb024c_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "libgcc-ng >=7.3.0",
+        "libstdcxx-ng >=7.3.0",
+        "numpy",
+        "python >=3.5,<3.6.0a0"
+      ],
+      "md5": "d220ac78835db99688a6416ea9cbc49a",
+      "name": "xentropy",
+      "sha256": "9bf4d4bd5c3ce676d0bcc525dc081a45c0852cf5f59e9b2f8003dfeed39f8f0c",
+      "size": 70280,
+      "subdir": "linux-64",
+      "timestamp": 1606737040123,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py36h6bb024c_0.tar.bz2": {
+      "build": "py36h6bb024c_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "libgcc-ng >=7.3.0",
+        "libstdcxx-ng >=7.3.0",
+        "numpy",
+        "python >=3.6,<3.7.0a0"
+      ],
+      "md5": "f88f54f14dc0ee5e5838b0a0049f3f5f",
+      "name": "xentropy",
+      "sha256": "b32da5869424cdba4cdd9bf895385e7487fb0181993352d172e6024e3c291cb6",
+      "size": 70432,
+      "subdir": "linux-64",
+      "timestamp": 1606736908975,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py37h6bb024c_0.tar.bz2": {
+      "build": "py37h6bb024c_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "libgcc-ng >=7.3.0",
+        "libstdcxx-ng >=7.3.0",
+        "numpy",
+        "python >=3.7,<3.8.0a0"
+      ],
+      "md5": "1596db62bc48837d933488a453053240",
+      "name": "xentropy",
+      "sha256": "a82b6d70f2d9e4cb6b70d568a3d12a23b239f261a5c0445487515d99eead618e",
+      "size": 70357,
+      "subdir": "linux-64",
+      "timestamp": 1606736750086,
+      "version": "1.8"
+    },
     "xentropy-1.8-py38h6bb024c_0.tar.bz2": {
       "build": "py38h6bb024c_0",
       "build_number": 0,
@@ -13,10 +67,10 @@
         "numpy",
         "python >=3.8,<3.9.0a0"
       ],
-      "md5": "faa5ae506e81367f63ac3264cfdbb0cf",
+      "md5": "1944f359ba09b97e3d235c77aea0fb38",
       "name": "xentropy",
-      "sha256": "44ffb6b183e62d3bad352e5a0dbc775bc0f3385c457517f0a6c185aadaa72b15",
-      "size": 70989,
+      "sha256": "561179090ebc4d3b8c62d99d87a1581821531c32ccd2b4d3210e3b3b3cd3942d",
+      "size": 71020,
       "subdir": "linux-64",
       "timestamp": 1606404649024,
       "version": "1.8"
