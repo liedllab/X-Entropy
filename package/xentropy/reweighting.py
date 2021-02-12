@@ -2,7 +2,7 @@ import numpy as np
 
 
 # Boltzmann constant in kCal/(mol*K):
-from .constants import id_gas_SI, id_gas_kcal
+from .internal.constants import id_gas_SI, id_gas_kcal
 
 
 def maclaurin_series(xs, mac_order=10):

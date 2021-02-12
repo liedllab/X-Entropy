@@ -10,6 +10,7 @@ from .internal.resolution import process_resolution_argument
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
     process_weights_argument, process_method_argument, start_end_from_grid, reshape_arrays_eventually
 import warnings
+from .internal.constants import id_gas_SI
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
 # warnings.simplefilter("always")
@@ -36,7 +37,7 @@ class Entropy(object):
         self.__verbose = verbose
         self.__resolution = process_resolution_argument(resolution, self.data, verbose=self.verbose)
 
-    def calculate(self, resolution=None, method=None, verbose=None, id_gas=8.314):
+    def calculate(self, resolution=None, method=None, verbose=None, id_gas=id_gas_SI):
         """Calculate the dihedral entropy of a set of dihedrals.
         # TODO Docstring
         The dihedral entropy of a number of different dihedral angles can be calculated using this

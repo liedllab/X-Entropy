@@ -1,6 +1,8 @@
 import numpy as np
 import warnings
 
+from .constants import PI, TWOPI
+
 
 def reshape_arrays_eventually(some_array):
     out = np.squeeze(some_array)
@@ -30,6 +32,21 @@ def process_weights_argument(weights, verbose=False):
     return weights, weight_switch
 
 
+def deg_to_rad(dat_deg):
+    return dat_deg/180*PI
+
+
+def sanity_check_dihedral_units(diheds):
+    if np.max(diheds) > TWOPI or np.min(diheds) < -TWOPI:
+        warn_msg = "X-Entropy detected dihedral values that are much larger than pi. " \
+                   "Your values are assumed to haven been given in degree and not radian. " \
+                   "X-Entropy expects dihedrals in radian and will transform the unit of your input. " \
+                   "Did you give dihedrals in degree?"
+        warnings.warn(warn_msg, RuntimeWarning)
+        diheds = deg_to_rad(diheds)
+    return diheds
+
+
 def preprocess_dihedral_data(diheds, weights, weight_switch):
     # mirror data
     # # <- for multiple data sets <- # #
@@ -42,8 +59,8 @@ def preprocess_dihedral_data(diheds, weights, weight_switch):
     #     for weight in weights:
     #         weights_out.append(np.concatenate([weight, weight, weight]))
     #     weights = np.array(weights_out)
-
-    diheds = np.concatenate([diheds - 360, diheds, diheds + 360])
+    diheds = sanity_check_dihedral_units(diheds)
+    diheds = np.concatenate([diheds - TWOPI, diheds, diheds + TWOPI])
     if weight_switch:  #
         weights = np.concatenate([weights, weights, weights])
 
@@ -52,11 +69,11 @@ def preprocess_dihedral_data(diheds, weights, weight_switch):
 
 def postprocess_dihedral_pdf(pdf, pdf_x, norm_for_mirrored_data=1/3):
     # mirror data
-    lower_idx = np.argmin(np.abs(pdf_x + 180))
-    if pdf_x[lower_idx] < -180:
+    lower_idx = np.argmin(np.abs(pdf_x + PI))
+    if pdf_x[lower_idx] < -PI:
         lower_idx = lower_idx + 1
-    upper_idx = np.argmin(np.abs(pdf_x - 180))
-    if pdf_x[upper_idx] > 180:
+    upper_idx = np.argmin(np.abs(pdf_x - PI))
+    if pdf_x[upper_idx] > PI:
         upper_idx = upper_idx - 1
 
     pdf_out = pdf[lower_idx:upper_idx]
