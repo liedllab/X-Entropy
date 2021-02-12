@@ -1,6 +1,6 @@
 
 """
-part of the entroPy module
+part of the X-EntroPy module
 
 @author: paq
 """
@@ -12,7 +12,7 @@ from .internal.resolution import process_resolution_argument, rules_of_thumb_dih
 
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
     process_weights_argument, process_method_argument, reshape_arrays_eventually, postprocess_dihedral_pdf
-from .constants import id_gas_SI
+from .internal.constants import id_gas_SI, PI
 import warnings
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
@@ -109,7 +109,7 @@ class dihedralEntropy(object):
             pdf_temp = kernel.get_pdf()
             pdf_x_temp = kernel.get_grid()
 
-            norm_for_mirrored_data = kernel.integrate(-180, 180, method=self.method)
+            norm_for_mirrored_data = kernel.integrate(-PI, PI, method=self.method)
             pdf_temp, pdf_x_temp = postprocess_dihedral_pdf(pdf_temp, pdf_x_temp, norm_for_mirrored_data)
             # start, end = start_end_from_grid(pdf_x_temp)
 
@@ -117,7 +117,7 @@ class dihedralEntropy(object):
             pdfs.append(pdf_temp)
 
             # integral = kernel.integrate(start, end, method=self.method)
-            p_logp = kernel.calculate_entropy(-180, 180, method=self.method)
+            p_logp = kernel.calculate_entropy(-PI, PI, method=self.method)
 
             entropy = - p_logp * id_gas
             ents.append(entropy)
