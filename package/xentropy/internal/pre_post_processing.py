@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 
 
 def reshape_arrays_eventually(some_array):
@@ -98,9 +99,9 @@ def process_data_shapes(data, weights=None, weight_switch=True):
         if data.shape[0] > data.shape[1]:
             warn_msg = "Your input data has suspicious shape. First dim is expected to be smaller than second dim. " \
                        "Data should have shape: (N_features, N_frames)."
-            raise RuntimeWarning(warn_msg)
-        pass  # This ia all good
-    else:
+            warnings.warn(warn_msg, RuntimeWarning)  # potentially transposed data
+        pass  # This is all good
+    else:  # This 3 dim or higher...
         err_msg = "Shape of data is suspicious\n" \
                   "{}".format(data.shape)
         raise ValueError(err_msg)
