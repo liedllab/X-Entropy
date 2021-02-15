@@ -8,6 +8,13 @@ from xentropy.kde_kernel import _kde_kernel
 from .internal.resolution import process_resolution_argument
 from .internal.pre_post_processing import sanity_check_input_data, process_weights_argument, reshape_arrays_eventually
 
+def check_dims(data):
+    data = np.squeeze(data)
+    if len(np.shape(data))>1:
+        err_msg = "Kde is designed for single data sets only!\n" \
+                  "You provided data of the following shape\n" \
+                  "data: {}".format(data.shape)
+        raise ValueError(err_msg)
 
 class kde(object):
 
@@ -22,6 +29,7 @@ class kde(object):
         weights, weight_switch = process_weights_argument(weights, verbose=verbose)
         self.__has_weights = weight_switch
         sanity_check_input_data(data, weights, weight_switch)
+        check_dims(data)  # kde can only take single data sets currently
         self.__data = data
         self.__weights = weights
         self.__verbose = verbose
