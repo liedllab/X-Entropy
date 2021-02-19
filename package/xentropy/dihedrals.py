@@ -16,7 +16,8 @@ from .internal.constants import id_gas_SI, PI
 import warnings
 
 # We want to to change that default, since ignoring warnings is ultimately the users decision:
-warnings.simplefilter("always")
+# warnings.simplefilter("always")
+warnings.simplefilter("default")
 
 
 class dihedralEntropy(object):
@@ -44,7 +45,6 @@ class dihedralEntropy(object):
 
     def calculate(self, resolution=None, method=None, verbose=None, id_gas=id_gas_SI):
         """Calculate the dihedral entropy of a set of dihedrals.
-        # TODO Docstring
         The dihedral entropy of a number of different dihedral angles can be calculated using this
         function. The output will be a number for the entropy in each direction. This is calculated
         using a generalized cross entropy method, published by Y.Botev et al.
@@ -64,8 +64,10 @@ class dihedralEntropy(object):
             The method for the numerical integration scheme. Can be one of
             "Riemann" or "Simpson" (default is "Simpson")
         verbose: bool
+            The verbose property of the parent object may be overwritten for this routine
         id_gas: float
-            ideal gas constants in J/(mol*K)
+            value of the gas constant may be given. Herewith the unit may also be changed.
+            default: ideal gas constants: 8.314 J/(mol*K)
         Returns
         -------
         list:
