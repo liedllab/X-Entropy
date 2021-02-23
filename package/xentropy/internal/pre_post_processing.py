@@ -36,6 +36,10 @@ def deg_to_rad(dat_deg):
     return dat_deg/180*PI
 
 
+def rad_to_deg(dat_rad):
+    return dat_rad*180/PI
+
+
 def sanity_check_dihedral_units(diheds):
     if np.max(diheds) > TWOPI or np.min(diheds) < -TWOPI:
         warn_msg = "X-Entropy detected dihedral values that are much larger than pi. " \
