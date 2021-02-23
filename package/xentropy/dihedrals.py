@@ -11,7 +11,8 @@ from xentropy.internal.resolution import minim_or_sqrt
 from .internal.resolution import process_resolution_argument, rules_of_thumb_dihedral
 
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
-    process_weights_argument, process_method_argument, reshape_arrays_eventually, postprocess_dihedral_pdf
+    process_weights_argument, process_method_argument, reshape_arrays_eventually, postprocess_dihedral_pdf, \
+    rad_to_deg, deg_to_rad
 from .internal.constants import id_gas_SI, PI
 import warnings
 
@@ -191,8 +192,21 @@ class dihedralEntropy(object):
         pass
 
     @property
+    def pdf_deg(self):
+        """Probability density function in deg^{-1}. """
+        if not self.is_finished:
+            self.calculate()
+            # pdf has inverse units of x, therefore, 1/rad. using the deg_to_rad here is the same as 1/rad_to_deg.
+        return deg_to_rad(self.__pdf)
+
+    @pdf_deg.setter
+    def pdf_deg(self, value):
+        print("You really shouldn't change .pdf yourself. Use .calculate()")
+        pass
+
+    @property
     def pdf(self):
-        """Probability density function. """
+        """Probability density function in rad^{-1}. """
         if not self.is_finished:
             self.calculate()
         return self.__pdf
@@ -220,6 +234,18 @@ class dihedralEntropy(object):
     @weights.setter
     def weights(self, value):
         print("Weights cannot be changed after initialization...")
+        pass
+
+    @property
+    def pdf_x_deg(self):
+        """Grid for probability density function. """
+        if not self.is_finished:
+            self.calculate()
+        return rad_to_deg(self.__pdf_x)
+
+    @pdf_x_deg.setter
+    def pdf_x_deg(self, value):
+        print("You really shouldn't change .pdf_x yourself. Use .calculate()")
         pass
 
     @property
