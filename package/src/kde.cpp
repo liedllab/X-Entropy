@@ -1,6 +1,6 @@
 #include "kde.h"
 
-double Gce::calcHistogramNormalizer(const std::vector<double> &weights) const
+double calcHistogramNormalizer(const std::vector<double> &weights)
 {
     return 1.0 / std::accumulate(
         std::begin(weights),
@@ -9,7 +9,7 @@ double Gce::calcHistogramNormalizer(const std::vector<double> &weights) const
     );
 }
 
-double Gce::calcHistogramNormalizer(int size) const
+double calcHistogramNormalizer(int size)
 {
     return 1.0 / static_cast<double>(size);
 }
