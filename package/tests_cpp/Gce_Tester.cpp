@@ -40,3 +40,9 @@ TEST(GceTest, WeightsTest)
 
     EXPECT_THROW(Gce({0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0}, {1, 1, 1, 1, 1, 2, 1, 1, 1, 1}, 10), ValueError);
 }
+
+TEST(calcHistogramNormalizer, Tests)
+{
+    EXPECT_DOUBLE_EQ(calcHistogramNormalizer({1., 2., 3., 4., 5.}), 1. / 15.);
+    EXPECT_DOUBLE_EQ(calcHistogramNormalizer(15), 1. / 15.);
+}

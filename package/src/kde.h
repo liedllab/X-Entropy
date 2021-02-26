@@ -18,6 +18,10 @@
 
 #define GASCONSTANT 8.314462618
 
+
+double calcHistogramNormalizer(int);
+double calcHistogramNormalizer(const std::vector<double> &);
+
 class Gce
 {
 private:
@@ -74,8 +78,6 @@ private:
      * @return The result of the multiplications (power function)
      */
     double calcIntPow(double, int) const noexcept;
-    double calcHistogramNormalizer(int) const;
-    double calcHistogramNormalizer(const std::vector<double> &) const;
     void calculateHistogram(double histogramNormalizer, const std::vector<double> &weights);
 
 public:
