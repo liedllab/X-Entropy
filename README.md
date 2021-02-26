@@ -94,3 +94,9 @@ johannes@kraml.dev
 This module was parallelized using the openmp toolkit (license:
 <https://github.com/llvm-mirror/openmp/blob/master/LICENSE.txt>). Parts of the
 module use the fftw3 library (<http://www.fftw.org/>).
+The KDE in this package is based on the publication by Z. Botev: 
+Kernel density estimation via diffusion
+Z. I. Botev, J. F. Grotowski, and D. P. Kroese (2010)
+Annals of Statistics, Volume 38, Number 5, pages 2916-2957
+doi:10.1214/10-AOS799 
+(https://projecteuclid.org/journals/annals-of-statistics/volume-38/issue-5/Kernel-density-estimation-via-diffusion/10.1214/10-AOS799.full).

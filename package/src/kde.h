@@ -22,13 +22,13 @@
 double calcHistogramNormalizer(int);
 double calcHistogramNormalizer(const std::vector<double> &);
 
-class Gce
+class KDE
 {
 private:
     int m_resolution;
     int m_nFrames;
     double m_range;
-    double m_tStar;
+    double m_star_t;
     std::vector<double> m_xgrid;
     std::vector<double> m_centers;
     std::vector<double> m_histogram;
@@ -61,7 +61,7 @@ private:
      * @brief Calculate ||f^(s)||^2
      * This function calculates the s'th derivative of the KDE, in order to estimate
      * t*.
-     * @param f_before: The last value for ||f^(s+1)||.
+     * @param f_before: The last value for ||f^(s+1)||^2.
      * @param s: The s'th step.
      * @param i_arr: An array holding its squared index.
      * @param data: The prior density.
@@ -90,7 +90,7 @@ public:
      * @param length: The length of the array.
      * @deprecated
      */
-    Gce(double *array, int res, int length);
+    KDE(double *array, int res, int length);
 
     /****
      * @brief Constructor
@@ -99,7 +99,7 @@ public:
      * @param array: The values for which to calculate the density estimation.
      * @param res: The resolution at which to calculate the density estimation.
      */
-    Gce(const std::vector<double> &array, int res);
+    KDE(const std::vector<double> &array, int res);
     
     /*****
      * @brief Constructor
@@ -108,7 +108,7 @@ public:
      * @param weigths The grid in x Dimension
      * @param resolution The number of observations
      */
-    Gce(const std::vector<double> &data, const std::vector<double> &weigths, int resolution);
+    KDE(const std::vector<double> &data, const std::vector<double> &weigths, int resolution);
 
     /****
      * @brief Discrete Cosine Transform

@@ -8,9 +8,9 @@ cdef extern from "../../src/kde.cpp":
     pass
 
 cdef extern from "../../src/kde.h":
-    cdef cppclass Gce:
-        Gce(vector[double]&, int) except +
-        Gce(vector[double]&, vector[double] &, int) except +
+    cdef cppclass KDE:
+        KDE(vector[double]&, int) except +
+        KDE(vector[double]&, vector[double] &, int) except +
 
         void calculate() except +
         double integrate(string &, double, double) except +
@@ -28,31 +28,31 @@ cdef class _kde_kernel:
     def __init__(self, data, resolution, weights=None):
         pass
 
-    cdef Gce* m_gce_kernel
+    cdef KDE* m_kde_kernel
     
     def __cinit__(self, data, resolution, weights=None):
         if not (weights is None):
-            self.m_gce_kernel = new Gce(data, weights, resolution)
+            self.m_kde_kernel = new KDE(data, weights, resolution)
         else:
-            self.m_gce_kernel = new Gce(data, resolution)
+            self.m_kde_kernel = new KDE(data, resolution)
     
     def __dealloc__(self):
-        del self.m_gce_kernel
+        del self.m_kde_kernel
     
     def calculate(self):
-        self.m_gce_kernel.calculate()
+        self.m_kde_kernel.calculate()
 
     def integrate(self, start, end, method="Simpson"):
-        return self.m_gce_kernel.integrate(method.encode("utf-8"), start, end)
+        return self.m_kde_kernel.integrate(method.encode("utf-8"), start, end)
     
     def calculate_entropy(self, start, end, method="Simpson"):
-        return self.m_gce_kernel.entropy(method.encode("utf-8"), start, end)
+        return self.m_kde_kernel.entropy(method.encode("utf-8"), start, end)
 
     def get_grid(self):
-        return np.array(self.m_gce_kernel.getCenters())
+        return np.array(self.m_kde_kernel.getCenters())
 
     def get_pdf(self):
-        return np.array(self.m_gce_kernel.getDensityEstimation())
+        return np.array(self.m_kde_kernel.getDensityEstimation())
     
     def get_bandwidth(self):
-        return self.m_gce_kernel.getBandwidth()
+        return self.m_kde_kernel.getBandwidth()
