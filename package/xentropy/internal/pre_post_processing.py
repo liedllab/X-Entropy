@@ -5,6 +5,7 @@ from .constants import PI, TWOPI
 
 
 def reshape_arrays_eventually(some_array):
+    # some_array = np.array(some_array)  # this is implicitly done below
     out = np.squeeze(some_array)
     if out.shape == ():  # special case: single number
         out = out[()]  # weird way of accessing a squeezed single number for np arrays
@@ -40,18 +41,27 @@ def rad_to_deg(dat_rad):
     return dat_rad*180/PI
 
 
-def sanity_check_dihedral_units(diheds):
-    if np.max(diheds) > TWOPI or np.min(diheds) < -TWOPI:
-        warn_msg = "X-Entropy detected dihedral values that are much larger than pi. " \
-                   "Your values are assumed to haven been given in degree and not radian. " \
-                   "X-Entropy expects dihedrals in radian and will transform the unit of your input. " \
-                   "Did you give dihedrals in degree?"
-        warnings.warn(warn_msg, RuntimeWarning)
+def sanity_check_dihedral_units(diheds, input_unit="radian"):
+    if input_unit == "radian":
+        return diheds
+    elif input_unit == "degree":
         diheds = deg_to_rad(diheds)
+    else:
+        if not input_unit == "auto":
+            print("Unkown dihedral unit: {}. We expect either 'degree', 'radian' or 'auto."
+                  "Falling back to 'auto'")
+        if np.max(diheds) > TWOPI or np.min(diheds) < -TWOPI:
+            warn_msg = "X-Entropy detected dihedral values that are much larger than pi. " \
+                       "Your values are assumed to be in degree. " \
+                       "X-Entropy expects dihedrals in radian and will transform the unit of your input. " \
+                       "If you do not want this transformation, " \
+                       "explicitly specify your input unit with the 'input_unit'-argument"
+            warnings.warn(warn_msg, RuntimeWarning)
+            diheds = deg_to_rad(diheds)
     return diheds
 
 
-def preprocess_dihedral_data(diheds, weights, weight_switch):
+def preprocess_dihedral_data(diheds, weights, weight_switch, input_unit="auto"):
     # mirror data
     # # <- for multiple data sets <- # #
     # diheds_out = []
@@ -63,7 +73,7 @@ def preprocess_dihedral_data(diheds, weights, weight_switch):
     #     for weight in weights:
     #         weights_out.append(np.concatenate([weight, weight, weight]))
     #     weights = np.array(weights_out)
-    diheds = sanity_check_dihedral_units(diheds)
+    diheds = sanity_check_dihedral_units(diheds, input_unit=input_unit)
     diheds = np.concatenate([diheds - TWOPI, diheds, diheds + TWOPI])
     if weight_switch:  #
         weights = np.concatenate([weights, weights, weights])
