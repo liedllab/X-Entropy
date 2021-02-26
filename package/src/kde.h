@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <limits>
-#include <algorithm>
+#include <numeric>
 
 #include <cfloat>
 #include <cmath>
