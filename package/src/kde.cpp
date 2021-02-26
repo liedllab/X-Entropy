@@ -2,12 +2,11 @@
 
 double Gce::calcHistogramNormalizer(const std::vector<double> &weights) const
 {
-    double normalizer{0.0};
-    for (auto weight : weights)
-    {
-        normalizer += weight;
-    }
-    return 1.0 / normalizer;
+    return 1.0 / std::accumulate(
+        std::begin(weights),
+        std::end(weights),
+        0
+    );
 }
 
 double Gce::calcHistogramNormalizer(int size) const
@@ -62,13 +61,7 @@ void Gce::calculateHistogram(double histogramNormalizer, const std::vector<doubl
     }
 }
 
-/****
- * @brief Constructor
- * Constructor for the GCE class, to make a python importable library, the
- * explanation for the constructor is given only once.
- * @param array: The values for which to calculate the density estimation.
- * @param res: The resolution at which to calculate the density estimation.
- */
+
 
 Gce::Gce(const std::vector<double> &array, int res)
     : m_resolution{res}, m_nFrames{static_cast<int>(array.size())}, m_tStar{0}, m_angles{array}
@@ -244,9 +237,9 @@ void Gce::calculate()
     Simpson simps;
     double stepsize_half{(m_xgrid.at(1) - m_xgrid.at(0)) / 2};
     double norm{simps(m_densityEstimation, m_xgrid.at(m_xgrid.size() - 2) - m_xgrid.at(0))};
-    for (int i = 0; i < static_cast<int>(m_densityEstimation.size()); ++i)
+    for ( auto &val : m_densityEstimation)
     {
-        m_densityEstimation[i] /= norm;
+        val /= norm;
     }
 }
 
@@ -305,7 +298,7 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
     // Csiszar Cross entropy
     for (int s = 4; s >= 2; --s)
     {
-        f = csiszar(f, s, i_arr, data);
+        f = derivateKDE(f, s, i_arr, data);
     }
 
     // The actual formula is a bit different, but to optimize away the root,
@@ -323,16 +316,16 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
 }
 
 /****
- * @brief Csiszar distance
- * Calculates the Csiszar distance between two different values. This is
- * function is iteratively optimized.
- * @param f_before: The last functional, which is updated here.
+ * @brief Calculate ||f^(s)||^2
+ * This function calculates the s'th derivative of the KDE, in order to estimate
+ * t*.
+ * @param f_before: The last value for ||f^(s+1)||.
  * @param s: The s'th step.
  * @param i_arr: An array holding its squared index.
  * @param data: The prior density.
- * @return: The new value for the functional (the new Csiszar measure).
+ * @return: The new value for the derivative.
  */
-double Gce::csiszar(
+double Gce::derivateKDE(
     double f_before,
     int s,
     const std::vector<double> &i_arr,
@@ -344,7 +337,8 @@ double Gce::csiszar(
     double f{0};
     // A helper that one does not need to calculate this particular value over and over again.
     double helper{0};
-    // One could parallelize this, but this is not worth the effort (max 4 steps)
+    // One could parallelize this, but this is not worth the effort (max 4
+    // steps), with s < 5.
     for (int i = 1; i <= (2 * s - 1); i += 2)
     {
         K0 *= static_cast<double>(i);
@@ -352,7 +346,7 @@ double Gce::csiszar(
     K0 *= M_2_SQRTPI * M_SQRT1_2 * 0.5;
     helper = pow(2.0 * K0 / (m_nFrames * f_before), 1.0 / (1.5 + s));
 
-// Calculates the Csiszar measure via Gaussians over the entire grid.
+// Calculates ||f^(s)||^2.
 #pragma omp parallel for reduction(+ \
                                    : f)
     for (int i = 0; i < static_cast<int>(m_xgrid.size() - 1); ++i)
