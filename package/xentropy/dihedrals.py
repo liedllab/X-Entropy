@@ -16,14 +16,10 @@ from .internal.pre_post_processing import preprocess_dihedral_data, process_data
 from .internal.constants import id_gas_SI, PI
 import warnings
 
-# We want to to change that default, since ignoring warnings is ultimately the users decision:
-# warnings.simplefilter("always")
-warnings.simplefilter("default")
-
 
 class dihedralEntropy(object):
 
-    def __init__(self, data, weights=None, resolution="auto", verbose=False, method="Simpson"):
+    def __init__(self, data, weights=None, resolution="auto", verbose=False, method="Simpson", input_unit="auto"):
         # flags and output
         self.__verbose = verbose
         self.__pdf = None
@@ -31,6 +27,7 @@ class dihedralEntropy(object):
         self.__bandwidth = None
         self.__is_finished = False
         self.__entropy = None
+        self.__input_unit = input_unit
         # input data
         # determine resolution from non mirrored data!!
         self.__resolution = process_resolution_argument(resolution, data, verbose=self.verbose,
@@ -102,7 +99,7 @@ class dihedralEntropy(object):
         bws, pdf_xs, pdfs, ents = [], [], [], []
         for dat in self.data:
             # apply periodic copies here
-            dat, ws = preprocess_dihedral_data(dat, self.weights, self.has_weights)
+            dat, ws = preprocess_dihedral_data(dat, self.weights, self.has_weights, self.__input_unit)
             # depending on whether weights are None or not, you will get a weighted pdf or a simple pdf
             kernel = _kde_kernel(dat, self.resolution, ws)
             kernel.calculate()
@@ -128,9 +125,9 @@ class dihedralEntropy(object):
             print("KDE finished.")
 
         ents = reshape_arrays_eventually(np.array(ents))
-        self.__pdf_x = reshape_arrays_eventually(np.array(pdf_xs))
+        self.__pdf_x = reshape_arrays_eventually(pdf_xs)
         self.__bandwidth = np.array(bws)
-        self.__pdf = reshape_arrays_eventually(np.array(pdfs))
+        self.__pdf = reshape_arrays_eventually(pdfs)
         self.__entropy = ents
 
         self.__is_finished = True
