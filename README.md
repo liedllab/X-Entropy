@@ -6,7 +6,7 @@
 
 This library is primarily meant to calculate dihedral entropies from MD
 simulation data. For this, we use a KDE with automatic bandwidth selection as
-suggested by K. Botev et al. We tried to keep the package as generalized as
+suggested by Z. Botev et al. We tried to keep the package as generalized as
 possible, therefore, the package can be used to calculate the entropy of any
 data, or also to simply calculate the KDE.
 
