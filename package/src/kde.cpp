@@ -14,7 +14,7 @@ double calcHistogramNormalizer(int size)
     return 1.0 / static_cast<double>(size);
 }
 
-void Gce::calculateHistogram(double histogramNormalizer, const std::vector<double> &weights)
+void KDE::calculateHistogram(double histogramNormalizer, const std::vector<double> &weights)
 {
     auto ext{extrema(m_angles)};
     m_range = ext.second - ext.first;
@@ -63,8 +63,8 @@ void Gce::calculateHistogram(double histogramNormalizer, const std::vector<doubl
 
 
 
-Gce::Gce(const std::vector<double> &array, int res)
-    : m_resolution{res}, m_nFrames{static_cast<int>(array.size())}, m_tStar{0}, m_angles{array}
+KDE::KDE(const std::vector<double> &array, int res)
+    : m_resolution{res}, m_nFrames{static_cast<int>(array.size())}, m_star_t{0}, m_angles{array}
 {
     if (m_resolution == -1)
     {
@@ -86,8 +86,8 @@ Gce::Gce(const std::vector<double> &array, int res)
  * @param weigths The grid in x Dimension
  * @param resolution The number of observations
  */
-Gce::Gce(const std::vector<double> &data, const std::vector<double> &weights, int resolution)
-    : m_resolution{resolution}, m_nFrames{static_cast<int>(data.size())}, m_angles{data}, m_tStar{0.0}
+KDE::KDE(const std::vector<double> &data, const std::vector<double> &weights, int resolution)
+    : m_resolution{resolution}, m_nFrames{static_cast<int>(data.size())}, m_angles{data}, m_star_t{0.0}
 {
     if (weights.size() != m_angles.size())
     {
@@ -95,7 +95,7 @@ Gce::Gce(const std::vector<double> &data, const std::vector<double> &weights, in
     }
     if (m_resolution == -1)
     {
-        m_resolution = 2 << 13;
+        m_resolution = 2 << 11;
     }
     if (m_nFrames <= 0)
     {
@@ -116,8 +116,8 @@ Gce::Gce(const std::vector<double> &data, const std::vector<double> &weights, in
  * @deprecated
  */
 
-Gce::Gce(double *array, int length, int res = -1)
-    : m_resolution{res}, m_nFrames{length}, m_tStar{0}
+KDE::KDE(double *array, int length, int res = -1)
+    : m_resolution{res}, m_nFrames{length}, m_star_t{0}
 {
     if (m_resolution == -1)
     {
@@ -168,7 +168,7 @@ Gce::Gce(double *array, int length, int res = -1)
  * 		      be stored
  * @return: The minimum and maximum value in the array.
  */
-std::pair<double, double> Gce::extrema(const std::vector<double> &array) const noexcept
+std::pair<double, double> KDE::extrema(const std::vector<double> &array) const noexcept
 {
     double minimum{array.at(0)};
     double maximum{array.at(0)};
@@ -192,7 +192,7 @@ std::pair<double, double> Gce::extrema(const std::vector<double> &array) const n
 /****
  * @brief Starts the calculation, could have guessed, right?
  */
-void Gce::calculate()
+void KDE::calculate()
 {
     std::vector<double> i_arr(m_histogram.size());
     std::vector<double> dct_data(m_histogram.size());
@@ -220,7 +220,7 @@ void Gce::calculate()
     //	#pragma omp parallel for
     for (int i = 0; i < static_cast<int>(dct_data.size()); ++i)
     {
-        dct_data[i] *= std::exp(-0.5 * M_PI * M_PI * i_arr[i] * m_tStar);
+        dct_data[i] *= std::exp(-0.5 * M_PI * M_PI * i_arr[i] * m_star_t);
     }
     std::vector<double> density(dct_data.size());
 
@@ -249,7 +249,7 @@ void Gce::calculate()
  * @param before_dct The values of the function before fourier transformation.
  * @param after_dct The values of the function after fourier transformation
  */
-void Gce::dct(double *before_dct, double *after_dct)
+void KDE::dct(double *before_dct, double *after_dct)
 {
     fftw_plan p{fftw_plan_r2r_1d(static_cast<int>(m_histogram.size()), before_dct, after_dct, FFTW_REDFT10, FFTW_ESTIMATE)};
     fftw_execute(p);
@@ -263,7 +263,7 @@ void Gce::dct(double *before_dct, double *after_dct)
  * @param before_idct The values of the function before inverse fourier transformation.
  * @param after_idct The values of the function after inverse fourier transformation
  */
-void Gce::idct(double *before_idct, double *after_idct)
+void KDE::idct(double *before_idct, double *after_idct)
 {
     fftw_plan p{fftw_plan_r2r_1d(static_cast<int>(m_histogram.size()), before_idct, after_idct, FFTW_REDFT01, FFTW_ESTIMATE)};
     fftw_execute(p);
@@ -278,7 +278,7 @@ void Gce::idct(double *before_idct, double *after_idct)
  * @return: Sets the t_star value of the class to a new value and returns the
  * 	        error.
  */
-double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double> &i_arr)
+double KDE::fixedpoint(const std::vector<double> &data, const std::vector<double> &i_arr)
 {
     // Used for parallelization purposes.
     double f{0};
@@ -290,7 +290,7 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
                                    : f)
     for (int i = 0; i < (int)(m_xgrid.size() - 1); ++i)
     {
-        f += calcIntPow(i_arr[i], 5) * data[i] * exp(-1 * i_arr[i] * M_PI * M_PI * m_tStar);
+        f += calcIntPow(i_arr[i], 5) * data[i] * exp(-1 * i_arr[i] * M_PI * M_PI * m_star_t);
     }
 
     f *= 2.0 * calcIntPow(M_PI, 10);
@@ -308,9 +308,9 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
     time = pow(4.0 * m_nFrames * m_nFrames * M_PI * f * f, -0.2);
 
     // Calculate the relative error of the new t_star (time) and the old t_star.
-    error = (m_tStar - time) / time;
+    error = (m_star_t - time) / time;
     // Set the new t* to the appropriate value.
-    m_tStar = time;
+    m_star_t = time;
 
     return error;
 }
@@ -325,7 +325,7 @@ double Gce::fixedpoint(const std::vector<double> &data, const std::vector<double
  * @param data: The prior density.
  * @return: The new value for the derivative.
  */
-double Gce::derivateKDE(
+double KDE::derivateKDE(
     double f_before,
     int s,
     const std::vector<double> &i_arr,
@@ -365,7 +365,7 @@ double Gce::derivateKDE(
  * @param exponent The exponent of the power function
  * @return The result of the multiplications (power function)
  */
-double Gce::calcIntPow(double value, int exponent) const noexcept
+double KDE::calcIntPow(double value, int exponent) const noexcept
 {
     double ret{1};
     for (int i{0}; i < exponent; ++i)
@@ -386,7 +386,7 @@ double Gce::calcIntPow(double value, int exponent) const noexcept
  * @param max The maximum value in the integration (on the x coordinate)
  * @return The integrated value within the given bounds.
  */
-double Gce::integrate(const std::string &type, double min, double max)
+double KDE::integrate(const std::string &type, double min, double max)
 {
     auto inte{getFunction(type)};
     std::vector<double> grid;
@@ -424,7 +424,7 @@ double Gce::integrate(const std::string &type, double min, double max)
  * @param max The maximum value in the integration (on the x coordinate)
  * @return The integrated value within the given bounds.
  */
-double Gce::entropy(const std::string &type, double min, double max)
+double KDE::entropy(const std::string &type, double min, double max)
 {
     auto inte{getFunction(type)};
     std::vector<double> grid;
@@ -472,7 +472,7 @@ double Gce::entropy(const std::string &type, double min, double max)
 /****
  * Returns the calculated density values.
  */
-std::vector<double> Gce::getDensityEstimation()
+std::vector<double> KDE::getDensityEstimation()
 {
     return m_densityEstimation;
 }
@@ -480,42 +480,42 @@ std::vector<double> Gce::getDensityEstimation()
 /****
  * Getters
  */
-const std::vector<double> &Gce::getAngles() const
+const std::vector<double> &KDE::getAngles() const
 {
     return m_angles;
 }
 
-const std::vector<double> &Gce::getGrid() const
+const std::vector<double> &KDE::getGrid() const
 {
     return m_xgrid;
 }
 
-const std::vector<double> &Gce::getCenters() const
+const std::vector<double> &KDE::getCenters() const
 {
     return m_centers;
 }
 
-const std::vector<double> &Gce::getHistogram() const
+const std::vector<double> &KDE::getHistogram() const
 {
     return m_histogram;
 }
 
-double Gce::getTStar() const
+double KDE::getTStar() const
 {
-    return m_tStar;
+    return m_star_t;
 }
 
-int Gce::getResolution() const
+int KDE::getResolution() const
 {
     return m_resolution;
 }
 
-int Gce::getGridLength() const
+int KDE::getGridLength() const
 {
     return (int)m_xgrid.size();
 }
 
-double Gce::getBandwidth() const
+double KDE::getBandwidth() const
 {
-    return sqrt(m_tStar) * m_range;
+    return sqrt(m_star_t) * m_range;
 }
