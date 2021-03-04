@@ -1,0 +1,81 @@
+{
+  "info": {
+    "subdir": "win-64"
+  },
+  "packages": {
+    "xentropy-1.8-py35he980bc4_0.tar.bz2": {
+      "build": "py35he980bc4_0",
+      "build_number": 0,
+      "depends": [
+        "fftw",
+        "numpy",
+        "python >=3.5,<3.6.0a0",
+        "vc >=14,<15.0a0"
+      ],
+      "md5": "bed50505149bb9fe39ab5203a67b45e3",
+      "name": "xentropy",
+      "sha256": "561297c970711ea1a145e86cb16f4a00a7bdc374b0121bbeadc7fa0eba342bd1",
+      "size": 63910,
+      "subdir": "win-64",
+      "timestamp": 1614861470036,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py36h2e52968_0.tar.bz2": {
+      "build": "py36h2e52968_0",
+      "build_number": 0,
+      "depends": [
+        "fftw",
+        "numpy",
+        "python >=3.6,<3.7.0a0",
+        "vc >=14.1,<15.0a0",
+        "vs2015_runtime >=14.16.27012,<15.0a0"
+      ],
+      "md5": "a2462bfa5594917313854b1c9d723f94",
+      "name": "xentropy",
+      "sha256": "f6cfedf6ffc5c7d9e11e3c3f2fb13f3cc69118feee9dd9aaa049c4f0b07831a9",
+      "size": 65507,
+      "subdir": "win-64",
+      "timestamp": 1614863366866,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py37h2e52968_0.tar.bz2": {
+      "build": "py37h2e52968_0",
+      "build_number": 0,
+      "depends": [
+        "fftw",
+        "numpy",
+        "python >=3.7,<3.8.0a0",
+        "vc >=14.1,<15.0a0",
+        "vs2015_runtime >=14.16.27012,<15.0a0"
+      ],
+      "md5": "7c918f330a8fe41323bf2d160c0765e5",
+      "name": "xentropy",
+      "sha256": "1c12be32b95c301432407ba1391464bb27c5198a76e684be34d2586dfb481f61",
+      "size": 65465,
+      "subdir": "win-64",
+      "timestamp": 1614860080125,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py38h2e52968_0.tar.bz2": {
+      "build": "py38h2e52968_0",
+      "build_number": 0,
+      "depends": [
+        "fftw",
+        "numpy",
+        "python >=3.8,<3.9.0a0",
+        "vc >=14.1,<15.0a0",
+        "vs2015_runtime >=14.16.27012,<15.0a0"
+      ],
+      "md5": "955493f3f6e8a542bf70587bbb671a4a",
+      "name": "xentropy",
+      "sha256": "716c43d4b29c6d0551482f98c5fea41e9eaa5936bdde6143caae1193f22938c7",
+      "size": 65681,
+      "subdir": "win-64",
+      "timestamp": 1614862239976,
+      "version": "1.8"
+    }
+  },
+  "packages.conda": {},
+  "removed": [],
+  "repodata_version": 1
+}

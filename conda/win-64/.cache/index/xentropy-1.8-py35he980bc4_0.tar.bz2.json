@@ -1,0 +1,1 @@
+{"build": "py35he980bc4_0", "build_number": 0, "depends": ["fftw", "numpy", "python >=3.5,<3.6.0a0", "vc >=14,<15.0a0"], "name": "xentropy", "subdir": "win-64", "timestamp": 1614861470036, "version": "1.8", "size": 63910, "md5": "bed50505149bb9fe39ab5203a67b45e3", "sha256": "561297c970711ea1a145e86cb16f4a00a7bdc374b0121bbeadc7fa0eba342bd1"}

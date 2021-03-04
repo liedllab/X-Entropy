@@ -1,0 +1,1 @@
+{"build": "py36h2bc3f7f_0", "build_number": 0, "depends": ["fftw", "libgcc-ng >=7.3.0", "libstdcxx-ng >=7.3.0", "numpy", "python >=3.6,<3.7.0a0"], "name": "xentropy", "subdir": "linux-64", "timestamp": 1614873381197, "version": "1.8", "size": 69761, "md5": "30f0663f7fccc84e969b4feec8168faf", "sha256": "59f0f0167744151f67d985e339a6fb790f6dafcfec42abd8500338f5c9ea3258"}

@@ -1,0 +1,78 @@
+{
+  "info": {
+    "subdir": "osx-64"
+  },
+  "packages": {
+    "xentropy-1.8-py35h41f2d22_0.tar.bz2": {
+      "build": "py35h41f2d22_0",
+      "build_number": 0,
+      "depends": [
+        "fftw >=3.3.8,<3.4.0a0",
+        "libcxx >=10.0.0",
+        "numpy",
+        "python >=3.5,<3.6.0a0"
+      ],
+      "md5": "8a578489b7b1b4c14a2c974b3bda22fc",
+      "name": "xentropy",
+      "sha256": "6ee12aa5a4ef584d9881551dc2c60e79b60f95901d3e6bb00ecb705e6f11ef65",
+      "size": 65875,
+      "subdir": "osx-64",
+      "timestamp": 1606739333936,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py36h41f2d22_0.tar.bz2": {
+      "build": "py36h41f2d22_0",
+      "build_number": 0,
+      "depends": [
+        "fftw",
+        "libcxx >=10.0.0",
+        "numpy",
+        "python >=3.6,<3.7.0a0"
+      ],
+      "md5": "7786093b587c29ff0704b6845ca0582b",
+      "name": "xentropy",
+      "sha256": "296a7da91482c96da4485db105addee4c46405a9587459291fa0708e9f31fec8",
+      "size": 65180,
+      "subdir": "osx-64",
+      "timestamp": 1614869529777,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py37h41f2d22_0.tar.bz2": {
+      "build": "py37h41f2d22_0",
+      "build_number": 0,
+      "depends": [
+        "fftw",
+        "libcxx >=10.0.0",
+        "numpy",
+        "python >=3.7,<3.8.0a0"
+      ],
+      "md5": "3d1fbbcc05bb998ca5262732f91500ab",
+      "name": "xentropy",
+      "sha256": "bc9df08ac86dc57ef8fa1f42b97dcf68d13ca4b02cdc330d85b5da9ed40fbb21",
+      "size": 64929,
+      "subdir": "osx-64",
+      "timestamp": 1614869850214,
+      "version": "1.8"
+    },
+    "xentropy-1.8-py38h41f2d22_0.tar.bz2": {
+      "build": "py38h41f2d22_0",
+      "build_number": 0,
+      "depends": [
+        "fftw",
+        "libcxx >=10.0.0",
+        "numpy",
+        "python >=3.8,<3.9.0a0"
+      ],
+      "md5": "00dafeebf14b55e9e282600c97a1d34a",
+      "name": "xentropy",
+      "sha256": "23867bf954e3e91579a3a046037458c76cc55c62ffc3ceea1ba415c6a571c0d1",
+      "size": 64968,
+      "subdir": "osx-64",
+      "timestamp": 1614871968240,
+      "version": "1.8"
+    }
+  },
+  "packages.conda": {},
+  "removed": [],
+  "repodata_version": 1
+}
