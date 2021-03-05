@@ -7,72 +7,72 @@
       "build": "py35h6bb024c_0",
       "build_number": 0,
       "depends": [
-        "fftw >=3.3.8,<3.4.0a0",
+        "fftw",
         "libgcc-ng >=7.3.0",
         "libstdcxx-ng >=7.3.0",
         "numpy",
         "python >=3.5,<3.6.0a0"
       ],
-      "md5": "d220ac78835db99688a6416ea9cbc49a",
+      "md5": "d40717ae8ba20b782548090c5ec530b2",
       "name": "xentropy",
-      "sha256": "9bf4d4bd5c3ce676d0bcc525dc081a45c0852cf5f59e9b2f8003dfeed39f8f0c",
-      "size": 70280,
+      "sha256": "eaaffa6f1d4e3935eafdd0bb4aace26b70e8c7c48bd5f30b32896a6f9319a5b7",
+      "size": 69622,
       "subdir": "linux-64",
-      "timestamp": 1606737040123,
+      "timestamp": 1614873204420,
       "version": "1.8"
     },
-    "xentropy-1.8-py36h6bb024c_0.tar.bz2": {
-      "build": "py36h6bb024c_0",
+    "xentropy-1.8-py36h2bc3f7f_0.tar.bz2": {
+      "build": "py36h2bc3f7f_0",
       "build_number": 0,
       "depends": [
-        "fftw >=3.3.8,<3.4.0a0",
+        "fftw",
         "libgcc-ng >=7.3.0",
         "libstdcxx-ng >=7.3.0",
         "numpy",
         "python >=3.6,<3.7.0a0"
       ],
-      "md5": "f88f54f14dc0ee5e5838b0a0049f3f5f",
+      "md5": "30f0663f7fccc84e969b4feec8168faf",
       "name": "xentropy",
-      "sha256": "b32da5869424cdba4cdd9bf895385e7487fb0181993352d172e6024e3c291cb6",
-      "size": 70432,
+      "sha256": "59f0f0167744151f67d985e339a6fb790f6dafcfec42abd8500338f5c9ea3258",
+      "size": 69761,
       "subdir": "linux-64",
-      "timestamp": 1606736908975,
+      "timestamp": 1614873381197,
       "version": "1.8"
     },
-    "xentropy-1.8-py37h6bb024c_0.tar.bz2": {
-      "build": "py37h6bb024c_0",
+    "xentropy-1.8-py37h2bc3f7f_0.tar.bz2": {
+      "build": "py37h2bc3f7f_0",
       "build_number": 0,
       "depends": [
-        "fftw >=3.3.8,<3.4.0a0",
+        "fftw",
         "libgcc-ng >=7.3.0",
         "libstdcxx-ng >=7.3.0",
         "numpy",
         "python >=3.7,<3.8.0a0"
       ],
-      "md5": "1596db62bc48837d933488a453053240",
+      "md5": "1631f2e54b7eaf8a6611fd329146ba64",
       "name": "xentropy",
-      "sha256": "a82b6d70f2d9e4cb6b70d568a3d12a23b239f261a5c0445487515d99eead618e",
-      "size": 70357,
+      "sha256": "42bc7a74073484e906d3e66792e2283ab8b144588092675c00ce8075c4358f93",
+      "size": 69756,
       "subdir": "linux-64",
-      "timestamp": 1606736750086,
+      "timestamp": 1614873620606,
       "version": "1.8"
     },
-    "xentropy-1.8-py38h6bb024c_0.tar.bz2": {
-      "build": "py38h6bb024c_0",
+    "xentropy-1.8-py38h2bc3f7f_0.tar.bz2": {
+      "build": "py38h2bc3f7f_0",
       "build_number": 0,
       "depends": [
-        "fftw >=3.3.8,<3.4.0a0",
+        "fftw",
         "libgcc-ng >=7.3.0",
         "libstdcxx-ng >=7.3.0",
         "numpy",
         "python >=3.8,<3.9.0a0"
       ],
-      "md5": "1944f359ba09b97e3d235c77aea0fb38",
+      "md5": "c29acaacef1add7743f65be12977ed78",
       "name": "xentropy",
-      "sha256": "561179090ebc4d3b8c62d99d87a1581821531c32ccd2b4d3210e3b3b3cd3942d",
-      "size": 71020,
+      "sha256": "bce94f47f840f5b40b71f713ab12eef596b6096fe197c68075140a78ed2e8a7b",
+      "size": 70398,
       "subdir": "linux-64",
-      "timestamp": 1606404649024,
+      "timestamp": 1614873762900,
       "version": "1.8"
     }
   },

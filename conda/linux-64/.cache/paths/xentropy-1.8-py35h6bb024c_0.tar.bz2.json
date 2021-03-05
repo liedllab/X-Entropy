@@ -9,8 +9,8 @@
     {
       "_path": "lib/python3.5/site-packages/XEntropy-1.8-py3.5-linux-x86_64.egg-info/SOURCES.txt",
       "path_type": "hardlink",
-      "sha256": "396699ea97e4948047dc338451b7f7aa7a79c7d7341d2bfe600af290f957a8a1",
-      "size_in_bytes": 420
+      "sha256": "d44b54643bb65bb8b9536d6f004dee92bf15d9cfe9dc92770c7774186004526a",
+      "size_in_bytes": 429
     },
     {
       "_path": "lib/python3.5/site-packages/XEntropy-1.8-py3.5-linux-x86_64.egg-info/dependency_links.txt",
@@ -39,92 +39,92 @@
     {
       "_path": "lib/python3.5/site-packages/xentropy/__init__.py",
       "path_type": "hardlink",
-      "sha256": "63ac74b6fd22b445489ccb9de42b2ad0f5e86e3d455df1ed027e70e32c8ca56c",
-      "size_in_bytes": 100
+      "sha256": "f896365fa7a27ada81812ab07a9381d94854ac9696bfc0877970f13fc3180043",
+      "size_in_bytes": 74
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/__pycache__/__init__.cpython-35.pyc",
       "path_type": "hardlink",
-      "sha256": "dfbe88884022c8021bc1962ed4abbd609b62d8a8b8b8149fb4815f37120934ad",
-      "size_in_bytes": 309
-    },
-    {
-      "_path": "lib/python3.5/site-packages/xentropy/__pycache__/constants.cpython-35.pyc",
-      "path_type": "hardlink",
-      "sha256": "29203f20aa89cd6f202eceae6b9c12ff21dfeb07ab41bf4e9c5b888e1200675d",
-      "size_in_bytes": 221
+      "sha256": "cd61694862bcc31749859cc761f7c04b7d637ab93e47b503c70d075f96182777",
+      "size_in_bytes": 275
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/__pycache__/dihedrals.cpython-35.pyc",
       "path_type": "hardlink",
-      "sha256": "48e31be529d6a6a754cc23ba2ab5e953227e7d7edc28319cc2d6be45284307c7",
-      "size_in_bytes": 8937
+      "sha256": "4461b937b9c7265df83c3945757f0ef54884df223ae8d8071182bddd4236963f",
+      "size_in_bytes": 9906
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/__pycache__/kde.cpython-35.pyc",
       "path_type": "hardlink",
-      "sha256": "7acaa79c4d80369ec84ba29b73fe92c0c998c9af1b4ec1f456c0e5c3e622f6ff",
-      "size_in_bytes": 5513
+      "sha256": "b69ba3ecb9345f6c78b3974811749d22be765906a5a39bbbe788ebf4e3c65116",
+      "size_in_bytes": 5865
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/__pycache__/kde_kernel.cpython-35.pyc",
       "path_type": "hardlink",
-      "sha256": "8ebe764aa04a4f2b29a1b0e0c311e7d85d039260f10267015d605a69fdd20922",
+      "sha256": "b24fec0538361a6c334723bf7fee6d5ba7812bff51f1743377165bc6faad2a57",
       "size_in_bytes": 524
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/__pycache__/reweighting.cpython-35.pyc",
       "path_type": "hardlink",
-      "sha256": "e8cd68debae55e0cb5a22da2306cd56f06cd4822b0b310f3a1d50bffd9e042f6",
-      "size_in_bytes": 2663
+      "sha256": "7da358bc981923776238bacd988e1272aaf7fee2eaa96baaa80ffe61011b21c6",
+      "size_in_bytes": 2604
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/__pycache__/xentropy.cpython-35.pyc",
       "path_type": "hardlink",
-      "sha256": "4457b5255dbd8d1eca5d4d7692f5c89a676b51ae71cb7c06963c4c0525bbb8e7",
-      "size_in_bytes": 8412
-    },
-    {
-      "_path": "lib/python3.5/site-packages/xentropy/constants.py",
-      "path_type": "hardlink",
-      "sha256": "60f55411163e5edc2ed3c20103973012e0fa3d59c78892a6088179621a4dd175",
-      "size_in_bytes": 46
+      "sha256": "f534703a1912d14ff28f169e978e4edda0a12585aaeadf9f49c7acb9190b4c26",
+      "size_in_bytes": 8367
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/dihedrals.py",
       "path_type": "hardlink",
-      "sha256": "e2a95fddf7f8c66fd40a9ed823f08f09bb816c932a80e94de38a694dd33d7c58",
-      "size_in_bytes": 9296
+      "sha256": "429e57fda3cd1518c3edeb460490e6725e3051f52d18f920bcb8328684a3a6cc",
+      "size_in_bytes": 10113
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/internal/__init__.py",
       "path_type": "hardlink",
-      "sha256": "2c893a3ad785c3f2d9d4f8936005a203de9db11b7f42a5be89571539289a3530",
-      "size_in_bytes": 80
+      "sha256": "24164fe88a28b184dd544d91a054080fae5feed0151312357637457ecf212b4a",
+      "size_in_bytes": 116
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/internal/__pycache__/__init__.cpython-35.pyc",
       "path_type": "hardlink",
-      "sha256": "e1d5bbd32844114a8900f5c55d696b52a1e084424b63a08d7a0d34700bff5fe2",
-      "size_in_bytes": 283
+      "sha256": "f20f24c03821160509fc7e1b1a461047d4adb33c9754ef7fac483eb26febc90a",
+      "size_in_bytes": 326
+    },
+    {
+      "_path": "lib/python3.5/site-packages/xentropy/internal/__pycache__/constants.cpython-35.pyc",
+      "path_type": "hardlink",
+      "sha256": "83c374e4ec4a1dd8b0662b322162aa0073bfb2417cee7f7dada836623837a2a9",
+      "size_in_bytes": 299
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/internal/__pycache__/pre_post_processing.cpython-35.pyc",
       "path_type": "hardlink",
-      "sha256": "1a7487ca15bf00b806e83d5f26a8d27e6bd3ebb7d50bb530133c179b315c6849",
-      "size_in_bytes": 3075
+      "sha256": "71d2fe122d8873320a7eae614ec8db2c33075a74b745f86ea915d848f95d8499",
+      "size_in_bytes": 4466
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/internal/__pycache__/resolution.cpython-35.pyc",
       "path_type": "hardlink",
-      "sha256": "4a5dee09f0b66db0f4737b4dffbb322e25edeed67bd14d6d223ed87f8a0f5057",
+      "sha256": "187cc3335f5878de368e9a30950f2275d89f592434d7a664860528c86ce56f49",
       "size_in_bytes": 6247
+    },
+    {
+      "_path": "lib/python3.5/site-packages/xentropy/internal/constants.py",
+      "path_type": "hardlink",
+      "sha256": "2f735a00e8cb4e0ebb893982e0ab4e9a8e7d755b50d0f8a7620a32a6cf1181c2",
+      "size_in_bytes": 89
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/internal/pre_post_processing.py",
       "path_type": "hardlink",
-      "sha256": "53f99bd80a24917e6fce5f9c99488db2a030b9562059bb89528d17ab86aded2d",
-      "size_in_bytes": 3832
+      "sha256": "9e40b179cbba6986026ad1888e895f3496a580f2858432d65c5749f036f0ae6f",
+      "size_in_bytes": 5515
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/internal/resolution.py",
@@ -135,13 +135,13 @@
     {
       "_path": "lib/python3.5/site-packages/xentropy/kde.py",
       "path_type": "hardlink",
-      "sha256": "3cd57c5bff518930b7ad9381b9301534f7937d38842d874940101d53c23baeee",
-      "size_in_bytes": 5192
+      "sha256": "689dabe89b36e856382b3e914adb64f6d9724ca4f1084c4a4355b5c5a8ca3f60",
+      "size_in_bytes": 5559
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/kde_kernel.cpython-35m-x86_64-linux-gnu.so",
       "path_type": "hardlink",
-      "sha256": "51993252c6f6f3a1c57170e3bd3cf5f51de546d7a024fb3ae25181dd37543d67",
+      "sha256": "ceac9670277681b293deebe74984f08a4a546af35d09077f1de8bb8da5bfb0e0",
       "size_in_bytes": 113560
     },
     {
@@ -153,14 +153,14 @@
     {
       "_path": "lib/python3.5/site-packages/xentropy/reweighting.py",
       "path_type": "hardlink",
-      "sha256": "41eedd9d8178adbe4f8d66db51c2f7470e29adb0c451f962a622361f11015479",
-      "size_in_bytes": 2558
+      "sha256": "937a1a4a25ad6dea1ac8e1a0021f0d09584b1733858d970ffbbb66de186cb2e8",
+      "size_in_bytes": 2434
     },
     {
       "_path": "lib/python3.5/site-packages/xentropy/xentropy.py",
       "path_type": "hardlink",
-      "sha256": "0ec6d286ea99f75b57076b0579b26a800265949afc3283ecd089a332dcc4817e",
-      "size_in_bytes": 8503
+      "sha256": "d681185b02bb39921d8523ecdfa81d9ad2d65d9b60d83c0682ca1543e78d3354",
+      "size_in_bytes": 8421
     }
   ],
   "paths_version": 1

@@ -1,0 +1,167 @@
+{
+  "paths": [
+    {
+      "_path": "lib/python3.6/site-packages/XEntropy-1.8-py3.6-linux-x86_64.egg-info/PKG-INFO",
+      "path_type": "hardlink",
+      "sha256": "82136f3882dcec2b5199c6dad16879cb3f46a9d6eb27b0c39e95f871ed2941b3",
+      "size_in_bytes": 268
+    },
+    {
+      "_path": "lib/python3.6/site-packages/XEntropy-1.8-py3.6-linux-x86_64.egg-info/SOURCES.txt",
+      "path_type": "hardlink",
+      "sha256": "d44b54643bb65bb8b9536d6f004dee92bf15d9cfe9dc92770c7774186004526a",
+      "size_in_bytes": 429
+    },
+    {
+      "_path": "lib/python3.6/site-packages/XEntropy-1.8-py3.6-linux-x86_64.egg-info/dependency_links.txt",
+      "path_type": "hardlink",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "size_in_bytes": 1
+    },
+    {
+      "_path": "lib/python3.6/site-packages/XEntropy-1.8-py3.6-linux-x86_64.egg-info/native_libs.txt",
+      "path_type": "hardlink",
+      "sha256": "3bee0685f43acc1e64e905524f851a0133b2aa62c103a359ecf000fb4c0adb3c",
+      "size_in_bytes": 52
+    },
+    {
+      "_path": "lib/python3.6/site-packages/XEntropy-1.8-py3.6-linux-x86_64.egg-info/not-zip-safe",
+      "path_type": "hardlink",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "size_in_bytes": 1
+    },
+    {
+      "_path": "lib/python3.6/site-packages/XEntropy-1.8-py3.6-linux-x86_64.egg-info/top_level.txt",
+      "path_type": "hardlink",
+      "sha256": "7e647d6e8e45d9a4802f9d7f452c5d0e412bbed314b43a745013e68654c8ccce",
+      "size_in_bytes": 9
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/__init__.py",
+      "path_type": "hardlink",
+      "sha256": "f896365fa7a27ada81812ab07a9381d94854ac9696bfc0877970f13fc3180043",
+      "size_in_bytes": 74
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/__pycache__/__init__.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "2187c219592df2633ea76959ef378c23fdf94d1a2e57ecd1a85a055c95dfb6cc",
+      "size_in_bytes": 263
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/__pycache__/dihedrals.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "e8d17a3b4a17ec780c459caa730ff09205cfd16a69adcf2127d9cc358259f932",
+      "size_in_bytes": 9350
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/__pycache__/kde.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "0344d3ab8c53c3e6e9be0d092383fac15297be93136522306b3a90dc41cb3bd1",
+      "size_in_bytes": 5502
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/__pycache__/kde_kernel.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "b66dfe9d61864ef3f4edb8c4ef8b2ab5a2fa850730d6aad863e281ac1cac9133",
+      "size_in_bytes": 607
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/__pycache__/reweighting.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "ac67da6a37a196d20df35e6002ba929eba9ca83efee61bcc7c6673cc2995c925",
+      "size_in_bytes": 2541
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/__pycache__/xentropy.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "a0413f71bf3b561cfaf2b8d6c13d74ab86e67ad9bf637eb805b0b347ab13e829",
+      "size_in_bytes": 7884
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/dihedrals.py",
+      "path_type": "hardlink",
+      "sha256": "429e57fda3cd1518c3edeb460490e6725e3051f52d18f920bcb8328684a3a6cc",
+      "size_in_bytes": 10113
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/internal/__init__.py",
+      "path_type": "hardlink",
+      "sha256": "24164fe88a28b184dd544d91a054080fae5feed0151312357637457ecf212b4a",
+      "size_in_bytes": 116
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/internal/__pycache__/__init__.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "e0bc803ef2bac9f4eb0bf54eab7406ceea5af52c1bf21de5d03a1498818ed549",
+      "size_in_bytes": 314
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/internal/__pycache__/constants.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "5894d9733d9b0fd8681133f90e6ce1a9ac34c792652b62da0bd81c6c00ff99da",
+      "size_in_bytes": 289
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/internal/__pycache__/pre_post_processing.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "a863f252b37bdbec2b82bd84ac7582d3d77a595b94dce05e3ccd7c66fd5d7556",
+      "size_in_bytes": 4124
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/internal/__pycache__/resolution.cpython-36.pyc",
+      "path_type": "hardlink",
+      "sha256": "68eb1c799fba3489b7f575b15bf598bc95922845ddd4e4dd460fbb677d8976be",
+      "size_in_bytes": 5787
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/internal/constants.py",
+      "path_type": "hardlink",
+      "sha256": "2f735a00e8cb4e0ebb893982e0ab4e9a8e7d755b50d0f8a7620a32a6cf1181c2",
+      "size_in_bytes": 89
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/internal/pre_post_processing.py",
+      "path_type": "hardlink",
+      "sha256": "9e40b179cbba6986026ad1888e895f3496a580f2858432d65c5749f036f0ae6f",
+      "size_in_bytes": 5515
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/internal/resolution.py",
+      "path_type": "hardlink",
+      "sha256": "87154b8860bce4343e1414e0087ef64ec6e7a233726f9e0b6d8b8f8d6150e638",
+      "size_in_bytes": 5918
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/kde.py",
+      "path_type": "hardlink",
+      "sha256": "689dabe89b36e856382b3e914adb64f6d9724ca4f1084c4a4355b5c5a8ca3f60",
+      "size_in_bytes": 5559
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/kde_kernel.cpython-36m-x86_64-linux-gnu.so",
+      "path_type": "hardlink",
+      "sha256": "796dce3469c7689b269e1212c104de33c388b3bb48827056c9901c4dc5a20f09",
+      "size_in_bytes": 115168
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/kde_kernel.py",
+      "path_type": "hardlink",
+      "sha256": "b336ab6f05798878a4b40d68a8828649ab47249c5b23f08cfeb88e8ff71dd35e",
+      "size_in_bytes": 436
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/reweighting.py",
+      "path_type": "hardlink",
+      "sha256": "937a1a4a25ad6dea1ac8e1a0021f0d09584b1733858d970ffbbb66de186cb2e8",
+      "size_in_bytes": 2434
+    },
+    {
+      "_path": "lib/python3.6/site-packages/xentropy/xentropy.py",
+      "path_type": "hardlink",
+      "sha256": "d681185b02bb39921d8523ecdfa81d9ad2d65d9b60d83c0682ca1543e78d3354",
+      "size_in_bytes": 8421
+    }
+  ],
+  "paths_version": 1
+}

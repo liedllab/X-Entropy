@@ -9,8 +9,8 @@
     {
       "_path": "lib/python3.8/site-packages/XEntropy-1.8-py3.8-macosx-10.9-x86_64.egg-info/SOURCES.txt",
       "path_type": "hardlink",
-      "sha256": "396699ea97e4948047dc338451b7f7aa7a79c7d7341d2bfe600af290f957a8a1",
-      "size_in_bytes": 420
+      "sha256": "d44b54643bb65bb8b9536d6f004dee92bf15d9cfe9dc92770c7774186004526a",
+      "size_in_bytes": 429
     },
     {
       "_path": "lib/python3.8/site-packages/XEntropy-1.8-py3.8-macosx-10.9-x86_64.egg-info/dependency_links.txt",
@@ -39,92 +39,92 @@
     {
       "_path": "lib/python3.8/site-packages/xentropy/__init__.py",
       "path_type": "hardlink",
-      "sha256": "63ac74b6fd22b445489ccb9de42b2ad0f5e86e3d455df1ed027e70e32c8ca56c",
-      "size_in_bytes": 100
+      "sha256": "f896365fa7a27ada81812ab07a9381d94854ac9696bfc0877970f13fc3180043",
+      "size_in_bytes": 74
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/__pycache__/__init__.cpython-38.pyc",
       "path_type": "hardlink",
-      "sha256": "9b0202f53c6661e10de7abee8d2ce86ec88fefae2ebaab8320032456681cd3fb",
-      "size_in_bytes": 307
-    },
-    {
-      "_path": "lib/python3.8/site-packages/xentropy/__pycache__/constants.cpython-38.pyc",
-      "path_type": "hardlink",
-      "sha256": "d8514a41d078c8e06ff77891f7cbd8c4081ca18069b079b23651508704ff3c7c",
-      "size_in_bytes": 231
+      "sha256": "9170f372bb04675b7fcd313874b2ac1916aa8b3d200d63674412af8b1b64a94f",
+      "size_in_bytes": 277
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/__pycache__/dihedrals.cpython-38.pyc",
       "path_type": "hardlink",
-      "sha256": "83ff44068ebde5a333de24736dbf53851cfcb48b36bf04e2d9ffd9e25a5c5818",
-      "size_in_bytes": 8444
+      "sha256": "bff6d70b9cbaa86a63568cecf9e1fd05b44a8d03bfea94fe1c646cc75dd251c2",
+      "size_in_bytes": 9239
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/__pycache__/kde.cpython-38.pyc",
       "path_type": "hardlink",
-      "sha256": "7f58525a67f3ea78cd97cc485ad093955ba031ea4fc1827c3546a7d037116427",
-      "size_in_bytes": 5226
+      "sha256": "542fa9ffacd68652e6ff2bae3d6d60f4bdd71311215b91b41b2bfc9c66884b00",
+      "size_in_bytes": 5554
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/__pycache__/kde_kernel.cpython-38.pyc",
       "path_type": "hardlink",
-      "sha256": "ffc9bcc969dab7e1cd3ede3ddd401df0e5cca7dbbbabc8190524a5aaafb268be",
+      "sha256": "68d1b710f0c4b5ebfca95d32408c4d739a4dce2c820d46d87ea533232efed134",
       "size_in_bytes": 614
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/__pycache__/reweighting.cpython-38.pyc",
       "path_type": "hardlink",
-      "sha256": "9af46d05407f7d867505ec51f25602381ddf2ab1e3a9b771f35b64faeae028b1",
-      "size_in_bytes": 2641
+      "sha256": "15da8e7123e4b03ed87d37052741fe41b0d0c7016d2a530352b5f3813a303539",
+      "size_in_bytes": 2571
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/__pycache__/xentropy.cpython-38.pyc",
       "path_type": "hardlink",
-      "sha256": "4b4a7dffdf4ce8223609db06863c65fc88af8386d32ee085b2ec9b7461c5afa5",
-      "size_in_bytes": 7960
-    },
-    {
-      "_path": "lib/python3.8/site-packages/xentropy/constants.py",
-      "path_type": "hardlink",
-      "sha256": "60f55411163e5edc2ed3c20103973012e0fa3d59c78892a6088179621a4dd175",
-      "size_in_bytes": 46
+      "sha256": "6207122664d150c59219e8a31082164109945307e50e6a5aa61e3f2b28d93f28",
+      "size_in_bytes": 7930
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/dihedrals.py",
       "path_type": "hardlink",
-      "sha256": "e2a95fddf7f8c66fd40a9ed823f08f09bb816c932a80e94de38a694dd33d7c58",
-      "size_in_bytes": 9296
+      "sha256": "429e57fda3cd1518c3edeb460490e6725e3051f52d18f920bcb8328684a3a6cc",
+      "size_in_bytes": 10113
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/internal/__init__.py",
       "path_type": "hardlink",
-      "sha256": "2c893a3ad785c3f2d9d4f8936005a203de9db11b7f42a5be89571539289a3530",
-      "size_in_bytes": 80
+      "sha256": "24164fe88a28b184dd544d91a054080fae5feed0151312357637457ecf212b4a",
+      "size_in_bytes": 116
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/internal/__pycache__/__init__.cpython-38.pyc",
       "path_type": "hardlink",
-      "sha256": "ca0cea0ff8cd736b5e13ab6ba3ab17d46018bc467de1ed13d5c215bce343b51b",
-      "size_in_bytes": 289
+      "sha256": "0535e5aaf858d6cdd8c26db42e8d0d6d6335183f6b51ec1db6448e684a44eba0",
+      "size_in_bytes": 328
+    },
+    {
+      "_path": "lib/python3.8/site-packages/xentropy/internal/__pycache__/constants.cpython-38.pyc",
+      "path_type": "hardlink",
+      "sha256": "fbd950e186d8601834f5318de450548893463f6e68ad911fb47c43e1419d41c8",
+      "size_in_bytes": 303
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/internal/__pycache__/pre_post_processing.cpython-38.pyc",
       "path_type": "hardlink",
-      "sha256": "339ddbfb959bcde0d697ddf1356a5016ccaabdebeb1835e86fbdb79c432db522",
-      "size_in_bytes": 2821
+      "sha256": "5eeeefc94589e619e7b028142128e68b765b1ef02a4e64d2659e76b02624174b",
+      "size_in_bytes": 4165
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/internal/__pycache__/resolution.cpython-38.pyc",
       "path_type": "hardlink",
-      "sha256": "f5f4b5e8a5980f1a5bbfc5a5dfd896954e33bd98139fffdd92ebb9e0e2566604",
+      "sha256": "9b693a9b83d7cf82fb22b0d20fe8acd09abfd0a13bfe9205089e1e64b9d11a2c",
       "size_in_bytes": 5776
+    },
+    {
+      "_path": "lib/python3.8/site-packages/xentropy/internal/constants.py",
+      "path_type": "hardlink",
+      "sha256": "2f735a00e8cb4e0ebb893982e0ab4e9a8e7d755b50d0f8a7620a32a6cf1181c2",
+      "size_in_bytes": 89
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/internal/pre_post_processing.py",
       "path_type": "hardlink",
-      "sha256": "53f99bd80a24917e6fce5f9c99488db2a030b9562059bb89528d17ab86aded2d",
-      "size_in_bytes": 3832
+      "sha256": "9e40b179cbba6986026ad1888e895f3496a580f2858432d65c5749f036f0ae6f",
+      "size_in_bytes": 5515
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/internal/resolution.py",
@@ -135,16 +135,16 @@
     {
       "_path": "lib/python3.8/site-packages/xentropy/kde.py",
       "path_type": "hardlink",
-      "sha256": "3cd57c5bff518930b7ad9381b9301534f7937d38842d874940101d53c23baeee",
-      "size_in_bytes": 5192
+      "sha256": "689dabe89b36e856382b3e914adb64f6d9724ca4f1084c4a4355b5c5a8ca3f60",
+      "size_in_bytes": 5559
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/kde_kernel.cpython-38-darwin.so",
       "file_mode": "binary",
       "path_type": "hardlink",
-      "prefix_placeholder": "/Users/jhk/opt/anaconda3/conda-bld/xentropy_1606407364286/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_",
-      "sha256": "10c14136af9a8cef9536c83402ad4475fb419c0c6c1637754f79e0bb2c25c467",
-      "size_in_bytes": 83684
+      "prefix_placeholder": "/Users/jhk/opt/anaconda3/envs/build_py_3.8/conda-bld/xentropy_1614871862091/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pl",
+      "sha256": "9961e66681cd3643298ff365acda05b80e823f446a661362e56475bc892c4f91",
+      "size_in_bytes": 83676
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/kde_kernel.py",
@@ -155,14 +155,14 @@
     {
       "_path": "lib/python3.8/site-packages/xentropy/reweighting.py",
       "path_type": "hardlink",
-      "sha256": "41eedd9d8178adbe4f8d66db51c2f7470e29adb0c451f962a622361f11015479",
-      "size_in_bytes": 2558
+      "sha256": "937a1a4a25ad6dea1ac8e1a0021f0d09584b1733858d970ffbbb66de186cb2e8",
+      "size_in_bytes": 2434
     },
     {
       "_path": "lib/python3.8/site-packages/xentropy/xentropy.py",
       "path_type": "hardlink",
-      "sha256": "0ec6d286ea99f75b57076b0579b26a800265949afc3283ecd089a332dcc4817e",
-      "size_in_bytes": 8503
+      "sha256": "d681185b02bb39921d8523ecdfa81d9ad2d65d9b60d83c0682ca1543e78d3354",
+      "size_in_bytes": 8421
     }
   ],
   "paths_version": 1
