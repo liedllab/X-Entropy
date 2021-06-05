@@ -95,6 +95,11 @@ This module was parallelized using the openmp toolkit (license:
 <https://github.com/llvm-mirror/openmp/blob/master/LICENSE.txt>). Parts of the
 module use the [fftw3 library](<http://www.fftw.org/>).
 
+When using the code in a publication, please cite:
+[Johannes Kraml, Florian Hofer, Patrick K. Quoika, Anna S. Kamenik, and Klaus R. Liedl
+Journal of Chemical Information and Modeling 2021 61 (4), 1533-1538 
+doi: 10.1021/acs.jcim.0c01375 ](https://pubs.acs.org/doi/10.1021/acs.jcim.0c01375)
+
 The KDE in this package is based on the publication by Z. Botev: 
 [Kernel density estimation via diffusion
 Z. I. Botev, J. F. Grotowski, and D. P. Kroese (2010)
