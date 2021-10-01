@@ -27,8 +27,8 @@ class kde(object):
         # input
         # TODO preprocess and sanitycheck data here, too (code in dihedrals.py should be applicable)
         weights, weight_switch = process_weights_argument(weights, verbose=verbose)
-        self.__has_weights = weight_switch
         sanity_check_input_data(data, weights, weight_switch)
+        self.__has_weights = weight_switch
         check_dims(data)  # kde can only take single data sets currently
         self.__data = data
         self.__weights = weights
@@ -62,10 +62,12 @@ class kde(object):
         if verbose:
             print("Initializing C++ kernel for kde...")
         if self.has_weights:
+            # print(self.weights)  # DEBUG
             kernel = _kde_kernel(self.data, self.resolution, self.weights)
         else:
             kernel = _kde_kernel(self.data, self.resolution)
         kernel.calculate()
+        # print(kernel.get_pdf()) # DEBUG
         self.__is_finished = True
         if verbose:
             print("KDE finished.")
