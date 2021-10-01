@@ -115,7 +115,6 @@ def sanity_check_input_data(data, weights=None, weight_switch=True):
 
 def process_data_shapes(data, weights=None, weight_switch=True):
     data = np.array(data)
-    sanity_check_input_data(data, weights, weight_switch)
 
     if len(data.shape) == 0:
         err_msg = "Shape of data is suspicious\n" \

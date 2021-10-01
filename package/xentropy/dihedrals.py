@@ -34,6 +34,7 @@ class dihedralEntropy(object):
                                                         rules_of_thumb=rules_of_thumb_dihedral())
         # process input arrays
         weights, weight_switch = process_weights_argument(weights, verbose=verbose)
+        sanity_check_input_data(data, weights, weight_switch)
         self.__has_weights = weight_switch
         data, weights = process_data_shapes(data, weights, weight_switch)
         self.__data = data
