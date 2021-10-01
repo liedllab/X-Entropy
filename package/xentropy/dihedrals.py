@@ -12,7 +12,7 @@ from .internal.resolution import process_resolution_argument, rules_of_thumb_dih
 
 from .internal.pre_post_processing import preprocess_dihedral_data, process_data_shapes, \
     process_weights_argument, process_method_argument, reshape_arrays_eventually, postprocess_dihedral_pdf, \
-    rad_to_deg, deg_to_rad
+    rad_to_deg, deg_to_rad, sanity_check_input_data
 from .internal.constants import id_gas_SI, PI
 import warnings
 
