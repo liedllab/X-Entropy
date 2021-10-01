@@ -29,6 +29,9 @@ def process_weights_argument(weights, verbose=False):
         if verbose:
             print("Weights have been given.")
         weights = np.array(weights)
+        if True in (weights < 0):
+            err_msg = "You gave negative values in you weights array.\n"
+            raise ValueError(err_msg)
 
     return weights, weight_switch
 
