@@ -5,7 +5,7 @@ double calcHistogramNormalizer(const std::vector<double> &weights)
     return 1.0 / std::accumulate(
         std::begin(weights),
         std::end(weights),
-        0
+        0.0
     );
 }
 
