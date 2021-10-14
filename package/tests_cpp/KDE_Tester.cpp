@@ -44,5 +44,6 @@ TEST(GceTest, WeightsTest)
 TEST(calcHistogramNormalizer, Tests)
 {
     EXPECT_DOUBLE_EQ(calcHistogramNormalizer({1., 2., 3., 4., 5.}), 1. / 15.);
+    EXPECT_DOUBLE_EQ(calcHistogramNormalizer({0.5, 2.5, 3.15, 4.85, 5.}), 1. / 15.);
     EXPECT_DOUBLE_EQ(calcHistogramNormalizer(15), 1. / 15.);
 }
