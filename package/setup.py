@@ -19,7 +19,7 @@ elif platform.system() == 'Darwin':
 
 setup(
         name = 'XEntropy',
-        version = '1.8',
+        version = '1.8.1',
         description = "Calculate the entropy of a given set of data, using the fftw3 library.",
         author = "Johannes Kraml",
         author_email="johannes.kraml@uibk.ac.at",
