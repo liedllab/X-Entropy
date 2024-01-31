@@ -17,7 +17,7 @@ from .internal.constants import id_gas_SI, PI
 import warnings
 
 
-class dihedralEntropy(object):
+class DihedralEntropy(object):
 
     def __init__(self, data, weights=None, resolution="auto", verbose=False, method="Simpson", input_unit="auto"):
         # flags and output
