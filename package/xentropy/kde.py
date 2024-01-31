@@ -16,7 +16,7 @@ def check_dims(data):
                   "data: {}".format(data.shape)
         raise ValueError(err_msg)
 
-class kde(object):
+class Kde(object):
 
     def __init__(self, data, weights=None, resolution="auto", verbose=False):
         # to be set after calculation
