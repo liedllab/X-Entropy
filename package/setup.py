@@ -23,7 +23,8 @@ setup(
         description = "Calculate the entropy of a given set of data, using the fftw3 library.",
         author = "Johannes Kraml",
         author_email="johannes.kraml@uibk.ac.at",
-
+        install_requires=["Cython"],
+]
         py_modules=['xentropy.dihedrals', 'xentropy.kde', 'xentropy.internal.constants', 'xentropy.xentropy',
             'xentropy.reweighting','xentropy.internal.resolution', 
             'xentropy.internal.pre_post_processing'],
