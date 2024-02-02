@@ -29,6 +29,5 @@ jobs:
     - name: Build
       run: pip install -r requirements.txt; pip install .
       working-directory: ${{ env.working-directory }}
-      dependencies: Cython
 
     #TODO: Run Tests
